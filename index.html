@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+                rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block"
+                rel="stylesheet">
+
+        <!-- PostHog Analytics -->
+        <script>
+                !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } var w = t.createElement("script"); w.type = "text/javascript", w.async = !0, w.src = s.api_host.replace(".api.envoy.posthog.com", "") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(w, r), o = e, s = s || {}, o._i.push([i, s, a]), o.init = g, o.register = function (t) { o.push(["register", t]) }, o.register_once = function (t) { o.push(["register_once", t]) }, o.unregister = function (t) { o.push(["unregister", t]) }, o.identify = function (t, e) { o.push(["identify", t, e]) }, o.alias = function (t, e) { o.push(["alias", t, e]) }, o.set_config = function (t) { o.push(["set_config", t]) }, o.disable_features = function (t) { o.push(["disable_features", t]) }, o.capture = function (t, e) { o.push(["capture", t, e]) }, o.capture_pageview = function (t) { o.push(["capture_pageview", t]) }, o._i[o._i.length - 1][1].loaded = function (t) { o.capture("pageview") }, e.__SV = 1.0 }) }(document, window.posthog || []);
+
+                // Initialize PostHog (Placeholder configuration)
+                // Replace '<YOUR_POSTHOG_API_KEY>' and 'https://us.i.posthog.com' with your actual PostHog details.
+                const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS-temp';
+                const POSTHOG_HOST = 'https://us.i.posthog.com';
+
+                if (POSTHOG_API_KEY) {
+                        posthog.init(POSTHOG_API_KEY, {
+                                api_host: POSTHOG_HOST,
+                                person_profiles: 'identified_only'
+                        });
+                } else {
+                        console.log("PostHog Analytics loaded in mockup mode.");
+                        window.posthog = {
+                                capture: function (eventName, properties) {
+                                        console.log("[PostHog Event Captured]", eventName, properties);
+                                }
+                        };
+                }
+        </script>
+
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <script id="tailwind-config">try {
+                        tailwind.config = {
+                                darkMode: "class",
+                                theme: {
+                                        extend: {
+                                                "colors": {
+                                                        "primary-fixed": "#e2e2e2",
+                                                        "surface-container-lowest": "#0e0e0e",
+                                                        "inverse-on-surface": "#313030",
+                                                        "surface": "#131313",
+                                                        "primary-container": "#e2e2e2",
+                                                        "on-secondary-container": "#00311f",
+                                                        "secondary-fixed": "#6ffbbe",
+                                                        "outline-variant": "#444748",
+                                                        "on-error": "#690005",
+                                                        "on-tertiary": "#1000a9",
+                                                        "text-muted": "#A3A3A3",
+                                                        "surface-container-highest": "#353534",
+                                                        "on-surface-variant": "#c4c7c8",
+                                                        "surface-tint": "#c6c6c7",
+                                                        "accent-green-glass": "rgba(16, 185, 129, 0.1)",
+                                                        "surface-container-high": "#2a2a2a",
+                                                        "on-surface": "#e5e2e1",
+                                                        "error": "#ffb4ab",
+                                                        "secondary-container": "#00a572",
+                                                        "on-secondary": "#003824",
+                                                        "on-primary-fixed": "#1a1c1c",
+                                                        "tertiary-container": "#e1e0ff",
+                                                        "tertiary": "#ffffff",
+                                                        "on-primary-container": "#636565",
+                                                        "on-tertiary-container": "#4f51dd",
+                                                        "on-tertiary-fixed": "#07006c",
+                                                        "secondary-fixed-dim": "#4edea3",
+                                                        "primary-fixed-dim": "#c6c6c7",
+                                                        "secondary": "#4edea3",
+                                                        "on-secondary-fixed-variant": "#005236",
+                                                        "on-primary-fixed-variant": "#454747",
+                                                        "surface-container": "#201f1f",
+                                                        "surface-bright": "#3a3939",
+                                                        "surface-dim": "#131313",
+                                                        "surface-elevated": "#171717",
+                                                        "on-primary": "#2f3131",
+                                                        "tertiary-fixed": "#e1e0ff",
+                                                        "tertiary-fixed-dim": "#c0c1ff",
+                                                        "surface-container-low": "#1c1b1b",
+                                                        "on-background": "#e5e2e1",
+                                                        "outline": "#8e9192",
+                                                        "surface-variant": "#353534",
+                                                        "primary": "#ffffff",
+                                                        "inverse-surface": "#e5e2e1",
+                                                        "error-container": "#93000a",
+                                                        "inverse-primary": "#5d5f5f",
+                                                        "background": "#131313",
+                                                        "on-tertiary-fixed-variant": "#2f2ebe",
+                                                        "on-secondary-fixed": "#002113",
+                                                        "on-error-container": "#ffdad6",
+                                                        "border-subtle": "#262626"
+                                                },
+                                                "borderRadius": {
+                                                        "DEFAULT": "1px",
+                                                        "sm": "1px",
+                                                        "md": "2px",
+                                                        "lg": "2px",
+                                                        "xl": "2px",
+                                                        "2xl": "2px",
+                                                        "3xl": "2px",
+                                                        "full": "9999px"
+                                                },
+                                                "spacing": {
+                                                        "margin-safe": "32px",
+                                                        "stack-gap": "16px",
+                                                        "grid-columns": "12",
+                                                        "gutter": "24px",
+                                                        "section-v-md": "80px",
+                                                        "section-v-lg": "120px"
+                                                },
+                                                "fontFamily": {
+                                                        "table-data": [
+                                                                "JetBrains Mono"
+                                                        ],
+                                                        "headline-lg-mobile": [
+                                                                "Geist"
+                                                        ],
+                                                        "headline-lg": [
+                                                                "Geist"
+                                                        ],
+                                                        "label-mono": [
+                                                                "JetBrains Mono"
+                                                        ],
+                                                        "display-hero": [
+                                                                "Geist"
+                                                        ],
+                                                        "headline-md": [
+                                                                "Geist"
+                                                        ],
+                                                        "body-md": [
+                                                                "Geist"
+                                                        ],
+                                                        "body-lg": [
+                                                                "Geist"
+                                                        ]
+                                                },
+                                                "fontSize": {
+                                                        "table-data": [
+                                                                "14px",
+                                                                {
+                                                                        "lineHeight": "1.4",
+                                                                        "fontWeight": "400"
+                                                                }
+                                                        ],
+                                                        "headline-lg-mobile": [
+                                                                "32px",
+                                                                {
+                                                                        "lineHeight": "1.2",
+                                                                        "fontWeight": "600"
+                                                                }
+                                                        ],
+                                                        "headline-lg": [
+                                                                "48px",
+                                                                {
+                                                                        "lineHeight": "1.2",
+                                                                        "letterSpacing": "-0.02em",
+                                                                        "fontWeight": "600"
+                                                                }
+                                                        ],
+                                                        "label-mono": [
+                                                                "12px",
+                                                                {
+                                                                        "lineHeight": "1.0",
+                                                                        "letterSpacing": "0.05em",
+                                                                        "fontWeight": "500"
+                                                                }
+                                                        ],
+                                                        "display-hero": [
+                                                                "72px",
+                                                                {
+                                                                        "lineHeight": "1.1",
+                                                                        "letterSpacing": "-0.04em",
+                                                                        "fontWeight": "600"
+                                                                }
+                                                        ],
+                                                        "headline-md": [
+                                                                "32px",
+                                                                {
+                                                                        "lineHeight": "1.3",
+                                                                        "fontWeight": "500"
+                                                                }
+                                                        ],
+                                                        "body-md": [
+                                                                "16px",
+                                                                {
+                                                                        "lineHeight": "1.6",
+                                                                        "fontWeight": "400"
+                                                                }
+                                                        ],
+                                                        "body-lg": [
+                                                                "20px",
+                                                                {
+                                                                        "lineHeight": "1.6",
+                                                                        "fontWeight": "400"
+                                                                }
+                                                        ]
+                                                }
+                                        },
+                                },
+                        }
+                } catch (_e) { }</script>
+        <style>
+                /* Custom Keyframes and Animations for interactive preview mockup */
+                @keyframes pulse-ring {
+                        0% {
+                                transform: scale(0.95);
+                                opacity: 0.85;
+                        }
+
+                        100% {
+                                transform: scale(1.45);
+                                opacity: 0;
+                        }
+                }
+
+                @keyframes type {
+                        from {
+                                width: 0;
+                        }
+
+                        to {
+                                width: 100%;
+                        }
+                }
+
+                @keyframes spin-slow {
+                        from {
+                                transform: rotate(0deg);
+                        }
+
+                        to {
+                                transform: rotate(360deg);
+                        }
+                }
+
+                .animate-waveform {
+                        transition: height 0.1s ease-out;
+                }
+
+                .animate-bg-wave {
+                        transition: height 0.1s ease-out;
+                }
+
+                .dot-grid {
+                        background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+                        background-size: 20px 20px;
+                }
+
+                @keyframes shimmer {
+                        0% {
+                                background-position: -200% 0;
+                        }
+
+                        100% {
+                                background-position: 200% 0;
+                        }
+                }
+
+                .animate-shimmer {
+                        background: linear-gradient(90deg, #444 20%, #fff 50%, #444 80%);
+                        background-size: 200% auto;
+                        -webkit-background-clip: text;
+                        background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        animation: shimmer 1.5s linear infinite;
+                        display: inline-block;
+                }
+
+                /* Walkthrough Buttons Layout & States */
+                .walkthrough-btn {
+                        outline: none !important;
+                        user-select: none;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        padding: 8px 16px;
+                        border-radius: 9999px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+                        /* Inactive state styles */
+                        background-color: rgba(255, 255, 255, 0.03);
+                        color: rgba(255, 255, 255, 0.45);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        backdrop-filter: blur(8px);
+                }
+
+                @media (min-width: 768px) {
+                        .walkthrough-btn {
+                                font-size: 11px;
+                                padding: 10px 20px;
+                        }
+                }
+
+                .walkthrough-btn:focus {
+                        outline: none !important;
+                        box-shadow: none !important;
+                }
+
+                /* Hover styling for inactive buttons */
+                .walkthrough-btn:not(.active):hover {
+                        transform: translateY(-1px);
+                        background-color: rgba(255, 255, 255, 0.08);
+                        color: rgba(255, 255, 255, 0.85);
+                        border-color: rgba(255, 255, 255, 0.2);
+                }
+
+                /* Active (Selected) state styles */
+                .walkthrough-btn.active {
+                        background-color: #ffffff;
+                        color: #131313;
+                        border-color: #ffffff;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+                }
+
+                .walkthrough-btn.active:hover {
+                        transform: translateY(-1px);
+                        background-color: #ffffff;
+                        box-shadow: 0 0 15px rgba(255, 255, 255, 0.25) !important;
+                }
+
+                .walkthrough-btn:active {
+                        transform: translateY(0px);
+                }
+
+                /* Navigation Links Underline Animation */
+                .nav-link {
+                        position: relative;
+                        display: inline-block;
+                }
+
+                .nav-link::after {
+                        content: '';
+                        position: absolute;
+                        width: 100%;
+                        transform: scaleX(0);
+                        height: 1px;
+                        bottom: -4px;
+                        left: 0;
+                        background-color: #ffffff;
+                        transform-origin: bottom right;
+                        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                .nav-link:hover::after {
+                        transform: scaleX(1);
+                        transform-origin: bottom left;
+                }
+
+                /* Interactive CTA Buttons */
+                .btn-interactive {
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                        user-select: none;
+                }
+
+                .btn-interactive:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08) !important;
+                        opacity: 1 !important;
+                }
+
+                .btn-interactive:active {
+                        transform: translateY(0px);
+                        box-shadow: none !important;
+                }
+
+                /* Card Micro-interactions */
+                .card-interactive {
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }
+
+                .card-interactive:hover {
+                        transform: translateY(-2px);
+                        border-color: rgba(255, 255, 255, 0.18) !important;
+                        background-color: rgba(255, 255, 255, 0.04) !important;
+                        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+                }
+
+                /* Spec table row hover */
+                .table-row-hover tr {
+                        transition: background-color 0.2s ease;
+                }
+
+                .table-row-hover tr:hover {
+                        background-color: rgba(255, 255, 255, 0.02) !important;
+                }
+
+                /* Floating Back to Top Button */
+                #back-to-top {
+                        position: fixed;
+                        bottom: 24px;
+                        right: 24px;
+                        z-index: 40;
+                        width: 44px;
+                        height: 44px;
+                        background-color: rgba(19, 19, 19, 0.8);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(12px);
+                        color: #ffffff;
+                        border-radius: 9999px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        opacity: 0;
+                        pointer-events: none;
+                        transform: translateY(10px);
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                #back-to-top.visible {
+                        opacity: 1;
+                        pointer-events: auto;
+                        transform: translateY(0);
+                }
+
+                #back-to-top:hover {
+                        background-color: #ffffff;
+                        color: #131313;
+                        border-color: #ffffff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 16px rgba(255, 255, 255, 0.12);
+                }
+
+                #back-to-top:active {
+                        transform: translateY(0);
+                }
+
+                /* Form validation shake and success animations */
+                @keyframes shake {
+
+                        0%,
+                        100% {
+                                transform: translateX(0);
+                        }
+
+                        25% {
+                                transform: translateX(-6px);
+                        }
+
+                        75% {
+                                transform: translateX(6px);
+                        }
+                }
+
+                .animate-shake {
+                        animation: shake 0.2s ease-in-out 2;
+                }
+
+                @keyframes scale-in {
+                        0% {
+                                transform: scale(0.92);
+                                opacity: 0;
+                        }
+
+                        100% {
+                                transform: scale(1);
+                                opacity: 1;
+                        }
+                }
+
+                .animate-scale-in {
+                        animation: scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                }
+        </style>
+</head>
+
+<body
+        class="antialiased font-body-md selection:bg-secondary/30 selection:text-primary min-h-screen flex flex-col relative overflow-x-hidden bg-surface-container-lowest">
+        <!-- Navigation -->
+        <nav
+                class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-border-subtle transition-all duration-300">
+                <div class="flex justify-between items-center px-margin-safe h-20 max-w-[1280px] mx-auto">
+                        <div class="font-display-hero text-body-lg font-semibold tracking-tighter text-primary cursor-pointer" onclick="scrollToTop()">Trace
+                        </div>
+                        <div class="hidden md:flex items-center space-x-8">
+                                <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
+                                        href="#platform-section">Platform</a>
+                                <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
+                                        href="#orchestration-section">Orchestration</a>
+                                <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
+                                        href="#specs-section">Specs</a>
+                                <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
+                                        href="#integrations-section">Integrations</a>
+                                <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
+                                        href="#pricing-section">Pricing</a>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                                <a id="header-preorder-btn" href="checkout.html" onclick="trackCta('header', 'Pre-order Now');"
+                                        class="btn-interactive bg-primary text-background px-6 py-2 rounded font-body-md text-body-md text-center flex items-center justify-center transition-all duration-300 opacity-0 scale-95 pointer-events-none">Pre-order Now</a>
+                                <button id="hamburger-btn"
+                                        class="md:hidden text-primary hover:text-secondary focus:outline-none flex items-center justify-center p-1 transition-colors"
+                                        onclick="toggleMobileMenu()">
+                                        <span class="material-symbols-outlined text-[28px]"
+                                                id="hamburger-icon">menu</span>
+                                </button>
+                        </div>
+                </div>
+                <!-- Mobile Menu Drawer (slide-down) -->
+                <div id="mobile-menu"
+                        class="hidden md:hidden w-full bg-surface-container-lowest border-b border-border-subtle backdrop-blur-xl absolute top-20 left-0 transition-all duration-300 overflow-hidden py-6 px-margin-safe flex flex-col gap-4">
+                        <a class="text-text-muted hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 border-b border-border-subtle/30"
+                                href="#platform-section" onclick="toggleMobileMenu()">Platform</a>
+                        <a class="text-text-muted hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 border-b border-border-subtle/30"
+                                href="#orchestration-section" onclick="toggleMobileMenu()">Orchestration</a>
+                        <a class="text-text-muted hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 border-b border-border-subtle/30"
+                                href="#specs-section" onclick="toggleMobileMenu()">Specs</a>
+                        <a class="text-text-muted hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 border-b border-border-subtle/30"
+                                href="#integrations-section" onclick="toggleMobileMenu()">Integrations</a>
+                        <a class="text-text-muted hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 border-b border-border-subtle/30"
+                                href="#pricing-section" onclick="toggleMobileMenu()">Pricing</a>
+                        <a class="text-secondary hover:text-primary hover:pl-2 transition-all font-body-md text-body-md py-2 font-medium"
+                                href="checkout.html" onclick="toggleMobileMenu()">Pre-order Now</a>
+                </div>
+        </nav>
+        <main class="flex-grow pt-20">
+                <!-- Hero Section -->
+                <section id="platform-section"
+                        class="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden border-b border-border-subtle py-12 md:py-24 bg-surface-container-lowest dot-grid">
+                        <div
+                                class="absolute inset-0 z-0 bg-gradient-to-br from-surface-container-lowest via-surface-container-lowest to-surface-container-low opacity-50">
+                        </div>
+                        <div
+                                class="relative z-20 px-margin-safe max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center w-full">
+                                <div class="flex flex-col items-start text-left max-w-xl mx-auto lg:mx-0">
+                                        <div
+                                                class="mb-6 px-3 py-1 border border-border-subtle rounded-full inline-flex items-center gap-2 bg-surface-container/50 backdrop-blur-md">
+                                                <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                                                <span class="font-label-mono text-label-mono text-text-muted uppercase">Now
+                                                        available for pre-order</span>
+                                        </div>
+                                        <h1
+                                                class="font-display-hero text-headline-lg-mobile md:text-display-hero text-primary mb-6">
+                                                Presence, redefined.</h1>
+                                        <p class="font-body-lg text-body-lg text-text-muted mb-10">
+                                                Trace is a minimalist device designed to disconnect you from the
+                                                noise. It provides essential utility without the endless scroll,
+                                                allowing you to reclaim your focus.
+                                        </p>
+                                        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                                                <a id="hero-reserve-btn" href="checkout.html" onclick="trackCta('hero', 'Reserve Now')"
+                                                        class="btn-interactive bg-primary text-background px-8 py-3 rounded font-body-md text-body-md font-medium text-center flex items-center justify-center">Reserve
+                                                        Now</a>
+                                                <button onclick="trackCta('hero', 'View technical specs'); scrollToSpecs()"
+                                                        class="btn-interactive border border-border-subtle text-primary px-8 py-3 rounded font-body-md text-body-md bg-surface-container/30 backdrop-blur-sm">View
+                                                        technical specs</button>
+                                        </div>
+                                </div>
+                                <div class="flex flex-col items-center justify-center w-full mt-12 lg:mt-0">
+                                        <!-- Device Display Area -->
+                                        <div
+                                                class="relative w-full max-w-[440px] aspect-square flex items-center justify-center mb-8 bg-transparent">
+                                                <!-- Animated Background Wave Graphic (Actual Looks from device-frame.png) - Width increased by ~60% and stretched -->
+                                                <div
+                                                        class="absolute inset-x-0 h-40 flex items-center justify-center gap-1.5 opacity-35 z-0 w-[160%] md:w-[170%] max-w-[720px] left-1/2 -translate-x-1/2">
+                                                        <!-- Left Wave (14 Bars) -->
+                                                        <div class="w-[3px] h-4 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.85s;"></div>
+                                                        <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.8s;"></div>
+                                                        <div class="w-[3px] h-8 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.75s;"></div>
+                                                        <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.7s;"></div>
+                                                        <div class="w-[3px] h-12 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.65s;"></div>
+                                                        <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.6s;"></div>
+                                                        <div class="w-[3px] h-20 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.55s;"></div>
+                                                        <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.5s;"></div>
+                                                        <div class="w-[3px] h-28 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.45s;"></div>
+                                                        <div class="w-[3px] h-32 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.4s;"></div>
+                                                        <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.3s;"></div>
+                                                        <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.2s;"></div>
+                                                        <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.1s;"></div>
+                                                        <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.05s;"></div>
+
+                                                        <!-- Spacer in the middle for the device itself to prevent overlaps (260px) -->
+                                                        <div class="w-[260px] shrink-0"></div>
+
+                                                        <!-- Right Wave (14 Bars) -->
+                                                        <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.05s;"></div>
+                                                        <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.1s;"></div>
+                                                        <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.2s;"></div>
+                                                        <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.3s;"></div>
+                                                        <div class="w-[3px] h-32 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.4s;"></div>
+                                                        <div class="w-[3px] h-28 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.45s;"></div>
+                                                        <div class="w-[3px] h-20 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.55s;"></div>
+                                                        <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.6s;"></div>
+                                                        <div class="w-[3px] h-12 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.65s;"></div>
+                                                        <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.7s;"></div>
+                                                        <div class="w-[3px] h-8 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.75s;"></div>
+                                                        <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.8s;"></div>
+                                                        <div class="w-[3px] h-4 bg-white/60 rounded-full animate-bg-wave"
+                                                                style="animation-delay: 0.85s;"></div>
+                                                </div>
+
+                                                <!-- 368x448 AMOLED Device with Bezel, Gloss Reflection, and Bezel Shadow (Reduced to max-w-[256px]) -->
+                                                <div
+                                                        class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_30px_70px_rgba(0,0,0,0.95),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center z-10">
+                                                        <!-- Glass Bezel Reflections (Replicating glare & light) -->
+                                                        <div
+                                                                class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20">
+                                                        </div>
+                                                        <div
+                                                                class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20">
+                                                        </div>
+
+                                                        <!-- 1.8" Touch AMOLED Display Area -->
+                                                        <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10"
+                                                                style="transform: translateZ(0);">
+                                                                <!-- Hardware Status Bar -->
+                                                                <div id="device-status-bar"
+                                                                        class="w-full flex justify-between items-center px-4 pt-2.5 pb-1.5 border-b border-neutral-900/40 text-[11px] font-label-mono text-text-muted/65 select-none bg-black shrink-0 z-20">
+                                                                        <span id="device-time">10:45 AM</span>
+                                                                        <span class="flex items-center gap-1">98% <span
+                                                                                        class="material-symbols-outlined text-[12px] text-text-muted/40">battery_50</span></span>
+                                                                </div>
+
+                                                                <!-- Screen States Container wrapper -->
+                                                                <div class="relative flex-grow w-full overflow-hidden">
+                                                                        <!-- Screen States -->
+                                                                        <!-- Capture State -->
+                                                                        <div class="screen-content absolute inset-0 flex flex-col items-center justify-center bg-black opacity-100"
+                                                                                id="screen-capture">
+                                                                                <!-- Phase 1: Boot screen -->
+                                                                                <div class="absolute inset-0 flex flex-col items-center justify-center bg-black transition-opacity duration-300 p-4"
+                                                                                        id="capture-boot">
+                                                                                        <div
+                                                                                                class="font-display-hero text-body-lg font-semibold tracking-tighter animate-shimmer select-none">
+                                                                                                TRACE</div>
+                                                                                </div>
+
+                                                                                <!-- Phase 2: Ready to Record screen -->
+                                                                                <div class="absolute inset-0 flex flex-col items-center justify-center bg-black transition-opacity duration-300 p-4"
+                                                                                        id="capture-ready"
+                                                                                        style="display: none; opacity: 0;">
+                                                                                        <span
+                                                                                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mb-2">Ready
+                                                                                                to Record</span>
+                                                                                        <div
+                                                                                                class="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center shadow-lg my-2.5 transition-transform hover:scale-105 active:scale-95 duration-200">
+                                                                                                <div
+                                                                                                        class="w-5 h-5 rounded-full bg-white animate-pulse">
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <span
+                                                                                                class="font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest mt-2">HOLD
+                                                                                                TO START</span>
+                                                                                </div>
+
+                                                                                <!-- Phase 3: Active Recording screen -->
+                                                                                <div class="absolute inset-0 flex flex-col items-center justify-between bg-black transition-opacity duration-300 p-4"
+                                                                                        id="capture-active"
+                                                                                        style="display: none; opacity: 0;">
+                                                                                        <!-- Screen Title -->
+                                                                                        <span
+                                                                                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2">Voice
+                                                                                                Capture</span>
+
+                                                                                        <!-- Center Wave Animation (Equalizer Wave Style - 9 Bars) -->
+                                                                                        <div
+                                                                                                class="flex items-center justify-center gap-1 h-16 w-full my-auto">
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-1.5 bg-secondary rounded-full animate-waveform">
+                                                                                                </div>
+                                                                                        </div>
+
+                                                                                        <!-- Status Info -->
+                                                                                        <span
+                                                                                                class="text-secondary font-label-mono text-[11px] uppercase mb-2 animate-pulse">Recording...</span>
+                                                                                </div>
+                                                                        </div>
+                                                                        <!-- Transcribe State -->
+                                                                        <div class="screen-content absolute inset-0 flex flex-col items-center justify-between bg-black opacity-0 p-4"
+                                                                                id="screen-transcribe">
+                                                                                <!-- Header -->
+                                                                                <span
+                                                                                        class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Live
+                                                                                        Transcript</span>
+
+                                                                                <!-- Main Transcript Text block -->
+                                                                                <div
+                                                                                        class="flex-grow flex flex-col justify-center w-full py-4">
+                                                                                        <div id="transcript-lines-container"
+                                                                                                class="border-l border-secondary/40 pl-3 space-y-1.5 w-full max-w-[220px] mx-auto text-left">
+                                                                                                <!-- Dynamic interactive lines will mount here -->
+                                                                                        </div>
+                                                                                </div>
+
+                                                                                <!-- Bottom Spacer to balance the top header layout -->
+                                                                                <div class="h-6 w-full shrink-0"></div>
+                                                                        </div>
+                                                                        <!-- Summarize State -->
+                                                                        <div class="screen-content absolute inset-0 flex flex-col items-center justify-between bg-black opacity-0 p-4"
+                                                                                id="screen-summarize">
+                                                                                <!-- Header -->
+                                                                                <span
+                                                                                        class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">AI
+                                                                                        Summary</span>
+
+                                                                                <!-- Main Summary Text block -->
+                                                                                <div
+                                                                                        class="flex-grow flex flex-col justify-center w-full py-4">
+                                                                                        <div
+                                                                                                class="border-l border-secondary/40 pl-3 space-y-2.5 w-full max-w-[220px] mx-auto text-left">
+                                                                                                <p
+                                                                                                        class="font-body-md text-primary text-[12px] leading-snug">
+                                                                                                        • Streamline
+                                                                                                        client
+                                                                                                        onboarding flow
+                                                                                                </p>
+                                                                                                <p
+                                                                                                        class="font-body-md text-primary text-[12px] leading-snug">
+                                                                                                        • Remove steps 3
+                                                                                                        &amp; 4 friction
+                                                                                                        points</p>
+                                                                                                <p
+                                                                                                        class="font-body-md text-primary text-[12px] leading-snug">
+                                                                                                        • Integrate
+                                                                                                        quick Stripe
+                                                                                                        transactions</p>
+                                                                                                <p
+                                                                                                        class="font-body-md text-primary text-[12px] leading-snug">
+                                                                                                        • Schedule A/B
+                                                                                                        test for next
+                                                                                                        cohort</p>
+                                                                                        </div>
+                                                                                </div>
+
+                                                                                <!-- Bottom Spacer to balance the top header layout -->
+                                                                                <div class="h-6 w-full shrink-0"></div>
+                                                                        </div>
+                                                                        <!-- Sync State -->
+                                                                        <div class="screen-content absolute inset-0 flex flex-col items-center justify-between bg-black opacity-0 p-4"
+                                                                                id="screen-sync">
+                                                                                <!-- Header -->
+                                                                                <span
+                                                                                        class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Sync</span>
+
+                                                                                <!-- Main Sync Text block -->
+                                                                                <div
+                                                                                        class="flex-grow flex flex-col justify-center w-full py-4">
+                                                                                        <div
+                                                                                                class="border-l border-secondary/40 pl-3 space-y-2.5 w-full max-w-[220px] mx-auto text-left">
+                                                                                                <div
+                                                                                                        class="flex items-center gap-2">
+                                                                                                        <span id="sync-icon"
+                                                                                                                class="material-symbols-outlined text-primary text-base animate-[spin-slow_3s_linear_infinite]">sync</span>
+                                                                                                        <span id="sync-status-text"
+                                                                                                                class="font-body-md text-primary text-[12px] leading-snug">Syncing...</span>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                        class="w-full bg-neutral-900 border border-neutral-850 h-2 rounded-full overflow-hidden">
+                                                                                                        <div id="sync-progress-bar"
+                                                                                                                class="w-0 h-full bg-secondary rounded-full transition-all duration-300 ease-out">
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                                <p id="sync-storage-text"
+                                                                                                        class="font-label-mono text-text-muted/65 text-[10px] uppercase tracking-wider">
+                                                                                                        Storage: 0.0 MB
+                                                                                                        / 4.8 MB</p>
+                                                                                        </div>
+                                                                                </div>
+
+                                                                                <!-- Bottom Spacer to balance the top header layout -->
+                                                                                <div class="h-6 w-full shrink-0"></div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <!-- Controls -->
+                                        <div class="flex flex-wrap justify-center gap-3 w-full max-w-lg px-2">
+                                                <button class="walkthrough-btn active" id="btn-capture"
+                                                        onclick="switchMode('capture')">
+                                                        <span class="flex items-center gap-1 md:gap-2"><span
+                                                                        class="material-symbols-outlined text-xs md:text-sm">mic</span>
+                                                                Capture</span>
+                                                </button>
+                                                <button class="walkthrough-btn" id="btn-transcribe"
+                                                        onclick="switchMode('transcribe')">
+                                                        <span class="flex items-center gap-1 md:gap-2"><span
+                                                                        class="material-symbols-outlined text-xs md:text-sm">subtitles</span>
+                                                                Transcribe</span>
+                                                </button>
+                                                <button class="walkthrough-btn" id="btn-summarize"
+                                                        onclick="switchMode('summarize')">
+                                                        <span class="flex items-center gap-1 md:gap-2"><span
+                                                                        class="material-symbols-outlined text-xs md:text-sm">format_list_bulleted</span>
+                                                                Summarize</span>
+                                                </button>
+                                                <button class="walkthrough-btn" id="btn-sync"
+                                                        onclick="switchMode('sync')">
+                                                        <span class="flex items-center gap-1 md:gap-2"><span
+                                                                        class="material-symbols-outlined text-xs md:text-sm">cloud_sync</span>
+                                                                Sync</span>
+                                                </button>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+                <!-- Philosophy Section -->
+                <section
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto grid-bg border-b border-border-subtle bg-surface-container-lowest">
+                        <div class="max-w-3xl mx-auto text-center">
+                                <h2
+                                        class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8">
+                                        Trace is the quiet in the noise</h2>
+                                <p class="font-body-lg text-body-lg text-text-muted">
+                                        We believe technology should serve your intent, not hack your attention. Trace
+                                        is engineered from the ground up to provide utility with zero friction and
+                                        absolute privacy. No notifications, no infinite feeds, just pure, unadulterated
+                                        focus.
+                                </p>
+                        </div>
+                </section>
+                <!-- Feature Grid -->
+                <section
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle bg-surface-container-lowest">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                                <!-- Feature 1 -->
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg group hover:border-outline-variant transition-colors relative overflow-hidden">
+                                        <div
+                                                class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                        </div>
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span class="material-symbols-outlined text-secondary">mic</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Capture
+                                        </h3>
+                                        <p class="font-body-md text-body-md text-text-muted">
+                                                Frictionless, pocket-sized audio capture with a rolling 60-second "Flashback" buffer. Capture fleeting ideas instantly without opening your phone.
+                                        </p>
+                                </div>
+                                <!-- Feature 2 -->
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg group hover:border-outline-variant transition-colors relative overflow-hidden">
+                                        <div
+                                                class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                        </div>
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span
+                                                        class="material-symbols-outlined text-secondary">translate</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Transcript</h3>
+                                        <p class="font-body-md text-body-md text-text-muted">
+                                                Real-time, stream-optimized voice-to-text. Enjoy instant multilingual translations and live, on-screen transcription in English and regional languages.
+                                        </p>
+                                </div>
+                                <!-- Feature 3 -->
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg group hover:border-outline-variant transition-colors relative overflow-hidden">
+                                        <div
+                                                class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                        </div>
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span class="material-symbols-outlined text-secondary">auto_awesome</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Summary</h3>
+                                        <p class="font-body-md text-body-md text-text-muted">
+                                                Intelligent AI structuring. Automatically convert unorganized audio drafts into clean chapter structures, actionable tasks, and core insights.
+                                        </p>
+                                </div>
+                        </div>
+                </section>
+                <!-- The Power of Edge Processing Section -->
+                <section
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle bg-surface-container-lowest">
+                        <div class="mb-12 md:mb-16">
+                                <h2
+                                        class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+                                        The Power of Edge Processing</h2>
+                                <p class="font-body-lg text-body-lg text-text-muted max-w-3xl">Premium
+                                        hardware-accelerated features that keep your data secure and your device
+                                        instantly ready.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg">
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span class="material-symbols-outlined text-secondary">history</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">"Flashback"
+                                                Audio Buffer</h3>
+                                        <p class="font-body-md text-body-md text-text-muted">Continuously records a
+                                                rolling 60-second loop into secure local cache memory. Pressing save commits the
+                                                previous 60 seconds, ensuring you never miss a fleeting thought.</p>
+                                </div>
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg">
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span class="material-symbols-outlined text-secondary">graphic_eq</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Voice Activity
+                                                Detection</h3>
+                                        <p class="font-body-md text-body-md text-text-muted">The device sleeps while a
+                                                smart low-power wake sensor listens. Wakes instantly to record upon
+                                                detecting human speech or a button press.</p>
+                                </div>
+                                <div
+                                        class="card-interactive p-8 bg-surface-container border border-border-subtle rounded-lg">
+                                        <div
+                                                class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
+                                                <span
+                                                        class="material-symbols-outlined text-secondary">enhanced_encryption</span>
+                                        </div>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Local Audio
+                                                Encryption</h3>
+                                        <p class="font-body-md text-body-md text-text-muted">Military-grade hardware
+                                                encryption protects your audio blocks as they are written. If the device is
+                                                lost, your data remains a completely unreadable vault.</p>
+                                </div>
+                        </div>
+                </section>
+                <!-- Intelligence on Demand Section -->
+                <section
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle grid-bg bg-surface-container-lowest">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                                <div>
+                                        <h2
+                                                class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">
+                                                Intelligence on Demand</h2>
+                                        <p class="font-body-lg text-body-lg text-text-muted mb-8">Speech instantly
+                                                becomes actionable data. Cloud AI processes your transcripts to generate
+                                                structured outputs.</p>
+                                        <div class="space-y-8">
+                                                <div class="flex gap-4">
+                                                        <span
+                                                                class="material-symbols-outlined text-secondary text-2xl">summarize</span>
+                                                        <div>
+                                                                <h4 class="font-body-lg text-primary font-medium mb-2">
+                                                                        AI Context &amp; Summarization</h4>
+                                                                <p class="text-text-muted">Automatically generates
+                                                                        chapter structures and bullet points from your
+                                                                        recordings.</p>
+                                                        </div>
+                                                </div>
+                                                <div class="flex gap-4">
+                                                        <span
+                                                                class="material-symbols-outlined text-secondary text-2xl">checklist</span>
+                                                        <div>
+                                                                <h4 class="font-body-lg text-primary font-medium mb-2">
+                                                                        Task Extraction</h4>
+                                                                <p class="text-text-muted">Pulls actionable tasks and
+                                                                        shopping lists directly from your natural
+                                                                        speech.</p>
+                                                        </div>
+                                                </div>
+                                                <div class="flex gap-4">
+                                                        <span
+                                                                class="material-symbols-outlined text-secondary text-2xl">forum</span>
+                                                        <div>
+                                                                <h4 class="font-body-lg text-primary font-medium mb-2">
+                                                                        "Ask Your Notes"</h4>
+                                                                <p class="text-text-muted">Query your past notes
+                                                                        conversationally via the app. "What did I say
+                                                                        about the marketing budget last Tuesday?"</p>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div
+                                        class="bg-surface-container rounded-xl border border-border-subtle p-8 h-full min-h-[400px] flex items-center justify-center relative overflow-hidden shadow-2xl">
+                                        <div class="font-label-mono text-text-muted text-sm space-y-4 w-full max-w-md">
+                                                <div class="flex gap-2"><span class="text-secondary">&gt;</span><span
+                                                                class="">Processing audio stream...</span></div>
+                                                <div class="flex gap-2"><span class="text-secondary">&gt;</span><span
+                                                                class="">Extracting tasks...</span></div>
+                                                <div class="flex gap-2 text-primary mt-6"><span
+                                                                class="text-secondary">&gt;</span><span class="">Action
+                                                                Items Identified:</span></div>
+                                                <div class="flex gap-2 opacity-80 ml-4"><span class="">- Finalize Q3
+                                                                budget by Friday</span></div>
+                                                <div class="flex gap-2 opacity-80 ml-4"><span class="">- Email design
+                                                                team regarding new assets</span></div>
+                                                <div class="flex gap-2 opacity-80 ml-4"><span class="">- Order
+                                                                replacement coffee filters</span></div>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+                <!-- The Ecosystem Section -->
+                <section id="integrations-section"
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle bg-surface-container-lowest">
+                        <div class="mb-12 md:mb-16 text-center max-w-3xl mx-auto">
+                                <h2
+                                        class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+                                        The Ecosystem</h2>
+                                <p class="font-body-lg text-body-lg text-text-muted">Seamless synchronization across all
+                                        your devices and favorite productivity tools.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div
+                                        class="card-interactive p-8 border border-border-subtle rounded-lg bg-surface-container">
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Zero-App Direct
+                                                Sync</h3>
+                                        <p class="font-body-md text-body-md text-text-muted mb-8">When in range of a
+                                                known Wi-Fi network, the device bypasses your phone entirely, pushing
+                                                compressed audio and transcripts directly to your cloud.</p>
+                                        <div
+                                                class="flex flex-wrap gap-6 items-center text-text-muted font-label-mono text-xs uppercase tracking-wider">
+                                                <span class="flex items-center gap-2"><span
+                                                                class="material-symbols-outlined text-sm">cloud_sync</span>
+                                                        Notion</span>
+                                                <span class="flex items-center gap-2"><span
+                                                                class="material-symbols-outlined text-sm">tag</span>
+                                                        Slack</span>
+                                        </div>
+                                </div>
+                                <div
+                                        class="card-interactive p-8 border border-border-subtle rounded-lg bg-surface-container">
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Companion App</h3>
+                                        <p class="font-body-md text-body-md text-text-muted mb-8">Seamlessly sync across Android, iOS, and Desktop. Manage device settings, browse voice notes, and access intelligent transcripts on any screen.</p>
+                                        <div
+                                                class="flex gap-4 items-center text-text-muted font-label-mono text-xs uppercase tracking-wider">
+                                                <span class="flex items-center gap-2"><span
+                                                                class="material-symbols-outlined text-sm">smartphone</span>
+                                                        iOS &amp; Android</span>
+                                                <span class="flex items-center gap-2"><span
+                                                                class="material-symbols-outlined text-sm">desktop_windows</span>
+                                                        Desktop</span>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+                <!-- User Journey Section -->
+                <section id="orchestration-section"
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle bg-surface-container rounded-3xl my-12">
+                        <div class="mb-16 text-center">
+                                <h2
+                                        class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+                                        From Thought to Action</h2>
+                                <p class="font-body-lg text-body-lg text-text-muted">A frictionless workflow designed to
+                                        keep you present.</p>
+                        </div>
+                        <div class="relative px-4 md:px-12">
+                                <div class="hidden md:block absolute top-8 left-12 right-12 h-px bg-border-subtle z-0">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-4 relative z-10">
+                                        <!-- Step 1 -->
+                                        <div class="flex flex-col items-center text-center">
+                                                <div
+                                                        class="w-16 h-16 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mb-6">
+                                                        <span
+                                                                class="material-symbols-outlined text-primary text-2xl">mic</span>
+                                                </div>
+                                                <h4 class="font-label-mono text-label-mono text-primary uppercase mb-2">
+                                                        Capture</h4>
+                                                <p class="text-sm text-text-muted">Tap record or use VAD.</p>
+                                        </div>
+                                        <!-- Step 2 -->
+                                        <div class="flex flex-col items-center text-center">
+                                                <div
+                                                        class="w-16 h-16 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mb-6">
+                                                        <span
+                                                                class="material-symbols-outlined text-primary text-2xl">memory</span>
+                                                </div>
+                                                <h4 class="font-label-mono text-label-mono text-primary uppercase mb-2">
+                                                        Process</h4>
+                                                <p class="text-sm text-text-muted">Real-time OLED transcription.</p>
+                                        </div>
+                                        <!-- Step 3 -->
+                                        <div class="flex flex-col items-center text-center">
+                                                <div
+                                                        class="w-16 h-16 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mb-6">
+                                                        <span
+                                                                class="material-symbols-outlined text-primary text-2xl">category</span>
+                                                </div>
+                                                <h4 class="font-label-mono text-label-mono text-primary uppercase mb-2">
+                                                        Categorize</h4>
+                                                <p class="text-sm text-text-muted">Tag as Idea, Meeting, etc.</p>
+                                        </div>
+                                        <!-- Step 4 -->
+                                        <div class="flex flex-col items-center text-center">
+                                                <div
+                                                        class="w-16 h-16 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mb-6">
+                                                        <span
+                                                                class="material-symbols-outlined text-primary text-2xl">sync</span>
+                                                </div>
+                                                <h4 class="font-label-mono text-label-mono text-primary uppercase mb-2">
+                                                        Sync</h4>
+                                                <p class="text-sm text-text-muted">Opus compress &amp; push via Wi-Fi.
+                                                </p>
+                                        </div>
+                                        <!-- Step 5 -->
+                                        <div class="flex flex-col items-center text-center">
+                                                <div
+                                                        class="w-16 h-16 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center mb-6">
+                                                        <span
+                                                                class="material-symbols-outlined text-secondary text-2xl">fact_check</span>
+                                                </div>
+                                                <h4
+                                                        class="font-label-mono text-label-mono text-secondary uppercase mb-2">
+                                                        Review</h4>
+                                                <p class="text-sm text-text-muted">AI summaries ready on phone.</p>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+                <section id="specs-section"
+                        class="py-12 md:py-section-v-lg px-margin-safe max-w-[1280px] mx-auto border-b border-border-subtle bg-surface-container-lowest table-row-hover">
+                        <div class="flex flex-col md:flex-row gap-12">
+                                <div class="md:w-1/3">
+                                        <h2
+                                                class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+                                                Technical Specifications</h2>
+                                        <p class="font-body-md text-body-md text-text-muted">Precision engineering for
+                                                minimal distraction.</p>
+                                </div>
+                                <div class="md:w-2/3">
+                                        <div
+                                                class="border border-border-subtle rounded-lg overflow-hidden bg-surface-container">
+                                                <div
+                                                        class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border-subtle border-b border-border-subtle">
+                                                        <div class="p-6">
+                                                                <span
+                                                                        class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Display
+                                                                        Specification</span>
+                                                                <span class="font-body-lg text-body-lg text-primary">1.8"
+                                                                        Touch AMOLED<br><span
+                                                                                class="text-xs text-text-muted">Outdoor-readable (350 nits), ultra-high contrast ratio, rich color spectrum</span></span>
+                                                        </div>
+                                                        <div class="p-6">
+                                                                <span
+                                                                        class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Processor
+                                                                        & Memory</span>
+                                                                <span class="font-body-lg text-body-lg text-primary">Dedicated Edge AI Processor<br><span
+                                                                                class="text-xs text-text-muted">High-performance secure storage & low-power RAM</span></span>
+                                                        </div>
+                                                </div>
+                                                <div
+                                                        class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border-subtle border-b border-border-subtle">
+                                                        <div class="p-6">
+                                                                <span
+                                                                        class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Connectivity
+                                                                        & Sensors</span>
+                                                                <span class="font-body-lg text-body-lg text-primary">Wi-Fi,
+                                                                        Bluetooth 5.2<br><span
+                                                                                class="text-xs text-text-muted">Smart Motion Wake-up & Precision Sync</span></span>
+                                                        </div>
+                                                        <div class="p-6">
+                                                                <span
+                                                                        class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Audio
+                                                                        & Tactile</span>
+                                                                <span class="font-body-lg text-body-lg text-primary">Onboard
+                                                                        Mic & Speaker<br><span
+                                                                                class="text-xs text-text-muted">Premium Audio Decoder & Tactile Operation Buttons</span></span>
+                                                        </div>
+                                                </div>
+                                                <div class="p-6">
+                                                        <span
+                                                                class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Dimensions
+                                                                & Expansion</span>
+                                                        <span class="font-body-lg text-body-lg text-primary">37.60 x
+                                                                45.20 x 15.00 mm<br><span
+                                                                        class="text-xs text-text-muted">MicroSD Card Slot, USB-C Port, Curved Matte Enclosure</span></span>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+                <!-- CTA Section -->
+                <section id="pricing-section"
+                        class="py-12 md:py-section-v-lg px-margin-safe text-center relative overflow-hidden bg-surface-container-lowest">
+                        <div class="absolute inset-0 z-0">
+                        </div>
+                        <div class="relative z-10 max-w-2xl mx-auto">
+                                <h2
+                                        class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">
+                                        Commit to focus.</h2>
+                                <p class="font-body-lg text-body-lg text-text-muted mb-8">Secure your Trace today.
+                                        Shipping begins soon.</p>
+                                <div class="font-display-hero text-[64px] font-semibold text-primary mb-8">₹2,499</div>
+                                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                                        <a href="checkout.html"
+                                                class="bg-primary text-background px-8 py-4 rounded font-body-md text-body-md font-medium hover:opacity-90 transition-opacity w-full sm:w-auto text-center flex items-center justify-center">Pre-order
+                                                Now</a>
+                                </div>
+                        </div>
+                </section>
+        </main>
+        <!-- Footer -->
+        <section id="contact-section"
+                class="py-12 md:py-section-v-lg px-margin-safe border-t border-border-subtle bg-surface-container-lowest">
+                <div class="max-w-[1280px] mx-auto">
+                        <div
+                                class="bg-surface-container rounded-3xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
+                                <div class="max-w-xl">
+                                        <h2
+                                                class="font-headline-lg text-headline-lg-mobile md:text-headline-md text-primary mb-4">
+                                                Join the waitlist</h2>
+                                        <p class="font-body-md text-body-md text-text-muted">Get early access and
+                                                updates on the Trace rollout. No spam, just progress.</p>
+                                </div>
+                                <div id="waitlist-form-container" class="w-full max-w-md transition-all duration-300">
+                                        <form id="waitlist-form" class="w-full flex flex-col sm:flex-row gap-3">
+                                                <input id="waitlist-email" type="email" placeholder="Enter your email"
+                                                        class="flex-grow bg-surface-container-lowest border border-border-subtle rounded px-4 py-3 text-primary font-body-md focus:outline-none focus:border-secondary transition-colors"
+                                                        required="">
+                                                <button id="waitlist-submit-btn" type="submit"
+                                                        class="bg-primary text-background px-8 py-3 rounded font-body-md font-medium hover:opacity-90 transition-opacity whitespace-nowrap flex items-center justify-center min-w-[100px] gap-2">
+                                                        <span>Join</span>
+                                                </button>
+                                        </form>
+                                        <p id="waitlist-error-msg"
+                                                class="text-error text-xs font-body-md mt-2 h-4 opacity-0 transition-opacity duration-300">
+                                        </p>
+                                </div>
+                        </div>
+                </div>
+        </section>
+        <footer
+                class="w-full py-8 md:py-section-v-md border-t border-border-subtle bg-surface-container-lowest dark:bg-surface-container-lowest">
+                <div class="max-w-[1280px] mx-auto px-margin-safe flex flex-col md:flex-row justify-between items-center gap-stack-gap">
+                        <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
+                                <div class="font-display-hero text-body-lg font-bold text-primary mb-2">Trace</div>
+                                <p class="font-body-md text-body-md text-text-muted">© 2026 Trace. All rights reserved. Presence over noise.</p>
+                        </div>
+                        <div class="flex gap-6 font-label-mono text-label-mono text-text-muted">
+                                <a class="hover:text-primary transition-colors duration-200" href="privacy.html">Privacy Policy</a>
+                                <a class="hover:text-primary transition-colors duration-200" href="terms.html">Terms of Service</a>
+                        </div>
+                </div>
+        </footer>
+
+        <!-- Floating Back to Top Button -->
+        <button id="back-to-top" onclick="scrollToTop()" title="Back to Top">
+                <span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+        </button>
+
+        <script>
+                // Loops.so Form Endpoint Configuration ID
+                const LOOPS_FORM_ID = 'cmr2br68g059u0jyri98r5fyc';
+
+                // Update device status bar time dynamically
+                function updateDeviceTime() {
+                        const timeEl = document.getElementById('device-time');
+                        if (timeEl) {
+                                const now = new Date();
+                                let hours = now.getHours();
+                                const minutes = String(now.getMinutes()).padStart(2, '0');
+                                const ampm = hours >= 12 ? 'PM' : 'AM';
+                                hours = hours % 12;
+                                hours = hours ? hours : 12;
+                                timeEl.textContent = `${hours}:${minutes} ${ampm}`;
+                        }
+                }
+                setInterval(updateDeviceTime, 1000);
+
+                let captureTimer;
+                let bootTimer;
+                let voiceInterval;
+                let typewriterTimeout;
+                let syncTimer;
+                let volumeHistory = Array(14).fill(0.1);
+                let isSpeaking = true;
+                let speechTimer = 0;
+                let masterVolume = 0.1;
+                let hasBooted = false;
+
+                const transcriptionPool = [
+                        "so the idea is to streamline",
+                        "the onboarding process by",
+                        "reducing the number of steps.",
+                        "We can also automate follow-ups",
+                        "and sync the action items directly",
+                        "to our team workspace in real-time.",
+                        "This removes all administrative friction",
+                        "so we can focus on core product design.",
+                        "Let's test this prototype next week.",
+                        "Meeting concluded, actions generated."
+                ];
+                let poolIndex = 0;
+
+                const bgLeftMultipliers = [4, 6, 8, 10, 12, 16, 20, 24, 28, 32, 24, 16, 10, 6];
+                const bgRightMultipliers = [6, 10, 16, 24, 32, 28, 20, 16, 12, 10, 8, 6, 4, 4];
+                const deviceMultipliers = [0.25, 0.45, 0.75, 0.95, 1.0, 0.9, 0.7, 0.45, 0.25]; // 9 bars
+
+                function clearVoiceCaptureAnimation() {
+                        clearInterval(voiceInterval);
+                        document.querySelectorAll('.animate-waveform').forEach(el => el.style.height = '');
+                        document.querySelectorAll('.animate-bg-wave').forEach(el => el.style.height = '');
+                }
+
+                function startVoiceCaptureAnimation() {
+                        clearVoiceCaptureAnimation();
+                        volumeHistory = Array(14).fill(0.1);
+                        isSpeaking = true;
+                        speechTimer = 0;
+
+                        const deviceBars = document.querySelectorAll('.animate-waveform');
+                        const bgBars = document.querySelectorAll('.animate-bg-wave');
+
+                        voiceInterval = setInterval(() => {
+                                // Update conversational state
+                                speechTimer -= 80;
+                                if (speechTimer <= 0) {
+                                        isSpeaking = !isSpeaking;
+                                        // Talk for 1.8s to 3.2s. Pause for 0.6s to 1.2s.
+                                        speechTimer = isSpeaking ? (1800 + Math.random() * 1400) : (600 + Math.random() * 600);
+                                }
+
+                                if (isSpeaking) {
+                                        // Fluctuating voice level representing spoken syllables
+                                        masterVolume = 0.25 + Math.random() * 0.75;
+                                } else {
+                                        // Minimal voice level representing a breath/pause
+                                        masterVolume = 0.05 + Math.random() * 0.08;
+                                }
+
+                                // Update history array (push to front, pop off oldest)
+                                volumeHistory.unshift(masterVolume);
+                                volumeHistory.pop();
+
+                                // 1. Update Centered Device Equalizer Bars (9 bars)
+                                deviceBars.forEach((bar, idx) => {
+                                        const mult = deviceMultipliers[idx] || 0.5;
+                                        const fluctuation = 0.85 + Math.random() * 0.3; // 85% to 115%
+                                        // h-14 container height is 56px.
+                                        const targetHeight = Math.max(4, masterVolume * mult * fluctuation * 56);
+                                        bar.style.height = `${targetHeight}px`;
+                                });
+
+                                // 2. Update Symmetrical Propagating Background Wave (28 bars: 14 left, 14 right)
+                                bgBars.forEach((bar, idx) => {
+                                        let historyIndex;
+                                        let multiplier;
+                                        if (idx < 14) {
+                                                // Left side: far-left (idx=0, oldest) to near-left (idx=13, newest)
+                                                historyIndex = 13 - idx;
+                                                multiplier = bgLeftMultipliers[idx];
+                                        } else {
+                                                // Right side: near-right (idx=14, newest) to far-right (idx=27, oldest)
+                                                historyIndex = idx - 14;
+                                                multiplier = bgRightMultipliers[idx - 14];
+                                        }
+                                        const vol = volumeHistory[historyIndex] || 0.1;
+                                        const fluctuation = 0.9 + Math.random() * 0.2; // 90% to 110%
+                                        // Max background wave bar height is multiplier * 1.5
+                                        const targetHeight = Math.max(4, vol * multiplier * fluctuation * 1.5);
+                                        bar.style.height = `${targetHeight}px`;
+                                });
+                        }, 80);
+                }
+
+                function startTranscriptionMockup() {
+                        const container = document.getElementById('transcript-lines-container');
+                        if (!container) return;
+
+                        // Clear previous state
+                        container.innerHTML = '';
+                        clearTimeout(typewriterTimeout);
+
+                        // Start with the first two lines already typed out
+                        const p1 = document.createElement('p');
+                        p1.className = 'font-body-md text-text-muted text-[12px] leading-normal transition-all duration-500 opacity-40';
+                        p1.textContent = '...so the idea is to streamline';
+                        container.appendChild(p1);
+
+                        const p2 = document.createElement('p');
+                        p2.className = 'font-body-md text-text-muted text-[12px] leading-normal transition-all duration-500 opacity-65';
+                        p2.textContent = 'the onboarding process by';
+                        container.appendChild(p2);
+
+                        poolIndex = 2; // Next line to type is index 2
+
+                        function typeNextLine() {
+                                // If we have 3 lines, shift up
+                                const children = container.querySelectorAll('p');
+                                if (children.length >= 3) {
+                                        // Fade out the first one
+                                        children[0].style.opacity = '0';
+                                        children[0].style.transform = 'translateY(-4px)';
+
+                                        // Transition others
+                                        children[1].className = 'font-body-md text-text-muted text-[12px] leading-normal transition-all duration-500 opacity-40';
+                                        children[2].className = 'font-body-md text-text-muted text-[12px] leading-normal transition-all duration-500 opacity-65';
+
+                                        setTimeout(() => {
+                                                if (children[0] && children[0].parentNode) {
+                                                        container.removeChild(children[0]);
+                                                }
+                                        }, 500);
+                                }
+
+                                // Create new paragraph for typing
+                                const newP = document.createElement('p');
+                                newP.className = 'font-body-md text-primary text-[12px] leading-normal font-medium transition-all duration-500 opacity-100';
+                                container.appendChild(newP);
+
+                                const fullText = transcriptionPool[poolIndex];
+                                poolIndex = (poolIndex + 1) % transcriptionPool.length;
+
+                                let charIndex = 0;
+                                function typeChar() {
+                                        newP.textContent = fullText.slice(0, charIndex + 1);
+                                        charIndex++;
+                                        if (charIndex < fullText.length) {
+                                                typewriterTimeout = setTimeout(typeChar, 45 + Math.random() * 25);
+                                        } else {
+                                                // Wait before typing next line
+                                                typewriterTimeout = setTimeout(typeNextLine, 1800);
+                                        }
+                                }
+                                typeChar();
+                        }
+
+                        // Trigger typing of the first dynamic line after a short delay
+                        typewriterTimeout = setTimeout(typeNextLine, 500);
+                }
+
+                function startSyncMockup() {
+                        const progressBar = document.getElementById('sync-progress-bar');
+                        const statusText = document.getElementById('sync-status-text');
+                        const storageText = document.getElementById('sync-storage-text');
+                        const syncIcon = document.getElementById('sync-icon');
+
+                        if (!progressBar || !statusText || !storageText || !syncIcon) return;
+
+                        // Reset layout to initial syncing state
+                        let syncProgress = 0;
+                        progressBar.style.width = '0%';
+                        statusText.textContent = 'Syncing...';
+                        storageText.textContent = 'Storage: 0.0 MB / 4.8 MB';
+                        syncIcon.textContent = 'sync';
+                        syncIcon.className = 'material-symbols-outlined text-primary text-sm animate-[spin-slow_3s_linear_infinite]';
+
+                        function updateSync() {
+                                if (syncProgress < 100) {
+                                        // Increment progress randomly
+                                        syncProgress += Math.floor(Math.random() * 8) + 4; // 4% to 11% step
+                                        if (syncProgress > 100) syncProgress = 100;
+
+                                        progressBar.style.width = `${syncProgress}%`;
+
+                                        // Calculate storage sync amount
+                                        const mbSynced = ((syncProgress / 100) * 4.8).toFixed(1);
+                                        storageText.textContent = `Storage: ${mbSynced} MB / 4.8 MB`;
+
+                                        syncTimer = setTimeout(updateSync, 120 + Math.random() * 80);
+                                } else {
+                                        // Complete sync
+                                        progressBar.style.width = '100%';
+                                        statusText.textContent = 'Sync Complete';
+                                        storageText.textContent = 'Storage: 4.8 MB / 4.8 MB';
+
+                                        // Change icon to check
+                                        syncIcon.textContent = 'check';
+                                        syncIcon.className = 'material-symbols-outlined text-primary text-sm'; // stop spinning
+
+                                        // Wait 3.5 seconds and restart loop
+                                        syncTimer = setTimeout(startSyncMockup, 3500);
+                                }
+                        }
+
+                        // Start the sync interval loop
+                        syncTimer = setTimeout(updateSync, 300);
+                }
+
+                function switchMode(mode) {
+                        // Clear active timers for capture animation
+                        clearTimeout(captureTimer);
+                        clearTimeout(bootTimer);
+                        clearTimeout(typewriterTimeout);
+                        clearTimeout(syncTimer);
+                        clearVoiceCaptureAnimation();
+
+                        // Ensure status bar is visible by default
+                        const statusBar = document.getElementById('device-status-bar');
+                        if (statusBar) {
+                                statusBar.style.display = 'flex';
+                        }
+
+                        // Reset all buttons to default state
+                        const buttons = document.querySelectorAll('.walkthrough-btn');
+                        buttons.forEach(btn => btn.classList.remove('active'));
+
+                        // Set active button state
+                        const activeBtn = document.getElementById(`btn-${mode}`);
+                        if (activeBtn) {
+                                activeBtn.classList.add('active');
+                        }
+
+                        // Track screen switch event in PostHog
+                        if (window.posthog && typeof window.posthog.capture === 'function') {
+                                window.posthog.capture('mockup_screen_switched', { screen_mode: mode });
+                        }
+
+                        // Hide all screens
+                        const screens = document.querySelectorAll('.screen-content');
+                        screens.forEach(screen => {
+                                screen.style.opacity = '0';
+                                screen.style.pointerEvents = 'none';
+                        });
+
+                        // Show active screen
+                        const activeScreen = document.getElementById(`screen-${mode}`);
+                        if (activeScreen) {
+                                activeScreen.style.opacity = '1';
+                                activeScreen.style.pointerEvents = 'auto';
+
+                                // Capture State sequence
+                                if (mode === 'capture') {
+                                        const bootScreen = document.getElementById('capture-boot');
+                                        const readyScreen = document.getElementById('capture-ready');
+                                        const activeScreenContent = document.getElementById('capture-active');
+
+                                        if (!hasBooted) {
+                                                hasBooted = true;
+
+                                                // Hide status bar during boot
+                                                if (statusBar) statusBar.style.display = 'none';
+
+                                                // Initial layout: Boot screen visible, others hidden
+                                                bootScreen.style.display = 'flex';
+                                                bootScreen.style.opacity = '1';
+                                                readyScreen.style.display = 'none';
+                                                readyScreen.style.opacity = '0';
+                                                activeScreenContent.style.display = 'none';
+                                                activeScreenContent.style.opacity = '0';
+
+                                                // Transition 1: Boot -> Ready (after 1.2 seconds)
+                                                bootTimer = setTimeout(() => {
+                                                        bootScreen.style.opacity = '0';
+                                                        setTimeout(() => {
+                                                                bootScreen.style.display = 'none';
+                                                                readyScreen.style.display = 'flex';
+                                                                readyScreen.offsetHeight; // trigger reflow
+                                                                readyScreen.style.opacity = '1';
+                                                                // Restore status bar
+                                                                if (statusBar) statusBar.style.display = 'flex';
+                                                        }, 300);
+                                                }, 1200);
+
+                                                // Transition 2: Ready -> Active Recording (after 4.2 seconds total, 3 seconds on Ready screen)
+                                                captureTimer = setTimeout(() => {
+                                                        readyScreen.style.opacity = '0';
+                                                        setTimeout(() => {
+                                                                readyScreen.style.display = 'none';
+                                                                activeScreenContent.style.display = 'flex';
+                                                                activeScreenContent.offsetHeight; // trigger reflow
+                                                                activeScreenContent.style.opacity = '1';
+                                                                startVoiceCaptureAnimation();
+                                                        }, 300);
+                                                }, 4200);
+                                        } else {
+                                                // Skip boot screen, show ready screen immediately
+                                                bootScreen.style.display = 'none';
+                                                bootScreen.style.opacity = '0';
+                                                readyScreen.style.display = 'flex';
+                                                readyScreen.style.opacity = '1';
+                                                activeScreenContent.style.display = 'none';
+                                                activeScreenContent.style.opacity = '0';
+
+                                                // Enforce status bar is visible
+                                                if (statusBar) statusBar.style.display = 'flex';
+
+                                                // Transition directly from Ready -> Active Recording after 3 seconds
+                                                captureTimer = setTimeout(() => {
+                                                        readyScreen.style.opacity = '0';
+                                                        setTimeout(() => {
+                                                                readyScreen.style.display = 'none';
+                                                                activeScreenContent.style.display = 'flex';
+                                                                activeScreenContent.offsetHeight; // trigger reflow
+                                                                activeScreenContent.style.opacity = '1';
+                                                                startVoiceCaptureAnimation();
+                                                        }, 300);
+                                                }, 3000);
+                                        }
+                                }
+
+                                // Start dynamic looping transcription typewriter
+                                if (mode === 'transcribe') {
+                                        startTranscriptionMockup();
+                                }
+
+                                // Start dynamic looping sync progress bar
+                                if (mode === 'sync') {
+                                        startSyncMockup();
+                                }
+                        }
+                }
+
+                function toggleMobileMenu() {
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        const hamburgerIcon = document.getElementById('hamburger-icon');
+                        if (mobileMenu.classList.contains('hidden')) {
+                                mobileMenu.classList.remove('hidden');
+                                hamburgerIcon.textContent = 'close';
+                        } else {
+                                mobileMenu.classList.add('hidden');
+                                hamburgerIcon.textContent = 'menu';
+                        }
+                }
+                function scrollToSpecs() {
+                        const specsEl = document.getElementById('specs-section');
+                        if (specsEl) {
+                                specsEl.scrollIntoView({ behavior: 'smooth' });
+                        }
+                }
+
+                function trackCta(location, text) {
+                        if (window.posthog && typeof window.posthog.capture === 'function') {
+                                window.posthog.capture('cta_clicked', {
+                                        cta_location: location,
+                                        cta_text: text
+                                });
+                        }
+                }
+
+                function scrollToTop() {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+                // Scroll listener for Back to Top button
+                window.addEventListener('scroll', () => {
+                        const backToTopBtn = document.getElementById('back-to-top');
+                        if (backToTopBtn) {
+                                if (window.scrollY > 300) {
+                                        backToTopBtn.classList.add('visible');
+                                } else {
+                                        backToTopBtn.classList.remove('visible');
+                                }
+                        }
+                });
+
+                function initializeWaitlistForm() {
+                        const waitlistForm = document.getElementById('waitlist-form');
+                        const emailInput = document.getElementById('waitlist-email');
+                        const submitBtn = document.getElementById('waitlist-submit-btn');
+                        const errorMsg = document.getElementById('waitlist-error-msg');
+                        const formContainer = document.getElementById('waitlist-form-container');
+
+                        if (!waitlistForm) return;
+
+                        waitlistForm.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+
+                                const email = emailInput.value.trim();
+                                if (!email) return;
+
+                                // Reset error state
+                                errorMsg.textContent = '';
+                                errorMsg.classList.add('opacity-0');
+                                emailInput.classList.remove('animate-shake', 'border-error');
+
+                                // Set loading state
+                                const btnText = submitBtn.querySelector('span');
+                                const originalBtnHtml = submitBtn.innerHTML;
+                                submitBtn.disabled = true;
+                                emailInput.disabled = true;
+                                submitBtn.innerHTML = `
+                                                <svg class="animate-spin h-4 w-4 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Joining...</span>
+                                        `;
+
+                                // Track submission intent in PostHog
+                                if (window.posthog && typeof window.posthog.capture === 'function') {
+                                        window.posthog.capture('newsletter_signup', { status: 'submitting' });
+                                }
+
+                                // Mockup or real submit
+                                if (!LOOPS_FORM_ID || LOOPS_FORM_ID === '<YOUR_LOOPS_FORM_ID>') {
+                                        // Simulating successful submit in Mockup mode
+                                        setTimeout(() => {
+                                                console.log("Mock newsletter submission to Loops.so successful:", email);
+
+                                                if (window.posthog && typeof window.posthog.capture === 'function') {
+                                                        window.posthog.capture('newsletter_signup', { status: 'success', mode: 'mockup' });
+                                                }
+
+                                                // Transition to success state with spring animation
+                                                formContainer.classList.add('animate-scale-in');
+                                                formContainer.innerHTML = `
+                                                                <div class="flex items-center gap-3 text-secondary p-4 bg-accent-green-glass border border-secondary/20 rounded-lg">
+                                                                        <span class="material-symbols-outlined text-secondary text-2xl font-bold">check_circle</span>
+                                                                        <span class="font-body-md text-primary text-sm font-medium">You're on the list. Presence awaits you.</span>
+                                                                </div>
+                                                        `;
+                                        }, 1000);
+                                } else {
+                                        try {
+                                                const response = await fetch(`https://app.loops.so/api/newsletter-form/${LOOPS_FORM_ID}`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                        },
+                                                        body: new URLSearchParams({
+                                                                email: email,
+                                                                source: 'Waitlist Form'
+                                                        })
+                                                });
+
+                                                if (response.ok) {
+                                                        if (window.posthog && typeof window.posthog.capture === 'function') {
+                                                                window.posthog.capture('newsletter_signup', { status: 'success', mode: 'live' });
+                                                        }
+
+                                                        formContainer.classList.add('animate-scale-in');
+                                                        formContainer.innerHTML = `
+                                                                        <div class="flex items-center gap-3 text-secondary p-4 bg-accent-green-glass border border-secondary/20 rounded-lg">
+                                                                                <span class="material-symbols-outlined text-secondary text-2xl font-bold">check_circle</span>
+                                                                                <span class="font-body-md text-primary text-sm font-medium">You're on the list. Presence awaits you.</span>
+                                                                        </div>
+                                                                `;
+                                                } else {
+                                                        const errData = await response.json().catch(() => ({}));
+                                                        throw new Error(errData.message || 'Submission failed. Please try again.');
+                                                }
+                                        } catch (err) {
+                                                console.error("Loops submission error:", err);
+                                                if (window.posthog && typeof window.posthog.capture === 'function') {
+                                                        window.posthog.capture('newsletter_signup', { status: 'error', error: err.message });
+                                                }
+
+                                                // Reset loading state
+                                                submitBtn.disabled = false;
+                                                emailInput.disabled = false;
+                                                submitBtn.innerHTML = originalBtnHtml;
+
+                                                // Shake effect on error
+                                                emailInput.classList.add('animate-shake', 'border-error');
+                                                errorMsg.textContent = err.message || 'Something went wrong. Please check your connection.';
+                                                errorMsg.classList.remove('opacity-0');
+
+                                                // Remove shake class after animation finishes so it can be re-triggered
+                                                setTimeout(() => {
+                                                        emailInput.classList.remove('animate-shake');
+                                                }, 500);
+                                        }
+                                }
+                        });
+                }
+
+                // Initialize animations and update clock on page load
+                document.addEventListener('DOMContentLoaded', () => {
+                        updateDeviceTime();
+                        switchMode('capture');
+                        initializeWaitlistForm();
+
+                        // Toggle header "Pre-order Now" visibility based on Hero "Reserve Now" button visibility
+                        const headerPreorderBtn = document.getElementById('header-preorder-btn');
+                        const heroReserveBtn = document.getElementById('hero-reserve-btn');
+                        
+                        if (headerPreorderBtn && heroReserveBtn) {
+                                const observer = new IntersectionObserver((entries) => {
+                                        entries.forEach(entry => {
+                                                if (entry.isIntersecting) {
+                                                        // Hero button is visible: hide header button
+                                                        headerPreorderBtn.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                                                        headerPreorderBtn.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                                                } else {
+                                                        // Hero button scrolled away: show header button
+                                                        headerPreorderBtn.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                                                        headerPreorderBtn.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+                                                }
+                                        });
+                                }, { threshold: 0 });
+                                observer.observe(heroReserveBtn);
+                        }
+                });
+        </script>
+
+</body>
+
+</html>

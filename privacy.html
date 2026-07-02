@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Privacy Policy - Trace</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-muted": "#A3A3A3",
+                        "border-subtle": "#262626",
+                        "surface": "#131313",
+                        "background": "#131313",
+                        "primary": "#F5F5F5",
+                        "secondary": "#00E699",
+                        "surface-container-lowest": "#0D0D0D",
+                        "surface-container": "#181818"
+                    },
+                    "fontFamily": {
+                        "display-hero": ["Geist", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"],
+                        "label-mono": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #0D0D0D;
+            color: #F5F5F5;
+        }
+    </style>
+</head>
+
+<body class="bg-surface-container-lowest text-primary antialiased font-body-md min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="w-full py-6 px-6 max-w-[900px] mx-auto flex justify-between items-center border-b border-border-subtle/50">
+        <a class="font-display-hero text-body-lg font-bold tracking-tighter text-primary" href="index.html">Trace</a>
+        <a class="font-label-mono text-xs uppercase text-text-muted hover:text-primary transition-colors" href="index.html">Back to Home</a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[900px] mx-auto px-6 py-12 md:py-20">
+        <article class="space-y-8">
+            <header class="space-y-2">
+                <h1 class="font-display-hero text-3xl md:text-4xl font-bold tracking-tight text-primary">Privacy Policy</h1>
+                <p class="font-label-mono text-xs text-text-muted uppercase">Last Updated: July 2026</p>
+            </header>
+
+            <section class="space-y-4">
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    This Privacy Policy describes how Trace ("we", "us", or "our") collects, uses, and protects your information on this website. 
+                    This site is currently operated as a demand-validation MVP (Minimum Viable Product) prototype to gauge customer interest.
+                </p>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold text-primary">1. Information We Collect</h2>
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    We collect personal information that you voluntarily submit to us via our forms. This includes:
+                </p>
+                <ul class="list-disc pl-5 space-y-2 text-text-muted font-body-md">
+                    <li>Contact information: Name, email address, and shipping address.</li>
+                    <li>Preference data: Pre-order customization options and general comments.</li>
+                </ul>
+                <div class="p-4 bg-surface-container border border-border-subtle rounded-lg text-secondary text-sm">
+                    <strong>Payment Disclaimer:</strong> We do not collect, process, or store credit card numbers or payment credentials. All pre-order actions are processed at zero charge as part of an idea validation phase.
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold text-primary">2. How We Use Your Data</h2>
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    The data collected is utilized solely to:
+                </p>
+                <ul class="list-disc pl-5 space-y-2 text-text-muted font-body-md">
+                    <li>Evaluate and validate overall interest in the Trace device.</li>
+                    <li>Notify you regarding project updates, batch production schedules, or waitlist status.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold text-primary">3. Telemetry and Analytics</h2>
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    We utilize PostHog analytics software to collect anonymized usage details, such as page views and link clicks, to optimize the experience and measure user conversions.
+                </p>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold text-primary">4. Data Sharing and Retention</h2>
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    Your personal information is secure. We do not sell, rent, or distribute your data to third parties. Data is stored securely via integrated storage providers (such as Loops.so and Google Sheets) and will be deleted upon project termination or upon your request.
+                </p>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xl font-semibold text-primary">5. Contact and Opt-Out</h2>
+                <p class="font-body-md text-text-muted leading-relaxed">
+                    If you have questions about this policy or wish to request data deletion, you can contact us at any time at <a href="mailto:contact@innoveloper.com" class="text-secondary hover:underline">contact@innoveloper.com</a>.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-surface border-t border-border-subtle py-8 px-6 mt-auto">
+        <div class="max-w-[900px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-label-mono text-text-muted">
+            <span>© 2026 Trace. All rights reserved.</span>
+            <div class="flex gap-4">
+                <a class="hover:text-primary transition-colors" href="terms.html">Terms of Service</a>
+                <a class="hover:text-primary transition-colors" href="index.html">Home</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
