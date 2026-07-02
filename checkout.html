@@ -244,6 +244,11 @@
         <div class="flex-1 w-full max-w-2xl">
             <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">Checkout</h1>
             <form class="space-y-12">
+                <!-- Honeypot trap to protect from spam bots -->
+                <div style="display: none !important;" aria-hidden="true">
+                    <input type="text" name="website_url_trap" id="website_url_trap" tabindex="-1" autocomplete="off">
+                </div>
+
                 <!-- Shipping Information -->
                 <section class="space-y-6">
                     <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Shipping Information
@@ -507,6 +512,15 @@
             }
 
             if (isValid) {
+                // 1. Honeypot Spam Bot Trap
+                const honeypotVal = document.getElementById('website_url_trap')?.value || '';
+                if (honeypotVal) {
+                    console.warn("Spam bot submission blocked.");
+                    // Quietly open success modal to confuse the bot without submitting to backend
+                    openSuccessModal();
+                    return;
+                }
+
                 const receiptEl = document.getElementById('receipt-id');
                 const randomId = '#AE-' + Math.floor(100000 + Math.random() * 900000);
                 receiptEl.textContent = randomId;
@@ -514,15 +528,18 @@
                 const remarks = document.querySelector('textarea')?.value || '';
                 const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
                 const paymentMethod = selectedRadio ? selectedRadio.nextElementSibling.textContent.trim() : 'Unknown';
+                const country = document.getElementById('checkout-country')?.value || '';
 
                 const formData = {
                     firstName: firstName.value.trim(),
                     lastName: lastName.value.trim(),
                     email: email.value.trim(),
                     mobile: mobile.value.trim(),
+                    country: country,
                     remarks: remarks,
                     paymentMethod: paymentMethod,
-                    receiptId: randomId
+                    receiptId: randomId,
+                    securityToken: "TracePreorderSecureToken2026"
                 };
 
                 // Track checkout completed event
