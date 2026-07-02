@@ -8,17 +8,21 @@
 
     <!-- SEO Meta Tags -->
     <title>Pre-order Trace - Smart AI Voice Dictation & Intelligence Device</title>
-    <meta name="description" content="Secure your pre-order of Trace, the dedicated pocket AI voice recorder and summarizer. Reclaim your focus.">
-    <meta name="keywords" content="pre-order, purchase, Trace AI, voice dictation device, smart notes, buy ESP32-S3 recorder">
+    <meta name="description"
+        content="Secure your pre-order of Trace, the dedicated pocket AI voice recorder and summarizer. Reclaim your focus.">
+    <meta name="keywords"
+        content="pre-order, purchase, Trace AI, voice dictation device, smart notes, buy ESP32-S3 recorder">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://innoveloper.com/Trace/checkout.html">
     <meta property="og:title" content="Pre-order Trace - Smart AI Voice Dictation & Intelligence Device">
-    <meta property="og:description" content="Secure your pre-order of Trace, the dedicated pocket AI voice recorder and summarizer.">
+    <meta property="og:description"
+        content="Secure your pre-order of Trace, the dedicated pocket AI voice recorder and summarizer.">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23131313'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Geist, sans-serif' font-weight='600' font-size='60' fill='%234edea3'%3ET%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23131313'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Geist, sans-serif' font-weight='600' font-size='60' fill='%234edea3'%3ET%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
@@ -27,7 +31,7 @@
         !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } var w = t.createElement("script"); w.type = "text/javascript", w.async = !0, w.src = s.api_host.replace(".api.envoy.posthog.com", "") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(w, r), o = e, s = s || {}, o._i.push([i, s, a]), o.init = g, o.register = function (t) { o.push(["register", t]) }, o.register_once = function (t) { o.push(["register_once", t]) }, o.unregister = function (t) { o.push(["unregister", t]) }, o.identify = function (t, e) { o.push(["identify", t, e]) }, o.alias = function (t, e) { o.push(["alias", t, e]) }, o.set_config = function (t) { o.push(["set_config", t]) }, o.disable_features = function (t) { o.push(["disable_features", t]) }, o.capture = function (t, e) { o.push(["capture", t, e]) }, o.capture_pageview = function (t) { o.push(["capture_pageview", t]) }, o._i[o._i.length - 1][1].loaded = function (t) { o.capture("pageview") }, e.__SV = 1.0 }) }(document, window.posthog || []);
 
         // Initialize PostHog (Placeholder configuration)
-        const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS-temp';
+        const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS';
         const POSTHOG_HOST = 'https://us.i.posthog.com';
 
         if (POSTHOG_API_KEY) {
@@ -257,20 +261,24 @@
                         <div class="md:col-span-2 relative">
                             <label
                                 class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Country/Region</label>
-                            
+
                             <!-- Custom Dropdown Picker -->
                             <div id="custom-country-dropdown" class="relative w-full">
                                 <button type="button" id="country-dropdown-trigger"
                                     class="w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 flex items-center justify-between text-left transition-all">
                                     <span id="selected-country-text">United States</span>
-                                    <span class="material-symbols-outlined text-[20px] text-text-muted transition-transform duration-200" id="dropdown-chevron">expand_more</span>
+                                    <span
+                                        class="material-symbols-outlined text-[20px] text-text-muted transition-transform duration-200"
+                                        id="dropdown-chevron">expand_more</span>
                                 </button>
-                                
-                                <input type="hidden" id="checkout-country" name="country" class="checkout-input" value="United States" />
-                                
-                                <div id="country-dropdown-popover" 
+
+                                <input type="hidden" id="checkout-country" name="country" class="checkout-input"
+                                    value="United States" />
+
+                                <div id="country-dropdown-popover"
                                     class="absolute left-0 right-0 mt-1 bg-surface-elevated border border-border-subtle rounded shadow-2xl z-50 hidden opacity-0 scale-95 origin-top transition-all duration-200 flex flex-col max-h-[300px]">
-                                    <div class="p-2 border-b border-border-subtle/50 sticky top-0 bg-surface-elevated shrink-0">
+                                    <div
+                                        class="p-2 border-b border-border-subtle/50 sticky top-0 bg-surface-elevated shrink-0">
                                         <input type="text" id="country-search" placeholder="Search country..."
                                             class="w-full bg-surface border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-9 px-3 text-sm focus:outline-none" />
                                     </div>
@@ -401,7 +409,9 @@
                     <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
                 </button>
                 <p class="font-label-mono text-[10px] text-text-muted text-center mt-2">
-                    By completing this pre-order, you agree to our <a href="terms.html" class="underline hover:text-primary transition-colors">Terms of Service</a> and <a href="privacy.html" class="underline hover:text-primary transition-colors">Privacy Policy</a>.
+                    By completing this pre-order, you agree to our <a href="terms.html"
+                        class="underline hover:text-primary transition-colors">Terms of Service</a> and <a
+                        href="privacy.html" class="underline hover:text-primary transition-colors">Privacy Policy</a>.
                 </p>
             </div>
         </aside>
@@ -431,8 +441,10 @@
                 <h3 class="font-headline-md text-headline-md text-primary font-bold">Pre-order Complete!</h3>
                 <p class="font-body-md text-text-muted text-sm">Thank you for reserving your Trace. Your slot in Batch 1
                     has been secured.</p>
-                <div class="mt-2.5 p-3 bg-secondary/10 border border-secondary/20 text-secondary rounded-lg font-body-md text-xs leading-normal">
-                    No payment has been charged at this stage. We will contact you to finalize details once production begins.
+                <div
+                    class="mt-2.5 p-3 bg-secondary/10 border border-secondary/20 text-secondary rounded-lg font-body-md text-xs leading-normal">
+                    No payment has been charged at this stage. We will contact you to finalize details once production
+                    begins.
                 </div>
             </div>
             <div
@@ -992,13 +1004,13 @@
                 }
             });
 
-            window.renderOptions = function(filterText = '') {
+            window.renderOptions = function (filterText = '') {
                 if (!optionsContainer) return;
                 optionsContainer.innerHTML = '';
-                const filtered = countriesList.filter(c => 
+                const filtered = countriesList.filter(c =>
                     c.name.toLowerCase().includes(filterText.toLowerCase())
                 );
-                
+
                 if (filtered.length === 0) {
                     const noResult = document.createElement('div');
                     noResult.className = 'px-4 py-2.5 text-xs text-text-muted';
@@ -1012,7 +1024,7 @@
                     opt.type = 'button';
                     opt.className = 'w-full text-left px-4 py-2.5 hover:bg-surface transition-colors text-sm font-body-md text-primary flex items-center justify-between';
                     opt.innerHTML = `<span>${c.name}</span>`;
-                    
+
                     if (hiddenCountryInput && hiddenCountryInput.value === c.name) {
                         opt.classList.add('bg-surface', 'text-secondary');
                         opt.innerHTML += `<span class="material-symbols-outlined text-[16px] text-secondary">check</span>`;

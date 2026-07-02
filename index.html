@@ -7,26 +7,31 @@
 
         <!-- SEO Meta Tags -->
         <title>Trace - Smart AI Voice Dictation & Intelligence Device</title>
-        <meta name="description" content="Trace is a pocket-sized AI voice dictation and intelligence device designed for frictionless audio capture, intelligent summarization, and task extraction.">
-        <meta name="keywords" content="voice dictation, audio capture, AI transcription, voice notes, pocket hardware, task extraction, smart dictation, WaveShare ESP32-S3">
+        <meta name="description"
+                content="Trace is a pocket-sized AI voice dictation and intelligence device designed for frictionless audio capture, intelligent summarization, and task extraction.">
+        <meta name="keywords"
+                content="voice dictation, audio capture, AI transcription, voice notes, pocket hardware, task extraction, smart dictation, WaveShare ESP32-S3">
         <meta name="author" content="Innoveloper Solutions">
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="http://innoveloper.com/Trace/">
         <meta property="og:title" content="Trace - Smart AI Voice Dictation & Intelligence Device">
-        <meta property="og:description" content="Reclaim your focus with instant, secure audio transcription and intelligent summarization in a pocket-sized device.">
+        <meta property="og:description"
+                content="Reclaim your focus with instant, secure audio transcription and intelligent summarization in a pocket-sized device.">
         <meta property="og:image" content="http://innoveloper.com/Trace/assets/og-image.png">
 
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image">
         <meta property="twitter:url" content="http://innoveloper.com/Trace/">
         <meta property="twitter:title" content="Trace - Smart AI Voice Dictation & Intelligence Device">
-        <meta property="twitter:description" content="Reclaim your focus with instant, secure audio transcription and intelligent summarization in a pocket-sized device.">
+        <meta property="twitter:description"
+                content="Reclaim your focus with instant, secure audio transcription and intelligent summarization in a pocket-sized device.">
         <meta property="twitter:image" content="http://innoveloper.com/Trace/assets/og-image.png">
 
         <!-- Favicon -->
-        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23131313'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Geist, sans-serif' font-weight='600' font-size='60' fill='%234edea3'%3ET%3C/text%3E%3C/svg%3E">
+        <link rel="icon" type="image/svg+xml"
+                href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23131313'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Geist, sans-serif' font-weight='600' font-size='60' fill='%234edea3'%3ET%3C/text%3E%3C/svg%3E">
 
         <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
                 rel="stylesheet">
@@ -39,7 +44,7 @@
 
                 // Initialize PostHog (Placeholder configuration)
                 // Replace '<YOUR_POSTHOG_API_KEY>' and 'https://us.i.posthog.com' with your actual PostHog details.
-                const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS-temp';
+                const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS';
                 const POSTHOG_HOST = 'https://us.i.posthog.com';
 
                 if (POSTHOG_API_KEY) {
@@ -499,7 +504,8 @@
         <nav
                 class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-border-subtle transition-all duration-300">
                 <div class="flex justify-between items-center px-margin-safe h-20 max-w-[1280px] mx-auto">
-                        <div class="font-display-hero text-body-lg font-semibold tracking-tighter text-primary cursor-pointer" onclick="scrollToTop()">Trace
+                        <div class="font-display-hero text-body-lg font-semibold tracking-tighter text-primary cursor-pointer"
+                                onclick="scrollToTop()">Trace
                         </div>
                         <div class="hidden md:flex items-center space-x-8">
                                 <a class="nav-link text-text-muted hover:text-primary transition-all font-body-md text-body-md"
@@ -514,8 +520,10 @@
                                         href="#pricing-section">Pricing</a>
                         </div>
                         <div class="flex items-center space-x-4">
-                                <a id="header-preorder-btn" href="checkout.html" onclick="trackCta('header', 'Pre-order Now');"
-                                        class="btn-interactive bg-primary text-background px-6 py-2 rounded font-body-md text-body-md text-center flex items-center justify-center transition-all duration-300 opacity-0 scale-95 pointer-events-none">Pre-order Now</a>
+                                <a id="header-preorder-btn" href="checkout.html"
+                                        onclick="trackCta('header', 'Pre-order Now');"
+                                        class="btn-interactive bg-primary text-background px-6 py-2 rounded font-body-md text-body-md text-center flex items-center justify-center transition-all duration-300 opacity-0 scale-95 pointer-events-none">Pre-order
+                                        Now</a>
                                 <button id="hamburger-btn"
                                         class="md:hidden text-primary hover:text-secondary focus:outline-none flex items-center justify-center p-1 transition-colors"
                                         onclick="toggleMobileMenu()">
@@ -566,7 +574,8 @@
                                                 allowing you to reclaim your focus.
                                         </p>
                                         <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                                                <a id="hero-reserve-btn" href="checkout.html" onclick="trackCta('hero', 'Reserve Now')"
+                                                <a id="hero-reserve-btn" href="checkout.html"
+                                                        onclick="trackCta('hero', 'Reserve Now')"
                                                         class="btn-interactive bg-primary text-background px-8 py-3 rounded font-body-md text-body-md font-medium text-center flex items-center justify-center">Reserve
                                                         Now</a>
                                                 <button onclick="trackCta('hero', 'View technical specs'); scrollToSpecs()"
@@ -904,7 +913,9 @@
                                         <h3 class="font-headline-md text-headline-md text-primary mb-4">Capture
                                         </h3>
                                         <p class="font-body-md text-body-md text-text-muted">
-                                                Frictionless, pocket-sized audio capture with a rolling 60-second "Flashback" buffer. Capture fleeting ideas instantly without opening your phone.
+                                                Frictionless, pocket-sized audio capture with a rolling 60-second
+                                                "Flashback" buffer. Capture fleeting ideas instantly without opening
+                                                your phone.
                                         </p>
                                 </div>
                                 <!-- Feature 2 -->
@@ -915,12 +926,13 @@
                                         </div>
                                         <div
                                                 class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
-                                                <span
-                                                        class="material-symbols-outlined text-secondary">translate</span>
+                                                <span class="material-symbols-outlined text-secondary">translate</span>
                                         </div>
                                         <h3 class="font-headline-md text-headline-md text-primary mb-4">Transcript</h3>
                                         <p class="font-body-md text-body-md text-text-muted">
-                                                Real-time, stream-optimized voice-to-text. Enjoy instant multilingual translations and live, on-screen transcription in English and regional languages.
+                                                Real-time, stream-optimized voice-to-text. Enjoy instant multilingual
+                                                translations and live, on-screen transcription in English and regional
+                                                languages.
                                         </p>
                                 </div>
                                 <!-- Feature 3 -->
@@ -931,11 +943,14 @@
                                         </div>
                                         <div
                                                 class="w-12 h-12 bg-surface-container-high rounded-lg border border-border-subtle flex items-center justify-center mb-6">
-                                                <span class="material-symbols-outlined text-secondary">auto_awesome</span>
+                                                <span
+                                                        class="material-symbols-outlined text-secondary">auto_awesome</span>
                                         </div>
                                         <h3 class="font-headline-md text-headline-md text-primary mb-4">Summary</h3>
                                         <p class="font-body-md text-body-md text-text-muted">
-                                                Intelligent AI structuring. Automatically convert unorganized audio drafts into clean chapter structures, actionable tasks, and core insights.
+                                                Intelligent AI structuring. Automatically convert unorganized audio
+                                                drafts into clean chapter structures, actionable tasks, and core
+                                                insights.
                                         </p>
                                 </div>
                         </div>
@@ -961,7 +976,8 @@
                                         <h3 class="font-headline-md text-headline-md text-primary mb-4">"Flashback"
                                                 Audio Buffer</h3>
                                         <p class="font-body-md text-body-md text-text-muted">Continuously records a
-                                                rolling 60-second loop into secure local cache memory. Pressing save commits the
+                                                rolling 60-second loop into secure local cache memory. Pressing save
+                                                commits the
                                                 previous 60 seconds, ensuring you never miss a fleeting thought.</p>
                                 </div>
                                 <div
@@ -986,7 +1002,8 @@
                                         <h3 class="font-headline-md text-headline-md text-primary mb-4">Local Audio
                                                 Encryption</h3>
                                         <p class="font-body-md text-body-md text-text-muted">Military-grade hardware
-                                                encryption protects your audio blocks as they are written. If the device is
+                                                encryption protects your audio blocks as they are written. If the device
+                                                is
                                                 lost, your data remains a completely unreadable vault.</p>
                                 </div>
                         </div>
@@ -1088,8 +1105,11 @@
                                 </div>
                                 <div
                                         class="card-interactive p-8 border border-border-subtle rounded-lg bg-surface-container">
-                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Companion App</h3>
-                                        <p class="font-body-md text-body-md text-text-muted mb-8">Seamlessly sync across Android, iOS, and Desktop. Manage device settings, browse voice notes, and access intelligent transcripts on any screen.</p>
+                                        <h3 class="font-headline-md text-headline-md text-primary mb-4">Companion App
+                                        </h3>
+                                        <p class="font-body-md text-body-md text-text-muted mb-8">Seamlessly sync across
+                                                Android, iOS, and Desktop. Manage device settings, browse voice notes,
+                                                and access intelligent transcripts on any screen.</p>
                                         <div
                                                 class="flex gap-4 items-center text-text-muted font-label-mono text-xs uppercase tracking-wider">
                                                 <span class="flex items-center gap-2"><span
@@ -1197,14 +1217,19 @@
                                                                         Specification</span>
                                                                 <span class="font-body-lg text-body-lg text-primary">1.8"
                                                                         Touch AMOLED<br><span
-                                                                                class="text-xs text-text-muted">Outdoor-readable (350 nits), ultra-high contrast ratio, rich color spectrum</span></span>
+                                                                                class="text-xs text-text-muted">Outdoor-readable
+                                                                                (350 nits), ultra-high contrast ratio,
+                                                                                rich color spectrum</span></span>
                                                         </div>
                                                         <div class="p-6">
                                                                 <span
                                                                         class="font-label-mono text-label-mono text-text-muted block mb-2 uppercase">Processor
                                                                         & Memory</span>
-                                                                <span class="font-body-lg text-body-lg text-primary">Dedicated Edge AI Processor<br><span
-                                                                                class="text-xs text-text-muted">High-performance secure storage & low-power RAM</span></span>
+                                                                <span class="font-body-lg text-body-lg text-primary">Dedicated
+                                                                        Edge AI Processor<br><span
+                                                                                class="text-xs text-text-muted">High-performance
+                                                                                secure storage & low-power
+                                                                                RAM</span></span>
                                                         </div>
                                                 </div>
                                                 <div
@@ -1215,7 +1240,9 @@
                                                                         & Sensors</span>
                                                                 <span class="font-body-lg text-body-lg text-primary">Wi-Fi,
                                                                         Bluetooth 5.2<br><span
-                                                                                class="text-xs text-text-muted">Smart Motion Wake-up & Precision Sync</span></span>
+                                                                                class="text-xs text-text-muted">Smart
+                                                                                Motion Wake-up & Precision
+                                                                                Sync</span></span>
                                                         </div>
                                                         <div class="p-6">
                                                                 <span
@@ -1223,7 +1250,9 @@
                                                                         & Tactile</span>
                                                                 <span class="font-body-lg text-body-lg text-primary">Onboard
                                                                         Mic & Speaker<br><span
-                                                                                class="text-xs text-text-muted">Premium Audio Decoder & Tactile Operation Buttons</span></span>
+                                                                                class="text-xs text-text-muted">Premium
+                                                                                Audio Decoder & Tactile Operation
+                                                                                Buttons</span></span>
                                                         </div>
                                                 </div>
                                                 <div class="p-6">
@@ -1232,7 +1261,9 @@
                                                                 & Expansion</span>
                                                         <span class="font-body-lg text-body-lg text-primary">37.60 x
                                                                 45.20 x 15.00 mm<br><span
-                                                                        class="text-xs text-text-muted">MicroSD Card Slot, USB-C Port, Curved Matte Enclosure</span></span>
+                                                                        class="text-xs text-text-muted">MicroSD Card
+                                                                        Slot, USB-C Port, Curved Matte
+                                                                        Enclosure</span></span>
                                                 </div>
                                         </div>
                                 </div>
@@ -1290,14 +1321,18 @@
         </section>
         <footer
                 class="w-full py-8 md:py-section-v-md border-t border-border-subtle bg-surface-container-lowest dark:bg-surface-container-lowest">
-                <div class="max-w-[1280px] mx-auto px-margin-safe flex flex-col md:flex-row justify-between items-center gap-stack-gap">
+                <div
+                        class="max-w-[1280px] mx-auto px-margin-safe flex flex-col md:flex-row justify-between items-center gap-stack-gap">
                         <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
                                 <div class="font-display-hero text-body-lg font-bold text-primary mb-2">Trace</div>
-                                <p class="font-body-md text-body-md text-text-muted">© 2026 Trace. All rights reserved. Presence over noise.</p>
+                                <p class="font-body-md text-body-md text-text-muted">© 2026 Trace. All rights reserved.
+                                        Presence over noise.</p>
                         </div>
                         <div class="flex gap-6 font-label-mono text-label-mono text-text-muted">
-                                <a class="hover:text-primary transition-colors duration-200" href="privacy.html">Privacy Policy</a>
-                                <a class="hover:text-primary transition-colors duration-200" href="terms.html">Terms of Service</a>
+                                <a class="hover:text-primary transition-colors duration-200" href="privacy.html">Privacy
+                                        Policy</a>
+                                <a class="hover:text-primary transition-colors duration-200" href="terms.html">Terms of
+                                        Service</a>
                         </div>
                 </div>
         </footer>
@@ -1823,7 +1858,7 @@
                         // Toggle header "Pre-order Now" visibility based on Hero "Reserve Now" button visibility
                         const headerPreorderBtn = document.getElementById('header-preorder-btn');
                         const heroReserveBtn = document.getElementById('hero-reserve-btn');
-                        
+
                         if (headerPreorderBtn && heroReserveBtn) {
                                 const observer = new IntersectionObserver((entries) => {
                                         entries.forEach(entry => {
