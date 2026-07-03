@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	try {
 		// Check if test mode is active (?test=true or ?test-mode=true)
 		const urlParams = new URLSearchParams(window.location.search);
-		const isTestMode = urlParams.has('test') || urlParams.has('test-mode');
+		const isTestMode = true //urlParams.has('test') || urlParams.has('test-mode');
 
 		// 1. Injected HUD setup for Test Mode
 		if (isTestMode) {

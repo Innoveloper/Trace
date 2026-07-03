@@ -1,6 +1,155 @@
+// Preloader start execution time tracking
+const preloaderStartTime = performance.now();
+
+// Trigger fade-in entry animation for preloader device as soon as script runs
+(function triggerPreloaderEntry() {
+    const preloaderDevice = document.getElementById('preloader-device');
+    if (preloaderDevice) {
+        setTimeout(() => {
+            preloaderDevice.style.opacity = '1';
+        }, 50);
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            const device = document.getElementById('preloader-device');
+            if (device) {
+                setTimeout(() => {
+                    device.style.opacity = '1';
+                }, 50);
+            }
+        });
+    }
+})();
+
+// Update device status bar time dynamically to match device standards
+function updateDeviceTime() {
+    const timeElements = document.querySelectorAll('.device-time');
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const timeStr = `${hours}:${minutes} ${ampm}`;
+    
+    timeElements.forEach(el => {
+        el.textContent = timeStr;
+    });
+}
+updateDeviceTime();
+setInterval(updateDeviceTime, 1000);
+
+// Helper function to animate device screen state changes cleanly
+function updatePreloaderScreenState(newTitleText, newIconText, newDescText, isSuccessColor = false) {
+    const titleEl = document.getElementById('preloader-device-title');
+    const iconEl = document.getElementById('preloader-device-icon');
+    const textEl = document.getElementById('preloader-device-text');
+    
+    if (iconEl && textEl && titleEl) {
+        // Fade out content
+        titleEl.style.opacity = '0';
+        iconEl.style.opacity = '0';
+        iconEl.style.transform = 'scale(0.8)';
+        textEl.style.opacity = '0';
+        
+        setTimeout(() => {
+            // Swap content
+            titleEl.textContent = newTitleText;
+            iconEl.textContent = newIconText;
+            textEl.textContent = newDescText;
+            
+            if (isSuccessColor) {
+                iconEl.classList.remove('text-primary');
+                iconEl.classList.add('text-secondary');
+            }
+            
+            // Fade in content
+            titleEl.style.opacity = '1';
+            iconEl.style.opacity = '1';
+            iconEl.style.transform = 'scale(1)';
+            textEl.style.opacity = '1';
+        }, 150);
+    }
+}
+
+// Schedule the 3-stage visual state transitions (adjusted to checkout-ready states)
+setTimeout(() => {
+    updatePreloaderScreenState('SECURE', 'credit_card', 'Processing...');
+}, 400);
+
+setTimeout(() => {
+    updatePreloaderScreenState('READY', 'verified_user', 'Connected.', true);
+}, 800);
+
+// Page preloader and fly-in morphing transition handler
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('page-preloader');
+    const preloaderDevice = document.getElementById('preloader-device');
+    const heroDevice = document.getElementById('hero-device');
+    const preloaderStatus = document.getElementById('preloader-status');
+
+    if (!preloader) return;
+
+    const elapsed = performance.now() - preloaderStartTime;
+    // Set to 1.2 seconds minimum display duration (0.4s per stage)
+    const remaining = Math.max(0, 1200 - elapsed);
+
+    setTimeout(() => {
+        if (preloaderDevice && heroDevice) {
+            // Calculate scale and position coordinates relative to the viewport
+            const preloaderRect = preloaderDevice.getBoundingClientRect();
+            const heroRect = heroDevice.getBoundingClientRect();
+
+            const preloaderCenterX = preloaderRect.left + preloaderRect.width / 2;
+            const preloaderCenterY = preloaderRect.top + preloaderRect.height / 2;
+            const heroCenterX = heroRect.left + heroRect.width / 2;
+            const heroCenterY = heroRect.top + heroRect.height / 2;
+
+            const deltaX = heroCenterX - preloaderCenterX;
+            const deltaY = heroCenterY - preloaderCenterY;
+            const scale = heroRect.width / preloaderRect.width;
+
+            // Trigger the FLIP animation using translation and exact scale matching (prevents viewport/mobile size jumps)
+            preloaderDevice.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
+            preloaderDevice.style.opacity = '1';
+        }
+
+        // Fade out overlay background and status text separately to keep device visible
+        preloader.classList.add('fade-out');
+        if (preloaderStatus) {
+            preloaderStatus.classList.remove('animate-pulse');
+            preloaderStatus.classList.add('opacity-0');
+        }
+
+        // Clean up preloader and show hero mockup device after transition completes (1.0s duration)
+        setTimeout(() => {
+            // Instant swap: hide preloader device, show hero device without transition lag
+            if (heroDevice) {
+                heroDevice.style.transition = 'none';
+                heroDevice.offsetHeight; // force browser repaint to apply transition: none instantly
+                heroDevice.style.opacity = '1';
+                heroDevice.classList.remove('opacity-0');
+                // Restore transition properties in next frames for clean subsequent states
+                setTimeout(() => {
+                    heroDevice.style.transition = '';
+                }, 50);
+            }
+            if (preloaderDevice) {
+                preloaderDevice.style.transition = 'none';
+                preloaderDevice.style.opacity = '0';
+            }
+            const preloaderWrapper = document.getElementById('preloader-device-wrapper');
+            if (preloaderWrapper) {
+                preloaderWrapper.style.display = 'none';
+            }
+            preloader.style.display = 'none';
+        }, 1000);
+    }, remaining);
+});
+
 // Google Sheet Apps Script Integration
 // Paste your web app deployment URL here: e.g. 'https://script.google.com/macros/s/.../exec'
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPSE8uEneh2NrwKFOh_tIUuypG8jLNRuEPxaAvAsItZh7jvSD9QxbcVUw3F0WOfTXEaw/exec';
+
 
 // Loops.so Form Endpoint Configuration ID
 const LOOPS_FORM_ID = 'cmr2br68g059u0jyri98r5fyc';

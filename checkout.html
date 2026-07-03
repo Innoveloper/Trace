@@ -105,6 +105,53 @@
 </head>
 
 <body class="bg-surface-container-lowest text-on-background antialiased font-body-md min-h-screen flex flex-col">
+    <!-- Full-Screen Page Preloader Overlay -->
+    <div id="page-preloader" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-[#0e0e0e]">
+        <!-- Booting Status text -->
+        <div id="preloader-status" class="mt-[500px] font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest animate-pulse select-none transition-opacity duration-500">
+            Securing Connection...
+        </div>
+    </div>
+
+    <!-- Preloader Device Mockup Centering Wrapper -->
+    <div id="preloader-device-wrapper" class="fixed inset-0 z-[10001] flex items-center justify-center pointer-events-none">
+        <!-- Center Preloader Device Mockup -->
+        <div id="preloader-device" class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center pointer-events-auto">
+            <!-- Glass Reflections -->
+            <div class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20"></div>
+            <div class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20"></div>
+
+            <!-- AMOLED Display Area -->
+            <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10" style="transform: translateZ(0);">
+                <!-- Hardware Status Bar (Visible on checkout page) -->
+                <div class="w-full flex justify-between items-center px-4 pt-2.5 pb-1.5 border-b border-neutral-900/40 text-[11px] font-label-mono text-text-muted/65 select-none bg-black shrink-0 z-20">
+                    <span class="device-time">10:45 AM</span>
+                    <span class="flex items-center gap-1">98% <span class="material-symbols-outlined text-[12px] text-text-muted/40">battery_50</span></span>
+                </div>
+
+                <!-- Screen States Container wrapper -->
+                <div class="relative flex-grow w-full overflow-hidden">
+                    <!-- Content Container (3 stages) -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center bg-black opacity-100 p-4">
+                        <!-- Stage Top Title -->
+                        <span id="preloader-device-title" class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mb-2 transition-all duration-150">
+                            CART
+                        </span>
+                        
+                        <!-- Stage Center Circle Container -->
+                        <div class="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center shadow-lg my-2.5 transition-all duration-150 transform scale-100 shrink-0">
+                            <span id="preloader-device-icon" class="material-symbols-outlined text-primary text-2xl transition-all duration-150">shopping_bag</span>
+                        </div>
+                        
+                        <!-- Stage Bottom Description -->
+                        <span id="preloader-device-text" class="font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest mt-2 transition-all duration-150">
+                            Verifying...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 <!-- TopNavBar (Transactional, but keeping Brand anchor for checkout context if desired, though instructions say hide if strictly linear. Will include minimal brand header for checkout) -->
 <header
         class="w-full py-6 px-gutter max-w-[1280px] mx-auto flex justify-center items-center border-b border-border-subtle/50">
@@ -248,6 +295,47 @@
         <div
                 class="sticky top-8 p-6 bg-surface-elevated/50 backdrop-blur-xl border border-border-subtle rounded-xl flex flex-col gap-6">
             <h3 class="font-label-mono text-label-mono text-text-muted uppercase">Order Summary</h3>
+            
+            <!-- Target Checkout Device Mockup -->
+            <div class="flex justify-center py-2">
+                <div id="hero-device"
+                     class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center opacity-0 transition-opacity duration-500 z-10">
+                    <!-- Glass Reflections -->
+                    <div class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20"></div>
+                    <div class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20"></div>
+
+                    <!-- AMOLED Display Area -->
+                    <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10" style="transform: translateZ(0);">
+                        <!-- Hardware Status Bar (Visible on checkout page) -->
+                        <div class="w-full flex justify-between items-center px-4 pt-2.5 pb-1.5 border-b border-neutral-900/40 text-[11px] font-label-mono text-text-muted/65 select-none bg-black shrink-0 z-20">
+                            <span class="device-time">10:45 AM</span>
+                            <span class="flex items-center gap-1">98% <span class="material-symbols-outlined text-[12px] text-text-muted/40">battery_50</span></span>
+                        </div>
+
+                        <!-- Screen States Container wrapper -->
+                        <div class="relative flex-grow w-full overflow-hidden">
+                            <!-- Content Container (Starts in Stage 3: Secured) -->
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-black opacity-100 p-4">
+                                <!-- Stage Top Title -->
+                                <span class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mb-2 select-none">
+                                    READY
+                                </span>
+                                
+                                <!-- Stage Center Circle Container -->
+                                <div class="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center shadow-lg my-2.5 shrink-0">
+                                    <span class="material-symbols-outlined text-secondary text-2xl">verified_user</span>
+                                </div>
+                                
+                                <!-- Stage Bottom Description -->
+                                <span class="font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest mt-2 select-none">
+                                    Connected.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex gap-4 items-center">
                 <div>
                     <div class="font-body-md font-medium text-primary">Trace</div>
