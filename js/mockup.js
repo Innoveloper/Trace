@@ -530,8 +530,9 @@ function initializeWaitlistForm() {
                         `;
 
         // Track submission intent in PostHog
+        const signupMode = (!LOOPS_FORM_ID || LOOPS_FORM_ID === '<YOUR_LOOPS_FORM_ID>') ? 'mockup' : 'live';
         if (window.posthog && typeof window.posthog.capture === 'function') {
-            window.posthog.capture('newsletter_signup', {status: 'submitting'});
+            window.posthog.capture('newsletter_signup', {status: 'submitting', mode: signupMode});
         }
 
         // Mockup or real submit

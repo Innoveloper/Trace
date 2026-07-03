@@ -244,10 +244,10 @@ function validateForm() {
             securityToken: "TracePreorderSecureToken2026"
         };
 
-        // Track checkout completed event
+        // Track checkout submitting event
         if (window.posthog && typeof window.posthog.capture === 'function') {
             window.posthog.capture('checkout_funnel', {
-                step: 'completed',
+                step: 'submitting',
                 payment_method: paymentMethod
             });
         }
@@ -664,6 +664,14 @@ async function detectUserLocation(selectElement) {
     const selectedText = document.getElementById('selected-country-text');
     if (selectedText) selectedText.textContent = detectedCountry;
     if (typeof renderOptions === 'function') renderOptions();
+
+    // Track the auto-detected country selection
+    if (window.posthog && typeof window.posthog.capture === 'function') {
+        window.posthog.capture('checkout_country_selected', {
+            country: detectedCountry,
+            detection_type: 'auto'
+        });
+    }
 }
 
 // Event Tracking Hookups
@@ -748,7 +756,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (hiddenCountryInput) hiddenCountryInput.value = c.name;
                 toggleDropdown(false);
                 if (window.posthog && typeof window.posthog.capture === 'function') {
-                    window.posthog.capture('checkout_country_selected', {country: c.name});
+                    window.posthog.capture('checkout_country_selected', {
+                        country: c.name,
+                        detection_type: 'manual'
+                    });
                 }
             });
             optionsContainer.appendChild(opt);
