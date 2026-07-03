@@ -1,0 +1,263 @@
+/* Custom Keyframes and Animations for interactive preview mockup */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.85;
+    }
+
+    100% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+}
+
+@keyframes type {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-waveform {
+    transition: height 0.1s ease-out;
+}
+
+.animate-bg-wave {
+    transition: height 0.1s ease-out;
+}
+
+.dot-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg, #444 20%, #fff 50%, #444 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 1.5s linear infinite;
+    display: inline-block;
+}
+
+/* Walkthrough Buttons Layout & States */
+.walkthrough-btn {
+    outline: none !important;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+    /* Inactive state styles */
+    background-color: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+}
+
+@media (min-width: 768px) {
+    .walkthrough-btn {
+        font-size: 11px;
+        padding: 10px 20px;
+    }
+}
+
+.walkthrough-btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Hover styling for inactive buttons */
+.walkthrough-btn:not(.active):hover {
+    transform: translateY(-1px);
+    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Active (Selected) state styles */
+.walkthrough-btn.active {
+    background-color: #ffffff;
+    color: #131313;
+    border-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.walkthrough-btn.active:hover {
+    transform: translateY(-1px);
+    background-color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.25) !important;
+}
+
+.walkthrough-btn:active {
+    transform: translateY(0px);
+}
+
+/* Navigation Links Underline Animation */
+.nav-link {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: -4px;
+    left: 0;
+    background-color: #ffffff;
+    transform-origin: bottom right;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* Interactive CTA Buttons */
+.btn-interactive {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    user-select: none;
+}
+
+.btn-interactive:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08) !important;
+    opacity: 1 !important;
+}
+
+.btn-interactive:active {
+    transform: translateY(0px);
+    box-shadow: none !important;
+}
+
+/* Card Micro-interactions */
+.card-interactive {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.card-interactive:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Spec table row hover */
+.table-row-hover tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-row-hover tr:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Floating Back to Top Button */
+#back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 40;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(19, 19, 19, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    color: #ffffff;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+#back-to-top:hover {
+    background-color: #ffffff;
+    color: #131313;
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.12);
+}
+
+#back-to-top:active {
+    transform: translateY(0);
+}
+
+/* Form validation shake and success animations */
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-6px);
+    }
+
+    75% {
+        transform: translateX(6px);
+    }
+}
+
+.animate-shake {
+    animation: shake 0.2s ease-in-out 2;
+}
+
+@keyframes scale-in {
+    0% {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-scale-in {
+    animation: scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
