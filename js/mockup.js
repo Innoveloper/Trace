@@ -617,6 +617,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const recordBtn = document.getElementById('device-record-button');
     if (recordBtn) {
         recordBtn.addEventListener('click', () => {
+            if (window.posthog && typeof window.posthog.capture === 'function') {
+                window.posthog.capture('mockup_recording_started');
+            }
             startRecording();
         });
     }

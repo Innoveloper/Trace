@@ -347,6 +347,11 @@ function openSuccessModal() {
         modal.classList.remove('opacity-0');
         modalContent.classList.add('scale-100');
         modalContent.classList.remove('scale-95');
+
+        // Track checkout success funnel completion
+        if (window.posthog && typeof window.posthog.capture === 'function') {
+            window.posthog.capture('checkout_funnel', {step: 'completed'});
+        }
     }
 }
 
