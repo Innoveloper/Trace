@@ -1,3 +1,98 @@
+// Preloader start execution time tracking
+const preloaderStartTime = performance.now();
+window.deferDeviceBoot = true;
+
+// Trigger fade-in entry animation for preloader device as soon as script runs
+(function triggerPreloaderEntry() {
+    const preloaderDevice = document.getElementById('preloader-device');
+    if (preloaderDevice) {
+        // Allow DOM to register the initial opacity(0) before transitioning
+        setTimeout(() => {
+            preloaderDevice.style.opacity = '1';
+        }, 50);
+    } else {
+        // Fallback in case DOM is not ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const device = document.getElementById('preloader-device');
+            if (device) {
+                setTimeout(() => {
+                    device.style.opacity = '1';
+                }, 50);
+            }
+        });
+    }
+})();
+
+// Page preloader and fly-in morphing transition handler
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('page-preloader');
+    const preloaderDevice = document.getElementById('preloader-device');
+    const heroDevice = document.getElementById('hero-device');
+    const preloaderStatus = document.getElementById('preloader-status');
+
+    if (!preloader) return;
+
+    const elapsed = performance.now() - preloaderStartTime;
+    const remaining = Math.max(0, 1500 - elapsed);
+
+    setTimeout(() => {
+        if (preloaderDevice && heroDevice) {
+            // Calculate scale and position coordinates relative to the viewport
+            const preloaderRect = preloaderDevice.getBoundingClientRect();
+            const heroRect = heroDevice.getBoundingClientRect();
+
+            const preloaderCenterX = preloaderRect.left + preloaderRect.width / 2;
+            const preloaderCenterY = preloaderRect.top + preloaderRect.height / 2;
+            const heroCenterX = heroRect.left + heroRect.width / 2;
+            const heroCenterY = heroRect.top + heroRect.height / 2;
+
+            const deltaX = heroCenterX - preloaderCenterX;
+            const deltaY = heroCenterY - preloaderCenterY;
+            const scale = heroRect.width / preloaderRect.width;
+
+            // Trigger the FLIP animation using translation and exact scale matching (prevents viewport/mobile size jumps)
+            preloaderDevice.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
+            preloaderDevice.style.opacity = '1';
+        }
+
+        // Fade out overlay background and status text separately to keep device visible
+        preloader.classList.add('fade-out');
+        if (preloaderStatus) {
+            preloaderStatus.classList.remove('animate-pulse');
+            preloaderStatus.classList.add('opacity-0');
+        }
+
+        // Clean up preloader and show hero mockup device after transition completes (1.0s duration)
+        setTimeout(() => {
+            // Instant swap: hide preloader device, show hero device without transition lag
+            if (heroDevice) {
+                heroDevice.style.transition = 'none';
+                heroDevice.offsetHeight; // force browser repaint to apply transition: none instantly
+                heroDevice.style.opacity = '1';
+                heroDevice.classList.remove('opacity-0');
+                // Restore transition properties in next frames for clean subsequent states
+                setTimeout(() => {
+                    heroDevice.style.transition = '';
+                }, 50);
+
+                // End boot deferral and trigger hero device boot transition sequence
+                window.deferDeviceBoot = false;
+                switchMode('capture', false);
+            }
+            if (preloaderDevice) {
+                preloaderDevice.style.transition = 'none';
+                preloaderDevice.style.opacity = '0';
+            }
+            const preloaderWrapper = document.getElementById('preloader-device-wrapper');
+            if (preloaderWrapper) {
+                preloaderWrapper.style.display = 'none';
+            }
+            preloader.style.display = 'none';
+        }, 1000);
+    }, remaining);
+});
+
+
 // Loops.so Form Endpoint Configuration ID
 const LOOPS_FORM_ID = 'cmr2br68g059u0jyri98r5fyc';
 
@@ -232,6 +327,22 @@ function startSyncMockup() {
 window.currentActiveMockupMode = 'capture';
 window.handleMockupModeChange = null;
 
+function startRecording() {
+    const readyScreen = document.getElementById('capture-ready');
+    const activeScreenContent = document.getElementById('capture-active');
+    if (readyScreen && activeScreenContent) {
+        clearTimeout(captureTimer);
+        readyScreen.style.opacity = '0';
+        setTimeout(() => {
+            readyScreen.style.display = 'none';
+            activeScreenContent.style.display = 'flex';
+            activeScreenContent.offsetHeight; // trigger reflow
+            activeScreenContent.style.opacity = '1';
+            startVoiceCaptureAnimation();
+        }, 300);
+    }
+}
+
 function switchMode(mode, trackEvent = true) {
     const previousMode = window.currentActiveMockupMode;
     window.currentActiveMockupMode = mode;
@@ -288,8 +399,6 @@ function switchMode(mode, trackEvent = true) {
             const activeScreenContent = document.getElementById('capture-active');
 
             if (!hasBooted) {
-                hasBooted = true;
-
                 // Hide status bar during boot
                 if (statusBar) statusBar.style.display = 'none';
 
@@ -301,30 +410,22 @@ function switchMode(mode, trackEvent = true) {
                 activeScreenContent.style.display = 'none';
                 activeScreenContent.style.opacity = '0';
 
-                // Transition 1: Boot -> Ready (after 1.2 seconds)
-                bootTimer = setTimeout(() => {
-                    bootScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        bootScreen.style.display = 'none';
-                        readyScreen.style.display = 'flex';
-                        readyScreen.offsetHeight; // trigger reflow
-                        readyScreen.style.opacity = '1';
-                        // Restore status bar
-                        if (statusBar) statusBar.style.display = 'flex';
-                    }, 300);
-                }, 1200);
+                if (!window.deferDeviceBoot) {
+                    hasBooted = true;
 
-                // Transition 2: Ready -> Active Recording (after 4.2 seconds total, 3 seconds on Ready screen)
-                captureTimer = setTimeout(() => {
-                    readyScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        readyScreen.style.display = 'none';
-                        activeScreenContent.style.display = 'flex';
-                        activeScreenContent.offsetHeight; // trigger reflow
-                        activeScreenContent.style.opacity = '1';
-                        startVoiceCaptureAnimation();
-                    }, 300);
-                }, 4200);
+                    // Transition 1: Boot -> Ready (after 1.2 seconds)
+                    bootTimer = setTimeout(() => {
+                        bootScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            bootScreen.style.display = 'none';
+                            readyScreen.style.display = 'flex';
+                            readyScreen.offsetHeight; // trigger reflow
+                            readyScreen.style.opacity = '1';
+                            // Restore status bar
+                            if (statusBar) statusBar.style.display = 'flex';
+                        }, 300);
+                    }, 1200);
+                }
             } else {
                 // Skip boot screen, show ready screen immediately
                 bootScreen.style.display = 'none';
@@ -336,18 +437,6 @@ function switchMode(mode, trackEvent = true) {
 
                 // Enforce status bar is visible
                 if (statusBar) statusBar.style.display = 'flex';
-
-                // Transition directly from Ready -> Active Recording after 3 seconds
-                captureTimer = setTimeout(() => {
-                    readyScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        readyScreen.style.display = 'none';
-                        activeScreenContent.style.display = 'flex';
-                        activeScreenContent.offsetHeight; // trigger reflow
-                        activeScreenContent.style.opacity = '1';
-                        startVoiceCaptureAnimation();
-                    }, 300);
-                }, 3000);
             }
         }
 
@@ -523,6 +612,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDeviceTime();
     switchMode('capture', false);
     initializeWaitlistForm();
+
+    // Setup record button click listener
+    const recordBtn = document.getElementById('device-record-button');
+    if (recordBtn) {
+        recordBtn.addEventListener('click', () => {
+            startRecording();
+        });
+    }
 
     // Toggle header "Pre-order Now" visibility based on Hero "Reserve Now" button visibility
     const headerPreorderBtn = document.getElementById('header-preorder-btn');

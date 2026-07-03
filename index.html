@@ -78,7 +78,6 @@
         }(document, window.posthog || []);
 
         // Initialize PostHog (Placeholder configuration)
-        // Replace '<YOUR_POSTHOG_API_KEY>' and 'https://t.innoveloper.com' with your actual PostHog details.
         const POSTHOG_API_KEY = 'phc_u5UUTUYiLrnDrfb2iRXK76rMGy9zkKTu35zGEcqZKmjS';
         const POSTHOG_HOST = 'https://t.innoveloper.com';
 
@@ -105,6 +104,42 @@
 
 <body
         class="antialiased font-body-md selection:bg-secondary/30 selection:text-primary min-h-screen flex flex-col relative overflow-x-hidden bg-surface-container-lowest">
+    <!-- Full-Screen Page Preloader Overlay -->
+    <div id="page-preloader" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-[#0e0e0e]">
+        <!-- Booting Status text -->
+        <div id="preloader-status" class="mt-[500px] font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest animate-pulse select-none z-10 transition-opacity duration-500">
+            Booting Trace OS...
+        </div>
+    </div>
+
+    <!-- Preloader Device Mockup Centering Wrapper -->
+    <div id="preloader-device-wrapper" class="fixed inset-0 z-[10001] flex items-center justify-center pointer-events-none">
+        <!-- Center Preloader Device Mockup -->
+        <div id="preloader-device" class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center pointer-events-auto">
+            <!-- Glass Reflections -->
+            <div class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20"></div>
+            <div class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20"></div>
+
+            <!-- AMOLED Display Area -->
+            <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10" style="transform: translateZ(0);">
+                <!-- Hardware Status Bar (Hidden during boot) -->
+                <div class="w-full flex justify-between items-center px-4 pt-2.5 pb-1.5 border-b border-neutral-900/40 text-[11px] font-label-mono text-text-muted/65 select-none bg-black shrink-0 z-20" style="display: none;">
+                    <span>10:45 AM</span>
+                    <span class="flex items-center gap-1">98% <span class="material-symbols-outlined text-[12px] text-text-muted/40">battery_50</span></span>
+                </div>
+
+                <!-- Screen States Container wrapper -->
+                <div class="relative flex-grow w-full overflow-hidden">
+                    <!-- Boot Screen -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center bg-black opacity-100">
+                        <div class="font-display-hero text-body-lg font-semibold tracking-tighter animate-shimmer select-none text-primary">
+                            TRACE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 <!-- Navigation -->
 <nav
         class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-border-subtle transition-all duration-300">
@@ -256,9 +291,8 @@
                              style="animation-delay: 0.85s;"></div>
                     </div>
 
-                    <!-- 368x448 AMOLED Device with Bezel, Gloss Reflection, and Bezel Shadow (Reduced to max-w-[256px]) -->
-                    <div
-                            class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_30px_70px_rgba(0,0,0,0.95),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center z-10">
+                    <div id="hero-device"
+                            class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center z-10 opacity-0 transition-opacity duration-500">
                         <!-- Glass Bezel Reflections (Replicating glare & light) -->
                         <div
                                 class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20">
@@ -288,7 +322,7 @@
                                     <div class="absolute inset-0 flex flex-col items-center justify-center bg-black transition-opacity duration-300 p-4"
                                          id="capture-boot">
                                         <div
-                                                class="font-display-hero text-body-lg font-semibold tracking-tighter animate-shimmer select-none">
+                                                class="font-display-hero text-body-lg font-semibold tracking-tighter animate-shimmer select-none text-primary">
                                             TRACE
                                         </div>
                                     </div>
@@ -299,14 +333,14 @@
                                             <span
                                                     class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mb-2">Ready
                                                 to Record</span>
-                                        <div
-                                                class="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center shadow-lg my-2.5 transition-transform hover:scale-105 active:scale-95 duration-200">
-                                            <div class="w-5 h-5 rounded-full bg-white animate-pulse">
-                                            </div>
-                                        </div>
-                                        <span
-                                                class="font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest mt-2">HOLD
-                                                TO START</span>
+                                        <div id="device-record-button"
+                                                 class="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center shadow-lg my-2.5 transition-transform hover:scale-105 active:scale-95 duration-200 cursor-pointer">
+                                             <div class="w-5 h-5 rounded-full bg-white animate-pulse pointer-events-none">
+                                             </div>
+                                         </div>
+                                         <span
+                                                 class="font-label-mono text-[10px] text-text-muted/60 uppercase tracking-widest mt-2">CLICK
+                                                 TO START</span>
                                     </div>
 
                                     <!-- Phase 3: Active Recording screen -->
