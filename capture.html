@@ -66,14 +66,14 @@
         /* 9:16 Canvas Layout Constraint */
         .canvas-9-16 {
             position: relative;
-            width: 100%;
-            max-width: 450px;
-            aspect-ratio: 9 / 16;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
             background-color: #0A0A0A;
-            border: 1px solid #262626;
-            border-radius: 24px;
+            border: none;
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: none;
         }
 
         /* Diagonal Panning Dot Grid Background */
@@ -157,7 +157,7 @@
     </style>
 </head>
 
-<body class="min-h-screen w-screen flex flex-col items-center justify-center p-4 py-12">
+<body class="m-0 p-0 overflow-hidden bg-black w-screen h-screen">
 
     <!-- 9:16 Motion Graphic Simulator Canvas -->
     <div id="motion-canvas"
@@ -201,24 +201,19 @@
             <div class="w-[3px] h-12 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.65s;"></div>
             <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.7s;"></div>
             <div class="w-[3px] h-8 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.75s;"></div>
-            <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.8s;"></div>
             <div class="w-[3px] h-4 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.85s;"></div>
         </div>
 
-        <!-- ================= INTRO COVER: AUDIO UNLOCKER ================= -->
-        <div id="play-overlay"
-            class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-8 text-center transition-all duration-700">
-            <!-- Pulsing Play Button -->
-            <button id="start-btn"
-                class="w-20 h-20 rounded-full bg-secondary/10 border border-secondary/40 text-secondary flex items-center justify-center shadow-[0_0_30px_rgba(0,230,153,0.3)] hover:scale-105 hover:bg-secondary/20 transition-all duration-300 cursor-pointer focus:outline-none mb-6">
-                <span class="material-symbols-outlined text-[36px]"
-                    style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-            </button>
-            <span class="font-mono text-[10px] text-secondary uppercase tracking-widest mb-2">TRACE // STORY
-                REVEAL</span>
-            <h2 class="text-xl font-medium tracking-tight text-primary mb-1">Ideas Fade in Seconds</h2>
-            <p class="text-xs text-text-muted max-w-[220px]">Watch how Trace captures thoughts instantly. (Sound On)</p>
+        <!-- Start Recording Overlay (Required to unlock Web Audio API) -->
+        <div id="start-recording-overlay"
+            class="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer transition-opacity duration-500">
+            <div class="text-center px-6 py-4 bg-surface border border-border-subtle rounded-xl shadow-2xl flex flex-col items-center">
+                <span class="material-symbols-outlined text-[32px] text-secondary mb-2">touch_app</span>
+                <span class="font-mono text-[12px] text-primary uppercase tracking-widest">Click anywhere to start</span>
+                <span class="font-mono text-[10px] text-text-muted mt-1 uppercase tracking-wider">Unlocks Audio Context</span>
+            </div>
         </div>
+
 
         <!-- ================= SCENES OVERLAY TEXTS ================= -->
         <div
@@ -630,89 +625,7 @@
             </div>
         </div>
 
-        <!-- Social Media Safe Area Overlay (Hidden by default) -->
-        <div id="safe-area-overlay" class="absolute inset-0 z-[60] pointer-events-none hidden">
-            <!-- Unsafe Top Area (Platform Headers/Following) -->
-            <div
-                class="absolute top-0 left-0 w-full h-[15%] bg-red-500/20 border-b border-red-500/50 flex items-start justify-center pt-3">
-                <span
-                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Unsafe
-                    (Top UI)</span>
-            </div>
-
-            <!-- Unsafe Right Area (Engagement buttons) -->
-            <div
-                class="absolute top-[35%] right-0 w-[15%] h-[40%] bg-red-500/20 border-l border-red-500/50 flex items-center justify-center">
-                <span
-                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded -rotate-90">Interactions</span>
-            </div>
-
-            <!-- Unsafe Bottom Area (Captions/Description) -->
-            <div
-                class="absolute bottom-0 left-0 w-full h-[25%] bg-red-500/20 border-t border-red-500/50 flex items-end justify-center pb-3">
-                <span
-                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Unsafe
-                    (Captions)</span>
-            </div>
-
-            <!-- Safe Zone Border -->
-            <div
-                class="absolute top-[15%] bottom-[25%] left-0 right-[15%] border-2 border-dashed border-secondary/40 rounded-sm">
-                <span
-                    class="absolute top-2 left-2 text-[9px] font-mono text-secondary/70 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Safe
-                    Zone</span>
-            </div>
-        </div>
     </div>
-
-    <!-- Media Controls -->
-    <div
-        class="mt-6 flex flex-col items-center gap-3 bg-surface/80 backdrop-blur-md border border-border-subtle rounded-2xl px-6 py-4 shadow-lg z-50 min-w-[360px]">
-        <div class="flex items-center justify-between w-full text-[11px] font-mono text-text-muted">
-            <span id="media-time-display">0.0s / 0.0s</span>
-            <span id="media-scene-display" class="text-secondary font-medium tracking-wide">Scene 1: The Hook</span>
-        </div>
-        <div class="flex items-center justify-between gap-4 w-full">
-            <button id="media-play-pause"
-                class="flex items-center justify-center text-primary hover:text-secondary transition-colors focus:outline-none"
-                title="Play/Pause">
-                <span class="material-symbols-outlined text-[24px]" id="media-play-icon">pause</span>
-            </button>
-            <div class="flex-grow h-2 bg-neutral-800/80 rounded-full overflow-hidden relative cursor-pointer group"
-                id="media-scrubber-bg">
-                <div id="media-progress"
-                    class="absolute top-0 left-0 h-full bg-secondary w-0 pointer-events-none rounded-full"></div>
-                <!-- Hover effect line -->
-                <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </div>
-            <button id="media-restart"
-                class="flex items-center justify-center text-primary hover:text-secondary transition-colors focus:outline-none"
-                title="Restart">
-                <span class="material-symbols-outlined text-[24px]">replay</span>
-            </button>
-        </div>
-        <!-- Safe Zone Toggle -->
-        <!-- Bottom Toggles / Actions -->
-        <div class="flex items-center justify-between w-full pt-3 mt-1 border-t border-border-subtle/30">
-            <label
-                class="flex items-center gap-2 cursor-pointer text-text-muted hover:text-primary transition-colors text-[10px] font-mono uppercase tracking-wider">
-                <input type="checkbox" id="toggle-safe-area" class="accent-secondary w-3 h-3 cursor-pointer">
-                Safe Zones
-            </label>
-            <button id="export-mp4-btn"
-                class="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-secondary hover:text-primary transition-colors focus:outline-none">
-                <span class="material-symbols-outlined text-[14px]">download</span>
-                Export 1080p
-            </button>
-        </div>
-    </div>
-
-    <!-- Replay / Screen Record Helper floating button -->
-    <button id="replay-btn"
-        class="fixed bottom-6 right-6 w-12 h-12 bg-surface hover:bg-neutral-900 border border-border-subtle text-primary hover:text-secondary rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-50 focus:outline-none opacity-0 pointer-events-none"
-        title="Restart Animation">
-        <span class="material-symbols-outlined text-[22px]">replay</span>
-    </button>
 
     <!-- ================= WEBAUDIO Programmatic Synthesizer ================= -->
     <script>
@@ -2244,214 +2157,30 @@
                         begin: () => {
                             document.getElementById('replay-btn').classList.remove('opacity-0', 'pointer-events-none');
                         }
-                    }, '-=400');
+                    }, '-=800');
             }
 
             // Build timeline compositions
             buildTimeline();
-            resetUI(); // Initialize UI elements (hide them behind the play cover screen)
+            resetUI(); 
 
-            // Hook user interaction overlay start button
-            document.getElementById('start-btn').addEventListener('click', () => {
-                sfx.init(); // Initialize audio context on click
-                resetUI(); // Ensure all sub-elements are clean
-
-                // Fade out cover screen
-                anime({
-                    targets: '#play-overlay',
-                    opacity: 0,
-                    scale: 1.05,
-                    duration: 600,
-                    easing: 'easeInQuad',
-                    complete: () => {
-                        document.getElementById('play-overlay').remove();
-                        mainTimeline.play(); // Start animation timeline
-                    }
-                });
-            });
-
-            // Replay button controller
-            document.getElementById('replay-btn').addEventListener('click', () => {
+            // Hook the "Click to Start" overlay to unlock audio context
+            document.getElementById('start-recording-overlay').addEventListener('click', function() {
+                // Initialize audio context on click
+                sfx.init();
                 resetUI();
-                mainTimeline.restart();
-            });
-
-            // --- Media Controls UI Logic ---
-            const playPauseBtn = document.getElementById('media-play-pause');
-            const playIcon = document.getElementById('media-play-icon');
-            const restartBtn = document.getElementById('media-restart');
-            const scrubberBg = document.getElementById('media-scrubber-bg');
-
-            playPauseBtn.addEventListener('click', () => {
-                if (mainTimeline.paused) {
+                
+                // Hide the overlay
+                this.classList.add('opacity-0', 'pointer-events-none');
+                
+                // Give it a tiny delay so the recording software can catch a clean start
+                setTimeout(() => {
                     mainTimeline.play();
-                    playIcon.innerText = 'pause';
-                } else {
-                    mainTimeline.pause();
-                    playIcon.innerText = 'play_arrow';
-                }
-            });
-
-            restartBtn.addEventListener('click', () => {
-                resetUI();
-                mainTimeline.restart();
-                playIcon.innerText = 'pause';
-            });
-
-            scrubberBg.addEventListener('click', (e) => {
-                const rect = scrubberBg.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const percentage = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
-                mainTimeline.seek(mainTimeline.duration * (percentage / 100));
-            });
-
-            // Safe Area Overlay Toggle
-            document.getElementById('toggle-safe-area').addEventListener('change', (e) => {
-                const overlay = document.getElementById('safe-area-overlay');
-                if (e.target.checked) {
-                    overlay.classList.remove('hidden');
-                } else {
-                    overlay.classList.add('hidden');
-                }
-            });
-
-            // Hook completion to swap pause icon back to play
-            mainTimeline.finished.then(() => {
-                playIcon.innerText = 'play_arrow';
-            });
-
-            // ================= MP4 EXPORT (WEBCODECS + MP4-MUXER) =================
-            document.getElementById('export-mp4-btn').addEventListener('click', async () => {
-                const overlay = document.getElementById('render-overlay');
-                const statusText = document.getElementById('render-status-text');
-                const progressBar = document.getElementById('render-progress-bar');
-                const frameCount = document.getElementById('render-frame-count');
-                const timeElapsed = document.getElementById('render-time-elapsed');
-                
-                overlay.classList.remove('opacity-0', 'pointer-events-none');
-                
-                try {
-                    statusText.innerText = "Initializing Hardware Encoder...";
-                    
-                    const fps = 30;
-                    const duration = mainTimeline.duration; // in ms
-                    const totalFrames = Math.floor((duration / 1000) * fps);
-                    
-                    // Pause playback and animations
-                    mainTimeline.pause();
-                    document.querySelector('.dot-grid').style.animationPlayState = 'paused';
-                    
-                    const canvasEl = document.getElementById('motion-canvas');
-                    const origWidth = canvasEl.style.width;
-                    const origMaxWidth = canvasEl.style.maxWidth;
-                    canvasEl.style.width = '450px';
-                    canvasEl.style.maxWidth = '450px';
-                    
-                    // Initialize MP4 Muxer
-                    const muxer = new Mp4Muxer.Muxer({
-                        target: new Mp4Muxer.ArrayBufferTarget(),
-                        video: {
-                            codec: 'avc',
-                            width: 1080,
-                            height: 1920
-                        },
-                        fastStart: 'in-memory'
-                    });
-                    
-                    // Initialize WebCodecs Video Encoder
-                    const videoEncoder = new VideoEncoder({
-                        output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
-                        error: e => { throw e; }
-                    });
-                    
-                    videoEncoder.configure({
-                        codec: 'avc1.640028', // H.264 High Profile
-                        width: 1080,
-                        height: 1920,
-                        hardwareAcceleration: 'prefer-hardware',
-                        bitrate: 10_000_000, // 10 Mbps
-                        framerate: fps
-                    });
-                    
-                    statusText.innerText = "Rendering frames (Hardware Accelerated)...";
-                    const startTime = performance.now();
-                    
-                    for(let i = 0; i < totalFrames; i++) {
-                        const t = (i / fps) * 1000;
-                        mainTimeline.seek(t);
-                        
-                        await new Promise(r => setTimeout(r, 10)); // Yield to let DOM update
-                        
-                        // Render exact frame to an offscreen canvas
-                        const frameCanvas = await htmlToImage.toCanvas(canvasEl, { 
-                            quality: 1.0,
-                            pixelRatio: 2.4, // 450x800 -> 1080x1920
-                            width: 450,
-                            height: 800
-                        });
-                        
-                        // Encode the canvas frame directly
-                        const frame = new VideoFrame(frameCanvas, { timestamp: (i / fps) * 1e6 });
-                        videoEncoder.encode(frame, { keyFrame: i % fps === 0 });
-                        frame.close();
-                        
-                        // Update UI progress
-                        const pct = Math.round(((i + 1) / totalFrames) * 100);
-                        progressBar.style.width = `${pct}%`;
-                        frameCount.innerText = `${i + 1} / ${totalFrames} Frames`;
-                        timeElapsed.innerText = `${Math.round((performance.now() - startTime) / 1000)}s`;
-                    }
-                    
-                    statusText.innerText = "Finalizing MP4 file...";
-                    
-                    // Flush the encoder and muxer
-                    await videoEncoder.flush();
-                    muxer.finalize();
-                    
-                    // Trigger download
-                    const buffer = muxer.target.buffer;
-                    const blob = new Blob([buffer], { type: 'video/mp4' });
-                    const url = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'Trace_Animation_1080p.mp4';
-                    a.click();
-                    
-                    // Restore UI
-                    canvasEl.style.width = origWidth;
-                    canvasEl.style.maxWidth = origMaxWidth;
-                    document.querySelector('.dot-grid').style.animationPlayState = 'running';
-                    
-                    overlay.classList.add('opacity-0', 'pointer-events-none');
-                    
-                } catch(err) {
-                    console.error(err);
-                    statusText.innerText = "Error during export: " + err.message;
-                    setTimeout(() => overlay.classList.add('opacity-0', 'pointer-events-none'), 5000);
-                }
+                }, 500);
             });
 
         });
     </script>
-    <!-- Render Progress Overlay -->
-    <div id="render-overlay"
-        class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
-        <div class="w-full max-w-md bg-surface border border-border-subtle p-8 rounded-2xl shadow-2xl text-center">
-            <span class="material-symbols-outlined text-[48px] text-secondary mb-4 animate-pulse">movie</span>
-            <h3 class="text-xl font-medium text-primary mb-2">Rendering Video</h3>
-            <p id="render-status-text" class="text-text-muted text-sm mb-6">Initializing FFmpeg...</p>
-            
-            <div class="w-full h-2 bg-neutral-900 rounded-full overflow-hidden mb-2 relative">
-                <div id="render-progress-bar" class="absolute top-0 left-0 h-full bg-secondary w-0 transition-all duration-75"></div>
-            </div>
-            <div class="flex justify-between w-full text-[10px] font-mono text-text-muted">
-                <span id="render-frame-count">0 / 0 Frames</span>
-                <span id="render-time-elapsed">0s</span>
-            </div>
-        </div>
-    </div>
-
 </body>
 
 </html>
