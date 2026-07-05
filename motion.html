@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Trace - Pre-Launch Motion Graphic Animation</title>
+    <meta name="description" content="Launch video simulator for the Trace AI Voice Dictation device.">
+
+    <!-- Fonts (matching index.html) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Tailwind Custom Configuration (matching index.html / js/tailwind-config.js) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'background': '#0A0A0A',
+                        'surface': '#131313',
+                        'primary': '#F5F5F5',
+                        'secondary': '#00E699', // Brand premium green accent
+                        'text-muted': '#A3A3A3',
+                        'border-subtle': '#262626'
+                    },
+                    fontFamily: {
+                        'sans': ['Geist', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                        'label-mono': ['JetBrains Mono', 'monospace'],
+                        'body-md': ['Geist', 'sans-serif'],
+                        'display-hero': ['Geist', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js (via CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+
+    <!-- Custom CSS Styles -->
+    <style>
+        /* Smooth base styles */
+        body {
+            background-color: #000000;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: 'Geist', sans-serif;
+            color: #F5F5F5;
+        }
+
+        /* 9:16 Canvas Layout Constraint */
+        .canvas-9-16 {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 9 / 16;
+            background-color: #0A0A0A;
+            border: 1px solid #262626;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Diagonal Panning Dot Grid Background */
+        @keyframes dot-pan {
+            0% {
+                background-position: 0px 0px;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+        .dot-grid {
+            background-image: radial-gradient(rgba(0, 230, 153, 0.05) 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            animation: dot-pan 20s linear infinite;
+        }
+
+        /* Hardware scanner laser line */
+        .laser-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00E699 20%, #00E699 80%, transparent);
+            box-shadow: 0 0 10px #00E699, 0 0 20px rgba(0, 230, 153, 0.5);
+            position: absolute;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            z-index: 30;
+        }
+
+        /* Ambient floating effect for outro 2D mockup */
+        @keyframes ambient-float-2d {
+
+            0%,
+            100% {
+                transform: scale(0.92) translateY(-35px);
+            }
+
+            50% {
+                transform: scale(0.92) translateY(-41px);
+            }
+        }
+
+        .float-active-2d {
+            animation: ambient-float-2d 4s ease-in-out infinite;
+        }
+
+        /* Hide scrollbars */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Equalizer & background waves smooth height changes */
+        .waveform-bar {
+            transition: height 0.1s ease-out;
+        }
+
+        .animate-bg-wave {
+            transition: height 0.1s ease-out;
+        }
+
+        /* TRACE text shimmer animation for boot screen */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .animate-shimmer {
+            background: linear-gradient(90deg, #444 20%, #fff 50%, #444 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 2s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen w-screen flex flex-col items-center justify-center p-4 py-12">
+
+    <!-- 9:16 Motion Graphic Simulator Canvas -->
+    <div id="motion-canvas"
+        class="canvas-9-16 flex flex-col items-center justify-between p-8 select-none [perspective:1000px]">
+
+        <!-- Panning Dot Grid Background Layer -->
+        <div class="absolute inset-0 dot-grid z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80 z-0"></div>
+
+        <!-- Background 28-Bar Waveform -->
+        <div id="bg-waveform"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-40 flex items-center justify-center gap-1.5 opacity-0 z-0 w-[160%] md:w-[170%] max-w-[720px] pointer-events-none">
+            <!-- Left Wave (14 Bars) -->
+            <div class="w-[3px] h-4 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.85s;"></div>
+            <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.8s;"></div>
+            <div class="w-[3px] h-8 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.75s;"></div>
+            <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.7s;"></div>
+            <div class="w-[3px] h-12 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.65s;"></div>
+            <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.6s;"></div>
+            <div class="w-[3px] h-20 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.55s;"></div>
+            <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.5s;"></div>
+            <div class="w-[3px] h-28 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.45s;"></div>
+            <div class="w-[3px] h-32 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.4s;"></div>
+            <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.3s;"></div>
+            <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.2s;"></div>
+            <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.1s;"></div>
+            <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.05s;"></div>
+
+            <!-- Spacer in the middle for the device itself to prevent overlaps (260px) -->
+            <div class="w-[260px] shrink-0"></div>
+
+            <!-- Right Wave (14 Bars) -->
+            <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.05s;"></div>
+            <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.1s;"></div>
+            <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.2s;"></div>
+            <div class="w-[3px] h-24 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.3s;"></div>
+            <div class="w-[3px] h-32 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.4s;"></div>
+            <div class="w-[3px] h-28 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.45s;"></div>
+            <div class="w-[3px] h-20 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.55s;"></div>
+            <div class="w-[3px] h-16 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.6s;"></div>
+            <div class="w-[3px] h-12 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.65s;"></div>
+            <div class="w-[3px] h-10 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.7s;"></div>
+            <div class="w-[3px] h-8 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.75s;"></div>
+            <div class="w-[3px] h-6 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.8s;"></div>
+            <div class="w-[3px] h-4 bg-white/60 rounded-full animate-bg-wave" style="animation-delay: 0.85s;"></div>
+        </div>
+
+        <!-- ================= INTRO COVER: AUDIO UNLOCKER ================= -->
+        <div id="play-overlay"
+            class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-8 text-center transition-all duration-700">
+            <!-- Pulsing Play Button -->
+            <button id="start-btn"
+                class="w-20 h-20 rounded-full bg-secondary/10 border border-secondary/40 text-secondary flex items-center justify-center shadow-[0_0_30px_rgba(0,230,153,0.3)] hover:scale-105 hover:bg-secondary/20 transition-all duration-300 cursor-pointer focus:outline-none mb-6">
+                <span class="material-symbols-outlined text-[36px]"
+                    style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+            </button>
+            <span class="font-mono text-[10px] text-secondary uppercase tracking-widest mb-2">TRACE // STORY
+                REVEAL</span>
+            <h2 class="text-xl font-medium tracking-tight text-primary mb-1">Ideas Fade in Seconds</h2>
+            <p class="text-xs text-text-muted max-w-[220px]">Watch how Trace captures thoughts instantly. (Sound On)</p>
+        </div>
+
+        <!-- ================= SCENES OVERLAY TEXTS ================= -->
+        <div
+            class="absolute inset-0 flex flex-col items-center justify-center p-8 z-40 text-center pointer-events-none">
+
+            <!-- Ticking Digital Clock Face (Scene 1) -->
+            <div id="ticking-clock-face"
+                class="absolute inset-0 flex flex-col items-center justify-center z-40 pointer-events-none opacity-0">
+                <span class="material-symbols-outlined text-[42px] text-secondary/25 mb-3 animate-pulse">schedule</span>
+                <span id="clock-digits" class="font-mono text-lg text-text-muted/80 tracking-widest">12:46:57 PM</span>
+            </div>
+
+            <!-- Scene 1 Hooks (Masked for slide-up reveal) -->
+            <div id="hook-container-1" class="relative h-20 overflow-hidden flex items-center justify-center w-full">
+                <div id="hook-text-1"
+                    class="text-[32px] font-bold leading-tight tracking-tight text-primary uppercase w-full opacity-0">
+                    Too many tabs.
+                </div>
+            </div>
+
+            <div id="hook-container-2" class="absolute h-20 overflow-hidden flex items-center justify-center w-full">
+                <div id="hook-text-2"
+                    class="text-[32px] font-bold leading-tight tracking-tight text-primary uppercase w-full opacity-0">
+                    Too many distractions.
+                </div>
+            </div>
+
+            <div id="hook-container-3" class="absolute h-20 overflow-hidden flex items-center justify-center w-full">
+                <div id="hook-text-3"
+                    class="text-[32px] font-bold leading-tight tracking-tight text-primary uppercase w-full opacity-0">
+                    Ideas fade.
+                </div>
+            </div>
+
+            <div id="hook-container-4" class="absolute h-20 overflow-hidden flex items-center justify-center w-full">
+                <div id="hook-text-4"
+                    class="text-[36px] font-extrabold leading-tight tracking-tighter text-secondary uppercase w-full opacity-0">
+                    Capture them.
+                </div>
+            </div>
+
+            <!-- Scene 2 Core Pitch (Placed below device to prevent overlaps) -->
+            <div id="reveal-pitch-text"
+                class="absolute top-[18%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 scale-90 max-w-xs">
+                Execute at the <br><span class="text-secondary font-semibold text-[28px]">speed of thought.</span>
+            </div>
+
+            <!-- Scene 3 Copy Overlays (Placed below device to prevent overlaps) -->
+            <div id="cut-text-flashback"
+                class="absolute right-[12%] top-[45%] -translate-y-1/2 text-[30px] font-bold text-secondary uppercase tracking-wider opacity-0 scale-90 text-right w-full max-w-[180px]">
+                Missed it?
+            </div>
+            <div id="cut-text-flashback-detail"
+                class="absolute top-[18%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 scale-90 max-w-xs text-center w-full">
+                Captures last <br><span class="text-secondary font-semibold text-[28px]">60s of audio.</span>
+            </div>
+            <div id="cut-text-transcribe"
+                class="absolute left-[12%] top-[42%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 max-w-xs text-left">
+                <span class="inline-block translate-y-2 opacity-0 transcribe-word">Flawless</span>
+                <span class="inline-block translate-y-2 opacity-0 transcribe-word">real-time</span> <br>
+                <span
+                    class="text-secondary font-semibold text-[28px] inline-block translate-y-2 opacity-0 transcribe-word">transcription.</span>
+            </div>
+            <div id="cut-text-summarize"
+                class="absolute top-[18%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 scale-90 max-w-xs text-center w-full">
+                Instantly <br><span class="text-secondary font-semibold text-[28px]">extract actions.</span>
+            </div>
+            <div id="cut-text-security"
+                class="absolute top-[18%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 scale-90 max-w-xs text-center w-full">
+                Military-grade <br><span class="text-secondary font-semibold text-[28px]">Encryption (AES-256)</span>
+            </div>
+
+            <!-- Scene 4 Sync Messages (Placed below device to prevent overlaps) -->
+            <div id="sync-headline-text"
+                class="absolute top-[18%] text-[24px] font-medium leading-snug tracking-tight text-primary opacity-0 scale-90 max-w-xs text-center w-full">
+                Zero-App Direct Sync
+            </div>
+            <div id="sync-sub-text"
+                class="absolute bottom-[26%] text-[14px] font-mono tracking-normal text-text-muted opacity-0 max-w-xs flex gap-3 justify-center items-center">
+                <span id="sync-word-notion" class="inline-block text-text-muted/40">To Notion.</span>
+                <span id="sync-word-slack" class="inline-block text-text-muted/40">To Slack.</span>
+                <span id="sync-word-obsidian" class="inline-block text-text-muted/40">To Obsidian.</span>
+            </div>
+        </div>
+
+        <!-- ================= TOP AREA: FLOATING FEATURE TAGS ================= -->
+        <div class="w-full flex justify-center z-30 mt-[16%]">
+            <div id="feature-tag-container" class="opacity-0 translate-y-[-20px]">
+                <div
+                    class="border border-secondary/30 rounded-full pl-3 pr-4 py-1.5 bg-surface/85 backdrop-blur-md inline-flex items-center gap-2 shadow-[0_4px_12px_rgba(0,230,153,0.15)]">
+                    <div class="relative w-1.5 h-1.5 flex items-center justify-center translate-y-[0.5px]">
+                        <span class="absolute w-3 h-3 rounded-full bg-secondary/40 animate-ping"></span>
+                        <span class="relative w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    </div>
+                    <span id="feature-tag-text"
+                        class="font-mono text-[11px] text-primary uppercase tracking-widest leading-none">Voice Activity
+                        Detection</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FLOATING INTEGRATION BADGES (Scene 4 - removed transition class) ================= -->
+        <div id="logo-notion"
+            class="absolute left-6 top-[28%] border border-border-subtle rounded-lg px-2.5 py-1.5 bg-surface/50 backdrop-blur-md inline-flex items-center gap-1.5 text-xs text-text-muted opacity-0 z-30 translate-x-[-20px]">
+            <span class="font-bold text-primary">N</span> Notion
+        </div>
+        <div id="logo-slack"
+            class="absolute right-[18%] top-[45%] border border-border-subtle rounded-lg px-2.5 py-1.5 bg-surface/50 backdrop-blur-md inline-flex items-center gap-1.5 text-xs text-text-muted opacity-0 z-30 translate-x-[20px]">
+            <span class="font-bold text-secondary">#</span> Slack
+        </div>
+        <div id="logo-obsidian"
+            class="absolute left-10 top-[60%] border border-border-subtle rounded-lg px-2.5 py-1.5 bg-surface/50 backdrop-blur-md inline-flex items-center gap-1.5 text-xs text-text-muted opacity-0 z-30 translate-x-[-20px]">
+            <span class="font-bold text-purple-400">♦</span> Obsidian
+        </div>
+
+        <!-- ================= MIDDLE AREA: THE DEVICE MOCKUP (Matched 1-to-1 with index.html) ================= -->
+        <div id="device-container"
+            class="relative w-full max-w-[256px] aspect-[368/448] flex items-center justify-center z-20 opacity-0 translate-y-[300px] my-auto">
+
+            <!-- Glow background effect behind device -->
+            <div id="device-glow"
+                class="absolute w-full h-full rounded-[32px] bg-secondary/5 blur-[40px] pointer-events-none transition-all duration-1000 opacity-50 z-0">
+            </div>
+
+            <!-- Outer Bezel / Case (exact classes from index.html / checkout.html / preview.html) -->
+            <div
+                class="relative w-full h-full bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center overflow-hidden z-10">
+
+                <!-- Glass Bezel Reflections (exact markup from index.html) -->
+                <div
+                    class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20">
+                </div>
+                <div
+                    class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20">
+                </div>
+
+                <!-- 1.8" Touch AMOLED Display Area (exact classes from index.html) -->
+                <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10"
+                    style="transform: translateZ(0);">
+
+                    <!-- Hardware Laser Scanning Line -->
+                    <div id="scanner-laser" class="laser-line"></div>
+
+                    <!-- Screen Status Bar (exact classes from index.html) -->
+                    <div id="device-status-bar"
+                        class="w-full flex justify-between items-center px-4 pt-2.5 pb-1.5 border-b border-neutral-900/40 text-[11px] font-label-mono text-text-muted/65 select-none bg-black shrink-0 z-20">
+                        <span id="device-time">12:47 PM</span>
+                        <span class="flex items-center gap-1">98% <span
+                                class="material-symbols-outlined text-[12px] text-text-muted/40">battery_50</span></span>
+                    </div>
+
+                    <!-- Screen Content Window (exact classes from index.html) -->
+                    <div class="relative flex-grow w-full overflow-hidden">
+
+                        <!-- Screen States (Capture, Flashback, Transcribe, Summarize, Sync, Encrypt) -->
+
+                        <!-- Capture Screen (active state from index.html) -->
+                        <div id="screen-capture"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-100 z-10">
+                            <!-- Screen Title -->
+                            <span class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2">Voice
+                                Capture</span>
+
+                            <!-- Center Wave Animation (Equalizer Wave Style - 9 Bars from index.html) -->
+                            <div id="waveform-area"
+                                class="flex items-center justify-center gap-1 h-16 w-full my-auto z-10 opacity-0">
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                                <div class="w-1.5 bg-secondary rounded-full waveform-bar" style="height: 4px;"
+                                    data-active="true"></div>
+                            </div>
+
+                            <!-- Status Info -->
+                            <span id="recording-status"
+                                class="text-secondary font-label-mono text-[11px] uppercase mb-2 animate-pulse">Recording...</span>
+                        </div>
+                        <div id="screen-flashback"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-0 z-10 translate-x-full">
+                            <!-- Header -->
+                            <span
+                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Buffer</span>
+
+                            <!-- Flashback loop wheel -->
+                            <div class="flex-grow flex flex-col justify-center items-center w-full py-4 relative">
+                                <!-- Concentric retroactive audio ripples (retro-vacuum effect) -->
+                                <div id="retro-ripples"
+                                    class="absolute pointer-events-none opacity-0 z-0 inset-0 flex items-center justify-center">
+                                    <div
+                                        class="ripple-ring absolute border border-secondary/35 rounded-full w-[240px] h-[240px] opacity-0">
+                                    </div>
+                                    <div
+                                        class="ripple-ring absolute border border-secondary/35 rounded-full w-[240px] h-[240px] opacity-0">
+                                    </div>
+                                    <div
+                                        class="ripple-ring absolute border border-secondary/35 rounded-full w-[240px] h-[240px] opacity-0">
+                                    </div>
+                                </div>
+
+                                <div id="flashback-wheel"
+                                    class="relative w-20 h-20 rounded-full border border-dashed border-secondary/35 flex items-center justify-center bg-secondary/5 z-10">
+                                    <span class="material-symbols-outlined text-[32px] text-secondary">history</span>
+                                </div>
+                                <span
+                                    class="font-label-mono text-[9px] text-secondary tracking-widest uppercase mt-4 z-10">60s
+                                    Loop Listening</span>
+
+                                <!-- Glowing Cursor Tap Indicator -->
+                                <div id="click-cursor"
+                                    class="absolute pointer-events-none opacity-0 z-20 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+                                    style="left: 50%; top: 50%;">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-secondary/20 border border-secondary/60 flex items-center justify-center shadow-[0_0_15px_rgba(0,230,153,0.4)]">
+                                        <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Bottom Spacer -->
+                            <div class="h-6 w-full shrink-0"></div>
+                        </div>
+
+                        <!-- Transcribe Screen (exact styling and layout from index.html) -->
+                        <div id="screen-transcribe"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-0 z-10 translate-x-full">
+                            <!-- Header -->
+                            <span
+                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Live
+                                Transcript</span>
+
+                            <!-- Main Transcript Text block -->
+                            <div class="flex-grow flex flex-col justify-center w-full py-4">
+                                <div id="transcript-lines-container"
+                                    class="border-l border-secondary/40 pl-3 space-y-1.5 w-full max-w-[220px] mx-auto text-left">
+                                    <!-- Dynamic typewriter lines appended here -->
+                                </div>
+                            </div>
+
+                            <!-- Bottom Spacer -->
+                            <div class="h-6 w-full shrink-0"></div>
+                        </div>
+
+                        <!-- Summarize Screen (Checklist - exact styling from index.html) -->
+                        <div id="screen-summarize"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-0 z-10 translate-x-full">
+                            <!-- Header -->
+                            <span
+                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">AI
+                                Summary</span>
+
+                            <!-- Main Summary checklist block -->
+                            <div class="flex-grow flex flex-col justify-center w-full py-4">
+                                <div id="checklist-container"
+                                    class="border-l border-secondary/40 pl-3 space-y-2.5 w-full max-w-[220px] mx-auto text-left">
+                                    <div class="checklist-item flex items-start gap-1.5 opacity-0 translate-y-[10px]">
+                                        <span class="text-secondary font-bold text-[14px] leading-snug">•</span>
+                                        <span class="font-body-md text-primary text-[12px] leading-snug">Streamline
+                                            client onboarding flow</span>
+                                    </div>
+                                    <div class="checklist-item flex items-start gap-1.5 opacity-0 translate-y-[10px]">
+                                        <span class="text-secondary font-bold text-[14px] leading-snug">•</span>
+                                        <span class="font-body-md text-primary text-[12px] leading-snug">Remove steps 3
+                                            & 4 friction points</span>
+                                    </div>
+                                    <div class="checklist-item flex items-start gap-1.5 opacity-0 translate-y-[10px]">
+                                        <span class="text-secondary font-bold text-[14px] leading-snug">•</span>
+                                        <span class="font-body-md text-primary text-[12px] leading-snug">Integrate quick
+                                            Stripe transactions</span>
+                                    </div>
+                                    <div class="checklist-item flex items-start gap-1.5 opacity-0 translate-y-[10px]">
+                                        <span class="text-secondary font-bold text-[14px] leading-snug">•</span>
+                                        <span class="font-body-md text-primary text-[12px] leading-snug">Schedule A/B
+                                            test for next cohort</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Spacer -->
+                            <div class="h-6 w-full shrink-0"></div>
+                        </div>
+
+                        <!-- Encrypt Screen (Scene 3 lock resolver) -->
+                        <div id="screen-encrypt"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-0 z-10 translate-x-full">
+                            <!-- Header -->
+                            <span
+                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Security</span>
+
+                            <!-- Main Lock Body -->
+                            <div class="flex-grow flex flex-col justify-center items-center w-full py-4 relative">
+                                <div id="lock-wrapper"
+                                    class="relative w-[80px] h-[100px] flex items-center justify-center mt-2">
+                                    <svg id="sd-card-vector"
+                                        class="absolute inset-0 w-full h-full text-secondary/70 drop-shadow-[0_0_15px_rgba(0,230,153,0.2)]"
+                                        viewBox="0 0 110 130" fill="none" stroke="currentColor" stroke-width="4"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <defs>
+                                            <clipPath id="sd-fill-clip">
+                                                <rect id="sd-fill-rect" x="0" y="130" width="110" height="0" />
+                                            </clipPath>
+                                        </defs>
+
+                                        <!-- Fill (bottom to top animation) -->
+                                        <path
+                                            d="M 35 10 L 85 10 Q 95 10, 95 20 L 95 110 Q 95 120, 85 120 L 25 120 Q 15 120, 15 110 L 15 85 L 25 75 L 25 65 L 15 65 L 15 50 L 25 40 L 25 20 Q 25 10, 35 10 Z"
+                                            fill="currentColor" stroke="none" opacity="0.25"
+                                            clip-path="url(#sd-fill-clip)" />
+
+                                        <!-- Outline -->
+                                        <path class="sd-card-path"
+                                            d="M 35 10 L 85 10 Q 95 10, 95 20 L 95 110 Q 95 120, 85 120 L 25 120 Q 15 120, 15 110 L 15 85 L 25 75 L 25 65 L 15 65 L 15 50 L 25 40 L 25 20 Q 25 10, 35 10 Z" />
+
+                                        <!-- Pins -->
+                                        <line class="sd-card-path" x1="40" y1="25" x2="40" y2="45" />
+                                        <line class="sd-card-path" x1="50" y1="25" x2="50" y2="45" />
+                                        <line class="sd-card-path" x1="60" y1="25" x2="60" y2="45" />
+                                        <line class="sd-card-path" x1="70" y1="25" x2="70" y2="45" />
+                                        <line class="sd-card-path" x1="80" y1="25" x2="80" y2="45" />
+
+                                        <!-- Bottom Rectangle -->
+                                        <rect class="sd-card-path" x="30" y="85" width="50" height="20" rx="4" ry="4" />
+                                    </svg>
+                                    <span id="lock-icon"
+                                        class="material-symbols-outlined text-[24px] text-black opacity-0 translate-y-2 absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-secondary rounded-full p-1.5 shadow-[0_0_15px_rgba(0,230,153,0.5)]">lock</span>
+                                </div>
+                                <span id="lock-status"
+                                    class="font-label-mono text-[9px] text-secondary tracking-widest uppercase mt-4">Storage
+                                    Encrypted</span>
+                            </div>
+
+                            <!-- Bottom Spacer -->
+                            <div class="h-6 w-full shrink-0"></div>
+                        </div>
+
+                        <!-- Sync Screen (exact styling and layout from index.html) -->
+                        <div id="screen-sync"
+                            class="screen-content absolute inset-0 flex flex-col items-center justify-between p-4 bg-black opacity-0 z-10 translate-x-full">
+                            <!-- Header -->
+                            <span
+                                class="font-body-md text-text-muted text-[12px] uppercase tracking-wider mt-2 select-none">Sync</span>
+
+                            <!-- Main Sync Text block -->
+                            <div class="flex-grow flex flex-col justify-center w-full py-4">
+                                <div
+                                    class="border-l border-secondary/40 pl-3 space-y-2.5 w-full max-w-[220px] mx-auto text-left">
+                                    <div class="flex items-center gap-2">
+                                        <span id="sync-icon"
+                                            class="material-symbols-outlined text-primary text-base">sync</span>
+                                        <span id="sync-status-text"
+                                            class="font-body-md text-primary text-[12px] leading-snug">Syncing...</span>
+                                    </div>
+                                    <div
+                                        class="w-full bg-neutral-900 border border-neutral-850 h-2 rounded-full overflow-hidden">
+                                        <div id="sync-progress-bar" class="w-0 h-full bg-secondary rounded-full">
+                                        </div>
+                                    </div>
+                                    <p id="sync-storage-text"
+                                        class="font-label-mono text-text-muted/65 text-[10px] uppercase tracking-wider">
+                                        Storage: 0.0 MB / 4.8 MB</p>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Spacer -->
+                            <div class="h-6 w-full shrink-0"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BOTTOM AREA: CTA BLOCK ================= -->
+        <div id="cta-block" class="w-full flex flex-col items-center opacity-0 translate-y-[30px] z-30 pb-4">
+
+            <div class="flex flex-col items-center text-center w-full max-w-[320px]">
+                <!-- Branding Tag -->
+                <div
+                    class="mb-3 px-3 py-1 border border-border-subtle rounded-full inline-flex items-center gap-1.5 bg-black/40 shadow-inner">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    <span class="font-mono text-[9px] text-text-muted uppercase tracking-widest">TRACE //
+                        PRE-ORDER</span>
+                </div>
+
+                <!-- Pricing Pulse Info -->
+                <div class="text-[22px] font-semibold text-primary tracking-tight mb-1">
+                    ₹2,499.00 <span
+                        class="text-secondary font-medium text-[15px] block sm:inline mt-0.5 sm:mt-0">Pre-order</span>
+                </div>
+
+                <!-- Website link -->
+                <div class="text-[12px] font-mono text-text-muted tracking-wider opacity-80 mt-1">
+                    trace.innoveloper.com
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Safe Area Overlay (Hidden by default) -->
+        <div id="safe-area-overlay" class="absolute inset-0 z-[60] pointer-events-none hidden">
+            <!-- Unsafe Top Area (Platform Headers/Following) -->
+            <div
+                class="absolute top-0 left-0 w-full h-[15%] bg-red-500/20 border-b border-red-500/50 flex items-start justify-center pt-3">
+                <span
+                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Unsafe
+                    (Top UI)</span>
+            </div>
+
+            <!-- Unsafe Right Area (Engagement buttons) -->
+            <div
+                class="absolute top-[35%] right-0 w-[15%] h-[40%] bg-red-500/20 border-l border-red-500/50 flex items-center justify-center">
+                <span
+                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded -rotate-90">Interactions</span>
+            </div>
+
+            <!-- Unsafe Bottom Area (Captions/Description) -->
+            <div
+                class="absolute bottom-0 left-0 w-full h-[25%] bg-red-500/20 border-t border-red-500/50 flex items-end justify-center pb-3">
+                <span
+                    class="text-[9px] font-mono text-red-400 opacity-90 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Unsafe
+                    (Captions)</span>
+            </div>
+
+            <!-- Safe Zone Border -->
+            <div
+                class="absolute top-[15%] bottom-[25%] left-0 right-[15%] border-2 border-dashed border-secondary/40 rounded-sm">
+                <span
+                    class="absolute top-2 left-2 text-[9px] font-mono text-secondary/70 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded">Safe
+                    Zone</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Media Controls -->
+    <div
+        class="mt-6 flex flex-col items-center gap-3 bg-surface/80 backdrop-blur-md border border-border-subtle rounded-2xl px-6 py-4 shadow-lg z-50 min-w-[360px]">
+        <div class="flex items-center justify-between w-full text-[11px] font-mono text-text-muted">
+            <span id="media-time-display">0.0s / 0.0s</span>
+            <span id="media-scene-display" class="text-secondary font-medium tracking-wide">Scene 1: The Hook</span>
+        </div>
+        <div class="flex items-center justify-between gap-4 w-full">
+            <button id="media-play-pause"
+                class="flex items-center justify-center text-primary hover:text-secondary transition-colors focus:outline-none"
+                title="Play/Pause">
+                <span class="material-symbols-outlined text-[24px]" id="media-play-icon">pause</span>
+            </button>
+            <div class="flex-grow h-2 bg-neutral-800/80 rounded-full overflow-hidden relative cursor-pointer group"
+                id="media-scrubber-bg">
+                <div id="media-progress"
+                    class="absolute top-0 left-0 h-full bg-secondary w-0 pointer-events-none rounded-full"></div>
+                <!-- Hover effect line -->
+                <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <button id="media-restart"
+                class="flex items-center justify-center text-primary hover:text-secondary transition-colors focus:outline-none"
+                title="Restart">
+                <span class="material-symbols-outlined text-[24px]">replay</span>
+            </button>
+        </div>
+        <!-- Safe Zone Toggle -->
+        <div class="flex items-center justify-center w-full pt-3 mt-1 border-t border-border-subtle/30">
+            <label
+                class="flex items-center gap-2 cursor-pointer text-text-muted hover:text-primary transition-colors text-[10px] font-mono uppercase tracking-wider">
+                <input type="checkbox" id="toggle-safe-area" class="accent-secondary w-3 h-3 cursor-pointer">
+                Show Platform Safe Zones
+            </label>
+        </div>
+    </div>
+
+    <!-- Replay / Screen Record Helper floating button -->
+    <button id="replay-btn"
+        class="fixed bottom-6 right-6 w-12 h-12 bg-surface hover:bg-neutral-900 border border-border-subtle text-primary hover:text-secondary rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-50 focus:outline-none opacity-0 pointer-events-none"
+        title="Restart Animation">
+        <span class="material-symbols-outlined text-[22px]">replay</span>
+    </button>
+
+    <!-- ================= WEBAUDIO Programmatic Synthesizer ================= -->
+    <script>
+        class SoundSynth {
+            constructor() {
+                this.ctx = null;
+                this.droneOscs = [];
+                this.droneGain = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            // Warm ambient synthesizer chord pad (Google Vids style)
+            playDrone() {
+                this.init();
+                const now = this.ctx.currentTime;
+
+                this.droneOscs = [];
+
+                // Warm major chord stack (A2 = 110Hz, C#3 = 138.6Hz, E3 = 164.8Hz)
+                const frequencies = [110.00, 138.59, 164.81];
+
+                this.droneGain = this.ctx.createGain();
+                this.droneGain.gain.setValueAtTime(0, now);
+                this.droneGain.gain.linearRampToValueAtTime(0.18, now + 1.5);
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(250, now);
+                filter.frequency.linearRampToValueAtTime(320, now + 5.0);
+                filter.Q.setValueAtTime(1.0, now);
+
+                frequencies.forEach(freq => {
+                    const osc = this.ctx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    osc.connect(filter);
+                    this.droneOscs.push(osc);
+                    osc.start(now);
+                });
+
+                filter.connect(this.droneGain);
+                this.droneGain.connect(this.ctx.destination);
+            }
+
+            stopDrone() {
+                if (this.droneOscs && this.droneGain) {
+                    const now = this.ctx.currentTime;
+                    try {
+                        this.droneGain.gain.cancelScheduledValues(now);
+                        this.droneGain.gain.setValueAtTime(this.droneGain.gain.value, now);
+                        this.droneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                        this.droneOscs.forEach(osc => osc.stop(now + 0.65));
+                    } catch (e) { }
+                    this.droneOscs = null;
+                }
+            }
+
+            // Clock tick-tock sounds (Scene 1)
+            playTickTock(isTock = false) {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(isTock ? 1100 : 1400, now);
+
+                gain.gain.setValueAtTime(0.015, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.02);
+            }
+
+            // Heavy sub-kick bass drum beat (Scene 1 rhythm)
+            playBassDrum() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(45, now + 0.15);
+
+                gain.gain.setValueAtTime(0.38, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+
+            // Clean electronic resonant swoosh sweep (Vids UI style)
+            playWhoosh() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(950, now + 0.6);
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(300, now);
+                filter.frequency.exponentialRampToValueAtTime(1200, now + 0.6);
+                filter.Q.setValueAtTime(2.0, now);
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.18, now + 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.65);
+            }
+
+            // High-pass digital bubble/tap clicking sound (Premium smartphone keyboard clicks)
+            playClick() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(anime.random(1100, 1400), now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.04);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+
+            // Mechanical keyboard click
+            playTypewriter() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                // Start high for the sharp plastic "clack" and drop fast
+                osc.frequency.setValueAtTime(anime.random(2500, 3000), now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.015);
+
+                // Fast decay envelope
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.03);
+            }
+
+            // High-pass sweep/tick for rapid text chain flashes
+            playFlash() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1500, now + 0.08);
+
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.09);
+            }
+
+            // Soft mechanical toggle dial-lock click
+            playLockClick() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.05);
+
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.06);
+            }
+
+            // Melodic bell alert chime with delay echoes
+            playChime() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const notes = [440, 554.37, 659.25, 880.00]; // A4 -> C#5 -> E5 -> A5
+
+                const delay = this.ctx.createDelay();
+                delay.delayTime.setValueAtTime(0.15, now);
+                const feedback = this.ctx.createGain();
+                feedback.gain.setValueAtTime(0.38, now); // 38% feedback echo
+
+                delay.connect(feedback);
+                feedback.connect(delay); // feedback loop
+
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+                    gain.gain.setValueAtTime(0, now + idx * 0.08);
+                    gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.08 + 0.018);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.7);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination); // direct path
+                    gain.connect(delay); // delay send path
+
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.75);
+                });
+
+                delay.connect(this.ctx.destination);
+            }
+
+            // Soft electronic scanner laser frequency sweep
+            playScan() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(700, now);
+                osc.frequency.exponentialRampToValueAtTime(130, now + 1.25);
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.05, now + 0.15);
+                gain.gain.linearRampToValueAtTime(0.05, now + 0.95);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.25);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 1.3);
+            }
+
+            // High frequency ding click (checkbox checklist)
+            playTick() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1450, now);
+                osc.frequency.exponentialRampToValueAtTime(2100, now + 0.06);
+
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.1);
+            }
+
+            // Final lock click resolving to warm A-major chord
+            playOutroResolution() {
+                this.init();
+                const now = this.ctx.currentTime;
+
+                // 1. Final dial lock thud
+                const lockOsc = this.ctx.createOscillator();
+                const lockGain = this.ctx.createGain();
+                lockOsc.type = 'triangle';
+                lockOsc.frequency.setValueAtTime(120, now);
+                lockGain.gain.setValueAtTime(0.28, now);
+                lockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                lockOsc.connect(lockGain);
+                lockGain.connect(this.ctx.destination);
+                lockOsc.start(now);
+                lockOsc.stop(now + 0.14);
+
+                // 2. Warm A major chord (A3, C#4, E4, A4) with 0.1s offset
+                const frequencies = [220.00, 277.18, 329.63, 440.00];
+                const delay = this.ctx.createDelay();
+                delay.delayTime.setValueAtTime(0.18, now + 0.1);
+                const feedback = this.ctx.createGain();
+                feedback.gain.setValueAtTime(0.40, now + 0.1);
+
+                delay.connect(feedback);
+                feedback.connect(delay);
+
+                frequencies.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + 0.1 + idx * 0.05);
+
+                    gain.gain.setValueAtTime(0, now + 0.1 + idx * 0.05);
+                    gain.gain.linearRampToValueAtTime(0.08, now + 0.1 + idx * 0.05 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1 + idx * 0.05 + 1.2);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    gain.connect(delay);
+
+                    osc.start(now + 0.1 + idx * 0.05);
+                    osc.stop(now + 0.1 + idx * 0.05 + 1.3);
+                });
+
+                delay.connect(this.ctx.destination);
+            }
+        }
+
+        const sfx = new SoundSynth();
+    </script>
+
+    <!-- ================= ANIME.JS ANIMATION SEQUENCE ================= -->
+    <script>
+        // Waveform Animation variables
+        let waveformInterval;
+        let typewriterTimeout;
+        let mainTimeline;
+
+        let volumeHistory = Array(14).fill(0.1);
+        let isSpeaking = true;
+        let speechTimer = 0;
+        let masterVolume = 0.1;
+        const bgLeftMultipliers = [4, 6, 8, 10, 12, 16, 20, 24, 28, 32, 24, 16, 10, 6];
+        const bgRightMultipliers = [6, 10, 16, 24, 32, 28, 20, 16, 12, 10, 8, 6, 4, 4];
+        const deviceMultipliers = [0.25, 0.45, 0.75, 0.95, 1.0, 0.9, 0.7, 0.45, 0.25]; // 9 bars
+
+        // Start random animation for waveform bars (equalizer mode)
+        function startWaveforms() {
+            const bars = document.querySelectorAll('.waveform-bar');
+            bars.forEach(bar => {
+                bar.setAttribute('data-active', 'true');
+                bar.style.transform = 'none'; // clear scaleY overrides
+            });
+
+            const bgWaveBars = document.querySelectorAll('.animate-bg-wave');
+            bgWaveBars.forEach(bar => {
+                bar.setAttribute('data-active', 'true');
+                bar.style.transform = 'none'; // clear scaleY overrides
+            });
+
+            volumeHistory = Array(14).fill(0.1);
+            isSpeaking = true;
+            speechTimer = 0;
+
+            clearInterval(waveformInterval);
+            waveformInterval = setInterval(() => {
+                // Update conversational state
+                speechTimer -= 80;
+                if (speechTimer <= 0) {
+                    isSpeaking = !isSpeaking;
+                    speechTimer = isSpeaking ? (1800 + Math.random() * 1400) : (600 + Math.random() * 600);
+                }
+
+                if (isSpeaking) {
+                    masterVolume = 0.25 + Math.random() * 0.75;
+                } else {
+                    masterVolume = 0.05 + Math.random() * 0.08;
+                }
+
+                volumeHistory.unshift(masterVolume);
+                volumeHistory.pop();
+
+                // 1. Update Centered Device Equalizer Bars (9 bars)
+                bars.forEach((bar, idx) => {
+                    const isActive = bar.getAttribute('data-active') === 'true';
+                    if (isActive) {
+                        const mult = deviceMultipliers[idx] || 0.5;
+                        const fluctuation = 0.85 + Math.random() * 0.3; // 85% to 115%
+                        const targetHeight = Math.max(4, masterVolume * mult * fluctuation * 56);
+                        bar.style.height = `${targetHeight}px`;
+                    }
+                });
+
+                // 2. Update Symmetrical Propagating Background Wave (28 bars: 14 left, 14 right)
+                bgWaveBars.forEach((bar, idx) => {
+                    const isActive = bar.getAttribute('data-active') === 'true';
+                    if (isActive) {
+                        let historyIndex;
+                        let multiplier;
+                        if (idx < 14) {
+                            historyIndex = 13 - idx;
+                            multiplier = bgLeftMultipliers[idx];
+                        } else {
+                            historyIndex = idx - 14;
+                            multiplier = bgRightMultipliers[idx - 14];
+                        }
+                        const val = volumeHistory[historyIndex] || 0.15;
+                        const fluctuation = 0.88 + Math.random() * 0.24;
+                        const targetHeight = Math.max(4, val * multiplier * fluctuation);
+                        bar.style.height = `${targetHeight}px`;
+                    }
+                });
+            }, 80);
+        }
+
+        // Freeze/shrink waveforms
+        function stopWaveforms() {
+            clearInterval(waveformInterval);
+            const bars = document.querySelectorAll('.waveform-bar');
+            bars.forEach(bar => {
+                bar.setAttribute('data-active', 'false');
+                bar.style.height = '';
+                bar.style.transform = 'none';
+                bar.style.opacity = '0.5';
+            });
+            const bgWaveBars = document.querySelectorAll('.animate-bg-wave');
+            bgWaveBars.forEach(bar => {
+                bar.setAttribute('data-active', 'false');
+                bar.style.transform = 'none';
+                bar.style.height = '';
+            });
+        }
+
+        // Active scrolling typewriter transcription simulation
+        function startTypingSequence() {
+            const container = document.getElementById('transcript-lines-container');
+            container.innerHTML = '';
+            clearTimeout(typewriterTimeout);
+
+            // Line 1: already typed
+            const p1 = document.createElement('p');
+            p1.className = 'font-body-md text-text-muted text-[12px] leading-normal opacity-40 transition-all duration-300';
+            p1.textContent = 'Draft an email to the';
+            container.appendChild(p1);
+
+            // Line 2: already typed
+            const p2 = document.createElement('p');
+            p2.className = 'font-body-md text-text-muted text-[12px] leading-normal opacity-65 transition-all duration-300';
+            p2.textContent = 'engineering team about the';
+            container.appendChild(p2);
+
+            // Line 3: active typing...
+            const p3 = document.createElement('p');
+            p3.className = 'font-body-md text-primary text-[12px] leading-normal font-medium transition-all duration-300 opacity-100';
+            container.appendChild(p3);
+
+            const line3Text = "new specs. Also, review the";
+            const line4Text = "budget at 3 PM.";
+
+            let i = 0;
+            function typeLine3() {
+                if (i < line3Text.length) {
+                    p3.textContent = line3Text.slice(0, i + 1) + '|';
+                    i++;
+                    sfx.playTypewriter();
+                    typewriterTimeout = setTimeout(typeLine3, 40);
+                } else {
+                    p3.textContent = line3Text; // remove typing cursor
+
+                    // Transition lines up: Line 1 fades completely, Line 2 -> Line 1 (opacity 40%), Line 3 -> Line 2 (opacity 65%)
+                    p1.style.opacity = 0;
+                    p1.style.transform = 'translateY(-4px)';
+                    p2.className = 'font-body-md text-text-muted text-[12px] leading-normal opacity-40 transition-all duration-300';
+                    p3.className = 'font-body-md text-text-muted text-[12px] leading-normal opacity-65 transition-all duration-300';
+
+                    typewriterTimeout = setTimeout(() => {
+                        p1.remove();
+
+                        // Line 4: active typing...
+                        const p4 = document.createElement('p');
+                        p4.className = 'font-body-md text-primary text-[12px] leading-normal font-medium transition-all duration-300 opacity-100';
+                        container.appendChild(p4);
+
+                        let j = 0;
+                        function typeLine4() {
+                            if (j < line4Text.length) {
+                                p4.textContent = line4Text.slice(0, j + 1) + '|';
+                                j++;
+                                sfx.playTypewriter();
+                                typewriterTimeout = setTimeout(typeLine4, 40);
+                            } else {
+                                p4.textContent = line4Text; // remove typing cursor
+                            }
+                        }
+                        typeLine4();
+                    }, 400);
+                }
+            }
+
+            // start typewriter execution
+            typewriterTimeout = setTimeout(typeLine3, 200);
+        }
+
+        // Programmatic emission of sync particles (Notion, Slack, Obsidian)
+        function emitSyncParticles() {
+            const canvas = document.getElementById('motion-canvas');
+            const targets = ['logo-notion', 'logo-slack', 'logo-obsidian'];
+
+            targets.forEach((targetId, idx) => {
+                const targetEl = document.getElementById(targetId);
+                if (!targetEl) return;
+
+                // Emit 6 particles for each target
+                for (let p = 0; p < 6; p++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'absolute w-1.5 h-1.5 bg-secondary rounded-full shadow-[0_0_8px_#00E699] z-40';
+                        // Start at screen center (relative to canvas container)
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        canvas.appendChild(particle);
+
+                        const targetRect = targetEl.getBoundingClientRect();
+                        const canvasRect = canvas.getBoundingClientRect();
+
+                        const destX = targetRect.left - canvasRect.left + targetRect.width / 2;
+                        const destY = targetRect.top - canvasRect.top + targetRect.height / 2;
+
+                        // Animate particle path
+                        anime({
+                            targets: particle,
+                            left: destX,
+                            top: destY,
+                            opacity: [1, 0.8, 0],
+                            scale: [0.5, 1.2, 0.2],
+                            duration: 750 + Math.random() * 350,
+                            easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                            complete: () => {
+                                particle.remove();
+                                // Border glow hit effect on target logo
+                                anime({
+                                    targets: `#${targetId}`,
+                                    scale: [1, 1.15, 1],
+                                    borderColor: ['#262626', '#00E699', '#262626'],
+                                    color: ['#A3A3A3', '#00E699', '#A3A3A3'],
+                                    duration: 600,
+                                    easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)'
+                                });
+                            }
+                        });
+                    }, idx * 120 + p * 70);
+                }
+            });
+        }
+
+        // Slide OS Display Panels horizontally
+        function slideDisplayScreen(fromId, toId) {
+            anime({
+                targets: `#${fromId}`,
+                translateX: -240,
+                opacity: 0,
+                duration: 450,
+                easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+            });
+            anime({
+                targets: `#${toId}`,
+                translateX: [240, 0],
+                opacity: [0, 1],
+                duration: 450,
+                easing: 'cubicBezier(0.25, 1, 0.2, 1)',
+                begin: () => {
+                    document.getElementById(toId).style.zIndex = 20;
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Initialize main Anime.js timeline
+            mainTimeline = anime.timeline({
+                autoplay: false, // Wait until clicked/unlocked
+                loop: false,
+                update: function (anim) {
+                    const progressEl = document.getElementById('media-progress');
+                    if (progressEl) {
+                        progressEl.style.width = anim.progress + '%';
+                    }
+
+                    const timeDisplay = document.getElementById('media-time-display');
+                    const sceneDisplay = document.getElementById('media-scene-display');
+
+                    if (timeDisplay && sceneDisplay) {
+                        const currentSec = (anim.currentTime / 1000).toFixed(1);
+                        const durationSec = (anim.duration / 1000).toFixed(1);
+                        timeDisplay.innerText = `${currentSec}s / ${durationSec}s`;
+
+                        let sceneName = "Scene 1: The Hook";
+                        if (currentSec >= 25.0) {
+                            sceneName = "Scene 5: CTA";
+                        } else if (currentSec >= 19.5) {
+                            sceneName = "Scene 4: Ecosystem Sync";
+                        } else if (currentSec >= 17.0) {
+                            sceneName = "Scene 3: Encrypt";
+                        } else if (currentSec >= 14.5) {
+                            sceneName = "Scene 3: AI Summary";
+                        } else if (currentSec >= 12.0) {
+                            sceneName = "Scene 3: Transcribe";
+                        } else if (currentSec >= 9.5) {
+                            sceneName = "Scene 3: Flashback";
+                        } else if (currentSec >= 4.5) {
+                            sceneName = "Scene 2: Reveal";
+                        }
+                        sceneDisplay.innerText = sceneName;
+                    }
+                }
+            });
+
+            // Reset UI states before animation starts
+            function resetUI() {
+                stopWaveforms();
+                clearTimeout(typewriterTimeout);
+                sfx.stopDrone();
+
+                document.getElementById('transcript-lines-container').innerHTML = "";
+                document.getElementById('device-container').className = "relative w-full max-w-[256px] aspect-[368/448] flex items-center justify-center z-20";
+                document.getElementById('clock-digits').innerText = "12:46:58 PM";
+
+                // Reset sync words highlighting
+                anime.set(['#sync-word-notion', '#sync-word-slack', '#sync-word-obsidian'], { color: 'rgba(163, 163, 163, 0.4)', scale: 1 });
+
+                // Clear any inline styles set by Anime.js to restart smoothly (exclude #motion-canvas)
+                anime.set([
+                    '#hook-text-1', '#hook-text-2', '#hook-text-3', '#hook-text-4',
+                    '#reveal-pitch-text', '#cut-text-flashback', '#cut-text-security',
+                    '#sync-headline-text', '#sync-sub-text', '#ticking-clock-face',
+                    '#feature-tag-container', '#device-container',
+                    '#waveform-area', '#screen-capture', '#screen-flashback', '#screen-transcribe',
+                    '#screen-summarize', '#screen-sync', '#screen-encrypt', '#scanner-laser',
+                    '#cta-block', '#device-glow', '.checklist-item',
+                    '#logo-notion', '#logo-slack', '#logo-obsidian', '.sd-card-path', '#lock-icon'
+                ], {
+                    opacity: 0,
+                    scale: 1,
+                    translateY: 0,
+                    translateX: 0,
+                    rotateX: 0,
+                    rotateY: 0,
+                    rotateZ: 0
+                });
+
+                // Reset masked translates for kinetic reveals (start 100px down and fully transparent)
+                anime.set(['#hook-text-1', '#hook-text-2', '#hook-text-3', '#hook-text-4'], { translateY: 100, opacity: 0 });
+                anime.set('#ticking-clock-face', { opacity: 0, scale: 1 });
+                anime.set('#bg-waveform', { opacity: 0 });
+
+                // Set default styles with cubic bezier offsets (keep device flat 2D layout)
+                anime.set('#device-container', { translateY: 340 });
+                anime.set('#feature-tag-container', { translateY: -30 });
+                anime.set('#cta-block', { translateY: 40 });
+                anime.set('#sd-fill-rect', { y: 130, height: 0 });
+                anime.set('#screen-capture', { opacity: 1, translateX: 0, zIndex: 10 });
+                anime.set('#screen-flashback', { opacity: 0, translateX: 240, zIndex: 0 });
+                anime.set('#screen-encrypt', { opacity: 0, translateX: 240, zIndex: 0 });
+                anime.set('#screen-transcribe', { opacity: 0, translateX: 240, zIndex: 0 });
+                anime.set('#screen-summarize', { opacity: 0, translateX: 240, zIndex: 0 });
+                anime.set('#screen-sync', { opacity: 0, translateX: 240, zIndex: 0 });
+
+                // Initialize progress bar
+                anime.set('#sync-progress-bar', { width: '0%', opacity: 1 });
+
+                anime.set('#device-status-bar', { opacity: 1 });
+
+                // Reset new flashback elements
+                anime.set(['#click-cursor', '#retro-ripples', '.ripple-ring', '#cut-text-flashback-detail', '#cut-text-transcribe', '#cut-text-summarize'], { opacity: 0 });
+                anime.set('.transcribe-word', { opacity: 0, translateY: 8 });
+                anime.set('#click-cursor', { translateX: 0, translateY: 0, scale: 1 });
+                anime.set('.ripple-ring', { scale: 1 });
+                anime.set('#flashback-wheel', { rotateZ: 0 });
+                const timeEl = document.getElementById('device-time');
+                if (timeEl) timeEl.innerText = '12:47 PM';
+            }
+
+            // Define Anime.js timeline steps with smooth cubic bezier parameters
+            function buildTimeline() {
+
+                // ================= SCENE 1: THE STORY HOOK (0s - 5.0s) =================
+                mainTimeline
+                    // Start clock ticking sequence (0.0s - 1.5s)
+                    .add({
+                        targets: '#ticking-clock-face',
+                        opacity: [0, 1],
+                        duration: 400,
+                        easing: 'easeOutQuad',
+                        begin: () => {
+                            resetUI();
+                            sfx.playTickTock(false); // Tick 1 (0.0s)
+                        }
+                    })
+                    .add({
+                        targets: '#motion-canvas',
+                        duration: 500,
+                        begin: () => { sfx.playTickTock(true); } // Tock 1 (0.5s)
+                    })
+                    .add({
+                        targets: '#clock-digits',
+                        duration: 500,
+                        begin: () => {
+                            document.getElementById('clock-digits').innerText = "12:46:59 PM";
+                            sfx.playTickTock(false); // Tick 2 (1.0s)
+                        }
+                    })
+                    .add({
+                        targets: '#ticking-clock-face',
+                        opacity: 0,
+                        scale: 0.9,
+                        duration: 400,
+                        easing: 'easeInQuad',
+                        begin: () => {
+                            document.getElementById('clock-digits').innerText = "12:47:00 PM";
+                        }
+                    })
+
+                    // Rhythmic Sub-Bass kick drum hits synchronized to aggressive text reveals (3.0s - 5.0s)
+
+                    // Beat 1: Too many tabs (3.0s)
+                    .add({
+                        targets: '#hook-text-1',
+                        translateY: [100, 0],
+                        opacity: [0, 1],
+                        duration: 350,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)',
+                        begin: () => { sfx.playBassDrum(); }
+                    }, '-=200')
+                    // Hold Beat 1
+                    .add({
+                        targets: '#hook-text-1',
+                        duration: 150
+                    })
+                    // Beat 2: Too many distractions (3.5s)
+                    .add({
+                        targets: '#hook-text-1',
+                        translateY: -100,
+                        opacity: 0,
+                        duration: 150,
+                        easing: 'easeInQuad'
+                    })
+                    .add({
+                        targets: '#hook-text-2',
+                        translateY: [100, 0],
+                        opacity: [0, 1],
+                        duration: 350,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)',
+                        begin: () => { sfx.playBassDrum(); }
+                    }, '-=150')
+                    // Hold Beat 2
+                    .add({
+                        targets: '#hook-text-2',
+                        duration: 150
+                    })
+                    // Beat 3: Ideas fade (4.0s)
+                    .add({
+                        targets: '#hook-text-2',
+                        translateY: -100,
+                        opacity: 0,
+                        duration: 150,
+                        easing: 'easeInQuad'
+                    })
+                    .add({
+                        targets: '#hook-text-3',
+                        translateY: [100, 0],
+                        opacity: [0, 1],
+                        duration: 350,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)',
+                        begin: () => { sfx.playBassDrum(); }
+                    }, '-=150')
+                    // Hold Beat 3
+                    .add({
+                        targets: '#hook-text-3',
+                        duration: 150
+                    })
+                    // Beat 4: Capture them (4.5s)
+                    .add({
+                        targets: '#hook-text-3',
+                        translateY: -100,
+                        opacity: 0,
+                        duration: 150,
+                        easing: 'easeInQuad'
+                    })
+                    .add({
+                        targets: '#hook-text-4',
+                        translateY: [100, 0],
+                        opacity: [0, 1],
+                        duration: 350,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)', // Overshoot
+                        begin: () => { sfx.playBassDrum(); }
+                    }, '-=150')
+                    // Hold Beat 4
+                    .add({
+                        targets: '#hook-text-4',
+                        duration: 150
+                    })
+                    // Clear Hook 4
+                    .add({
+                        targets: '#hook-text-4',
+                        translateY: -100,
+                        opacity: 0,
+                        duration: 300,
+                        easing: 'easeInQuad'
+                    })
+
+                // ================= SCENE 2: THE HARDWARE REVEAL (5.0s - 10.0s) =================
+                mainTimeline
+                    // Slide up Device Mockup smoothly (no camera-shake)
+                    .add({
+                        targets: '#device-container',
+                        opacity: [0, 1],
+                        translateY: [340, 0],
+                        duration: 1100,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.12)', // Premium flat bounce
+                        begin: () => {
+                            sfx.playWhoosh();
+                        },
+                        complete: () => {
+                            sfx.playChime();
+                        }
+                    })
+                    // Slide down Feature Tag
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: [0, 1],
+                        translateY: [-30, 0],
+                        duration: 600,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        changeBegin: () => {
+                            document.getElementById('feature-tag-text').innerText = "Dedicated AI Hardware";
+                        }
+                    }, '-=900')
+                    // Fade in pitch overlay copy (Execute at the speed of thought)
+                    .add({
+                        targets: '#reveal-pitch-text',
+                        opacity: [0, 1],
+                        scale: [0.9, 1],
+                        duration: 750,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=700')
+                    .add({
+                        targets: ['#waveform-area', '#bg-waveform'],
+                        opacity: (el) => {
+                            return el.id === 'bg-waveform' ? [0, 0.35] : [0, 1];
+                        },
+                        duration: 600,
+                        easing: 'easeOutQuad',
+                        begin: () => {
+                            startWaveforms();
+                        },
+                        delay: 200
+                    })
+                    // Let waveforms run, then fade pitch text out
+                    .add({
+                        targets: '#reveal-pitch-text',
+                        opacity: 0,
+                        scale: 1.05,
+                        duration: 450,
+                        easing: 'easeInQuad',
+                        delay: 1500
+                    })
+
+                // ================= SCENE 3: RAPID-FIRE EDGE INTELLIGENCE (10.0s - 20.0s) =================
+
+                // Cut 1: Flashback Buffer ("Missed it?") (10.0s - 12.5s)
+                mainTimeline
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 0,
+                        translateY: -10,
+                        duration: 350,
+                        complete: () => {
+                            document.getElementById('feature-tag-text').innerText = "Voice Activity Detection";
+                        }
+                    })
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 450,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        begin: () => {
+                            // Slide screen to flashback
+                            slideDisplayScreen('screen-capture', 'screen-flashback');
+                        }
+                    }, '-=350')
+                    // Fade out background wave during transition to Scene 3
+                    .add({
+                        targets: '#bg-waveform',
+                        opacity: 0,
+                        duration: 450,
+                        easing: 'easeOutQuad',
+                        complete: () => {
+                            // Deactivate bgWaveBars so they stop animating in setInterval
+                            const bgWaveBars = document.querySelectorAll('.animate-bg-wave');
+                            bgWaveBars.forEach(bar => bar.setAttribute('data-active', 'false'));
+                        }
+                    }, '-=350')
+                    // Camera shift: device tilts left and slides off-screen left
+                    .add({
+                        targets: '#device-container',
+                        translateX: -160,
+                        translateY: 15,
+                        scale: 1.05,
+                        rotateY: 25,
+                        rotateZ: -4,
+                        duration: 700,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=350')
+                    // Chain-flash overlay text: "Missed it?"
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: [0, 1],
+                        scale: [0.9, 1],
+                        duration: 200,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                        begin: () => {
+                            document.getElementById('cut-text-flashback').innerText = "Missed it?";
+                            sfx.playTypewriter();
+                        }
+                    }, '-=700')
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: 0,
+                        scale: 1.05,
+                        duration: 180,
+                        easing: 'easeInQuad',
+                        delay: 150
+                    })
+                    // Chain-flash overlay text: "Don't worry."
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: [0, 1],
+                        scale: [0.9, 1],
+                        duration: 200,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                        changeBegin: () => {
+                            document.getElementById('cut-text-flashback').innerText = "Don't worry";
+                            sfx.playTypewriter();
+                        }
+                    })
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: 0,
+                        scale: 1.05,
+                        duration: 180,
+                        easing: 'easeInQuad',
+                        delay: 150
+                    })
+                    // Chain-flash overlay text: "Let's capture."
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: [0, 1],
+                        scale: [0.9, 1],
+                        duration: 200,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                        changeBegin: () => {
+                            document.getElementById('cut-text-flashback').innerText = "Let's Capture";
+                            sfx.playTypewriter();
+                        }
+                    })
+                    .add({
+                        targets: '#cut-text-flashback',
+                        opacity: 0,
+                        scale: 1.05,
+                        duration: 180,
+                        easing: 'easeInQuad',
+                        delay: 150
+                    })
+                    // Slide device back to center
+                    .add({
+                        targets: '#device-container',
+                        translateX: 0,
+                        translateY: 0,
+                        rotateY: 0,
+                        rotateZ: 0,
+                        scale: 1.05,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    })
+                    // Move click cursor to tap the Flashback icon perfectly in center
+                    .add({
+                        targets: '#click-cursor',
+                        opacity: [0, 1],
+                        translateX: ['40px', '-50%'],
+                        translateY: ['40px', '-50%'],
+                        duration: 500,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=100')
+                    // Mechanical click tap
+                    .add({
+                        targets: '#click-cursor',
+                        scale: [1, 0.8, 1],
+                        duration: 200,
+                        easing: 'easeOutQuad',
+                        changeBegin: () => {
+                            sfx.playClick();
+                        }
+                    })
+                    // Fade out click cursor
+                    .add({
+                        targets: '#click-cursor',
+                        opacity: 0,
+                        duration: 200,
+                        easing: 'easeInQuad'
+                    })
+                    // Retroactive audio ripples sucking into the device
+                    .add({
+                        targets: '#retro-ripples',
+                        opacity: [0, 1],
+                        duration: 200,
+                        easing: 'easeOutQuad'
+                    }, '-=400')
+                    .add({
+                        targets: '.ripple-ring',
+                        scale: [3, 0.1],
+                        opacity: [0, 0.75, 0],
+                        translateX: [150, 0],
+                        duration: 900,
+                        delay: anime.stagger(150),
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=400')
+                    // Fast rewind spin for the flashback wheel
+                    .add({
+                        targets: '#flashback-wheel',
+                        rotateZ: -360,
+                        duration: 400,
+                        easing: 'linear'
+                    }, '-=400')
+                    // Time-travel effect: rapid clock rewind
+                    .add({
+                        targets: { s: 60 },
+                        s: 0,
+                        duration: 400,
+                        easing: 'linear',
+                        update: function (anim) {
+                            const timeEl = document.getElementById('device-time');
+                            if (timeEl) {
+                                let s = Math.round(anim.animations[0].currentValue);
+                                if (s === 60) timeEl.innerText = '12:47 PM';
+                                else if (s === 0) timeEl.innerText = '12:46 PM';
+                                else timeEl.innerText = '12:46:' + (s < 10 ? '0' + s : s) + ' PM';
+                            }
+                        }
+                    }, '-=400')
+                    .add({
+                        targets: '#retro-ripples',
+                        opacity: 0,
+                        duration: 200,
+                        easing: 'easeInQuad'
+                    })
+                    // Fade in tag detail overlay: "Captures last 60s of audio"
+                    .add({
+                        targets: '#cut-text-flashback-detail',
+                        opacity: [0, 1],
+                        scale: [0.95, 1],
+                        translateY: [15, 0],
+                        duration: 400,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                        changeBegin: () => {
+                            sfx.playFlash();
+                        }
+                    }, '-=700')
+                    .add({
+                        targets: '#cut-text-flashback-detail',
+                        opacity: 0,
+                        duration: 350,
+                        easing: 'easeInQuad',
+                        delay: 1100
+                    })
+
+                // Cut 2: Live Transcription typewriter (12.5s - 15.0s)
+                mainTimeline
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 0,
+                        translateY: -10,
+                        duration: 350,
+                        complete: () => {
+                            document.getElementById('feature-tag-text').innerText = "Edge AI Transcription";
+                        }
+                    })
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 450,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        begin: () => {
+                            // Slide screen to transcribe
+                            slideDisplayScreen('screen-flashback', 'screen-transcribe');
+                            startTypingSequence();
+                        }
+                    }, '-=350')
+                    // Camera shift: device slides far right and tilts on Y-axis
+                    .add({
+                        targets: '#device-container',
+                        translateX: 170,
+                        translateY: -10,
+                        scale: 1.1,
+                        rotateY: -28,
+                        rotateZ: 6,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=350')
+                    // Fade in transcribe text container
+                    .add({
+                        targets: '#cut-text-transcribe',
+                        opacity: 1,
+                        duration: 10
+                    }, '-=200')
+                    // Stagger animate words in
+                    .add({
+                        targets: '.transcribe-word',
+                        opacity: [0, 1],
+                        translateY: [8, 0],
+                        duration: 500,
+                        delay: anime.stagger(250),
+                        easing: 'easeOutQuad',
+                        changeBegin: () => {
+                            sfx.playFlash();
+                        }
+                    }, '-=190')
+                    // Hold duration for typewriter clicks
+                    .add({
+                        targets: '#device-glow',
+                        opacity: [0.5, 0.7, 0.5],
+                        duration: 1700
+                    })
+                    // Fade out transcribe text
+                    .add({
+                        targets: '#cut-text-transcribe',
+                        opacity: 0,
+                        duration: 350,
+                        easing: 'easeInQuad'
+                    }, '-=350')
+
+                // Cut 3: AI Summary checklist checkmarks (15.0s - 17.5s)
+                mainTimeline
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 0,
+                        translateY: -10,
+                        duration: 350,
+                        complete: () => {
+                            document.getElementById('feature-tag-text').innerText = "AI Action Extraction";
+                        }
+                    })
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 450,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        begin: () => {
+                            // Slide screen to summarize
+                            slideDisplayScreen('screen-transcribe', 'screen-summarize');
+                        }
+                    }, '-=350')
+                    // Camera shift: device centers and zooms in extremely close, tilting on X-axis
+                    .add({
+                        targets: '#device-container',
+                        translateX: 0,
+                        translateY: 80,
+                        scale: 1.35,
+                        rotateX: 18,
+                        rotateY: 0,
+                        rotateZ: 0,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=350')
+                    // Fade in summarize text on the top
+                    .add({
+                        targets: '#cut-text-summarize',
+                        opacity: [0, 1],
+                        scale: [0.95, 1],
+                        translateY: [15, 0],
+                        duration: 400,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=400')
+                    // Sweep Laser Scanner
+                    .add({
+                        targets: '#scanner-laser',
+                        opacity: [0, 1, 1, 0],
+                        top: ['0%', '100%'],
+                        duration: 1100,
+                        easing: 'easeInOutQuad',
+                        begin: () => {
+                            sfx.playScan();
+                        }
+                    }, '-=300')
+                    // Pop checkmarks in stagger with dings
+                    .add({
+                        targets: '.checklist-item',
+                        opacity: [0, 1],
+                        translateY: [15, 0],
+                        duration: 500,
+                        delay: anime.stagger(200),
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.2)',
+                        changeBegin: () => {
+                            sfx.playTick();
+                        }
+                    }, '-=600')
+                    // Hold summary screen
+                    .add({
+                        targets: '#device-glow',
+                        duration: 600
+                    })
+                    // Fade out summarize text
+                    .add({
+                        targets: '#cut-text-summarize',
+                        opacity: 0,
+                        duration: 300,
+                        easing: 'easeInQuad'
+                    }, '-=400')
+
+                // Cut 4: Security Dial lock & padlock (17.5s - 20.0s)
+                mainTimeline
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 0,
+                        translateY: -10,
+                        duration: 350,
+                        complete: () => {
+                            document.getElementById('feature-tag-text').innerText = "Local AES-256 Encryption";
+                        }
+                    })
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 450,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        begin: () => {
+                            // Slide screen to encrypt lock
+                            slideDisplayScreen('screen-summarize', 'screen-encrypt');
+                        }
+                    }, '-=350')
+                    // Camera shift: device tilts back down and left, scales up slightly with perspective
+                    .add({
+                        targets: '#device-container',
+                        translateX: -10,
+                        translateY: 75,
+                        scale: 1.25,
+                        rotateX: 38,
+                        rotateY: 0,
+                        rotateZ: 0,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=350')
+                    // Draw Micro SD Card Vector
+                    .add({
+                        targets: '.sd-card-path',
+                        strokeDashoffset: [anime.setDashoffset, 0],
+                        opacity: [0, 1],
+                        duration: 800,
+                        easing: 'easeInOutSine',
+                        begin: () => {
+                            sfx.playScan();
+                        }
+                    })
+                    // Fill SD Card Bottom to Top
+                    .add({
+                        targets: '#sd-fill-rect',
+                        y: [130, 0],
+                        height: [0, 130],
+                        duration: 600,
+                        easing: 'easeOutCubic'
+                    }, '-=500')
+                    // Padlock Pop inside SD Card
+                    .add({
+                        targets: '#lock-icon',
+                        opacity: [0, 1],
+                        translateY: [8, 0],
+                        scale: [0.5, 1.1, 1],
+                        duration: 400,
+                        easing: 'easeOutBack',
+                        begin: () => {
+                            sfx.playLockClick();
+                        }
+                    }, '-=200')
+                    // Fade in "Military-grade encryption (AES-256)" overlay text
+                    .add({
+                        targets: '#cut-text-security',
+                        opacity: [0, 1],
+                        scale: [0.95, 1],
+                        translateY: [15, 0],
+                        duration: 600,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=900')
+                    // Fade out overlay text
+                    .add({
+                        targets: '#cut-text-security',
+                        opacity: 0,
+                        duration: 400,
+                        easing: 'easeInQuad',
+                        delay: 600
+                    })
+
+                // ================= SCENE 4: THE ECOSYSTEM SYNC (20.0s - 25.0s) =================
+                mainTimeline
+                    // Transition Feature Tag
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 0,
+                        translateY: -10,
+                        duration: 350,
+                        complete: () => {
+                            document.getElementById('feature-tag-text').innerText = "Zero-App Wi-Fi Sync";
+                        }
+                    })
+                    .add({
+                        targets: '#feature-tag-container',
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 450,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)',
+                        begin: () => {
+                            // Slide screen to sync progress
+                            slideDisplayScreen('screen-encrypt', 'screen-sync');
+                        }
+                    }, '-=350')
+                    // Fade in "Zero-App Direct Sync" overlay headline
+                    .add({
+                        targets: '#sync-headline-text',
+                        opacity: [0, 1],
+                        scale: [0.9, 1],
+                        duration: 600,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=100')
+                    // Fade out headline (Delay 1.0s before starting fade out)
+                    .add({
+                        targets: '#sync-headline-text',
+                        opacity: 0,
+                        scale: 1.02,
+                        duration: 400,
+                        easing: 'easeInQuad',
+                        delay: 1000
+                    })
+                    // Fade in sub-text & trigger parallel progress, dim, and badges animations sequentially
+                    .add({
+                        targets: '#sync-sub-text',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 600,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    })
+                    // 1. Progress Bar Width & storage counting
+                    .add({
+                        targets: '#sync-progress-bar',
+                        width: ['0%', '100%'],
+                        duration: 1200,
+                        easing: 'easeInOutQuad',
+                        begin: () => {
+                            document.getElementById('sync-status-text').innerText = 'Syncing...';
+                            document.getElementById('sync-storage-text').innerText = 'Storage: 0.0 MB / 4.8 MB';
+                        },
+                        update: (anim) => {
+                            const percent = Math.round(anim.progress);
+                            const mb = (4.8 * percent / 100).toFixed(1);
+                            document.getElementById('sync-storage-text').innerText = `Storage: ${mb} MB / 4.8 MB`;
+                        },
+                        complete: () => {
+                            document.getElementById('sync-status-text').innerText = 'Synced';
+                            sfx.playChime(); // Synced chime
+                        }
+                    }, '-=600')
+                    // 1.5. Spin icon manually in timeline
+                    .add({
+                        targets: '#sync-icon',
+                        rotate: [0, 720],
+                        duration: 1200,
+                        easing: 'linear'
+                    }, '-=1200')
+                    // 2. Dim & scale down mockup (Camera pulls back) to let side messages shine
+                    .add({
+                        targets: '#device-container',
+                        opacity: 0.50,
+                        scale: 0.82,
+                        translateY: -20,
+                        translateX: 0,
+                        rotateX: 0,
+                        rotateY: 0,
+                        rotateZ: 0,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=1200')
+                    // --- COMBINED INTEGRATION ANIMATIONS (Badges + Text) ---
+                    // Pair 1: Notion (Starts at H+200)
+                    .add({
+                        targets: '#logo-notion',
+                        opacity: [0, 1],
+                        translateX: [-20, 0],
+                        duration: 400,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=400')
+                    .add({
+                        targets: '#sync-word-notion',
+                        scale: [1, 1.1, 1],
+                        color: ['rgba(163, 163, 163, 0.4)', '#00E699', '#00E699'],
+                        duration: 400,
+                        easing: 'easeInOutQuad'
+                    }, '-=400')
+
+                    // Pair 2: Slack (Starts at H+500)
+                    .add({
+                        targets: '#logo-slack',
+                        opacity: [0, 1],
+                        translateX: [20, 0],
+                        duration: 400,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)'
+                    }, '-=100')
+                    .add({
+                        targets: '#sync-word-slack',
+                        scale: [1, 1.1, 1],
+                        color: ['rgba(163, 163, 163, 0.4)', '#00E699', '#00E699'],
+                        duration: 400,
+                        easing: 'easeInOutQuad'
+                    }, '-=400')
+
+                    // Pair 3: Obsidian (Starts at H+800)
+                    .add({
+                        targets: '#logo-obsidian',
+                        opacity: [0, 1],
+                        translateX: [-20, 0],
+                        duration: 400,
+                        easing: 'cubicBezier(0.16, 1, 0.3, 1)',
+                        complete: () => { emitSyncParticles(); }
+                    }, '-=100')
+                    .add({
+                        targets: '#sync-word-obsidian',
+                        scale: [1, 1.1, 1],
+                        color: ['rgba(163, 163, 163, 0.4)', '#00E699', '#00E699'],
+                        duration: 400,
+                        easing: 'easeInOutQuad'
+                    }, '-=400')
+                    // Fade out sync sub-text
+                    .add({
+                        targets: '#sync-sub-text',
+                        opacity: 0,
+                        translateY: -15,
+                        duration: 400,
+                        easing: 'easeInQuad'
+                    })
+
+                // ================= SCENE 5: THE DROP (25.0s - 30.0s) =================
+                mainTimeline
+                    // Fade out integration logo badges
+                    .add({
+                        targets: ['#logo-notion', '#logo-slack', '#logo-obsidian'],
+                        opacity: 0,
+                        duration: 500,
+                        easing: 'easeInQuad'
+                    })
+                    // Restore device opacity, scale mockup in flat 2D (No 3D perspective tilts)
+                    .add({
+                        targets: '#device-container',
+                        opacity: 1,
+                        scale: 0.95,
+                        translateY: -25,
+                        translateX: 0,
+                        rotateX: 0,
+                        rotateY: 0,
+                        rotateZ: 0,
+                        duration: 1500,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)',
+                        begin: () => {
+                            // Switch screen back to Capture
+                            slideDisplayScreen('screen-sync', 'screen-capture');
+                            // Dial click resolving to warm A major chord
+                            sfx.playOutroResolution();
+                        },
+                        complete: () => {
+                            // Add flat 2D float animation class
+                            document.getElementById('device-container').classList.add('float-active-2d');
+                            // Trigger ambient loop glow separately to prevent timeline stuck bugs!
+                            anime({
+                                targets: '#device-glow',
+                                opacity: [0.3, 0.6, 0.3],
+                                scale: [1, 1.15, 1],
+                                duration: 3000,
+                                loop: true,
+                                easing: 'easeInOutQuad'
+                            });
+                        }
+                    }, '-=500')
+                    // Fade in CTA pricing block /Users/jd/Desktop/Screenshot 2026-07-05 at 8.25.53 PM.pngand domain directly below the device
+                    .add({
+                        targets: '#cta-block',
+                        opacity: [0, 1],
+                        translateY: [40, -125],
+                        duration: 800,
+                        easing: 'cubicBezier(0.175, 0.885, 0.32, 1.275)'
+                    }, '-=800')
+                    // Show replay helper floating button
+                    .add({
+                        targets: '#replay-btn',
+                        opacity: [0, 1],
+                        duration: 400,
+                        begin: () => {
+                            document.getElementById('replay-btn').classList.remove('opacity-0', 'pointer-events-none');
+                        }
+                    }, '-=400');
+            }
+
+            // Build timeline compositions
+            buildTimeline();
+            resetUI(); // Initialize UI elements (hide them behind the play cover screen)
+
+            // Hook user interaction overlay start button
+            document.getElementById('start-btn').addEventListener('click', () => {
+                sfx.init(); // Initialize audio context on click
+                resetUI(); // Ensure all sub-elements are clean
+
+                // Fade out cover screen
+                anime({
+                    targets: '#play-overlay',
+                    opacity: 0,
+                    scale: 1.05,
+                    duration: 600,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        document.getElementById('play-overlay').remove();
+                        mainTimeline.play(); // Start animation timeline
+                    }
+                });
+            });
+
+            // Replay button controller
+            document.getElementById('replay-btn').addEventListener('click', () => {
+                resetUI();
+                mainTimeline.restart();
+            });
+
+            // --- Media Controls UI Logic ---
+            const playPauseBtn = document.getElementById('media-play-pause');
+            const playIcon = document.getElementById('media-play-icon');
+            const restartBtn = document.getElementById('media-restart');
+            const scrubberBg = document.getElementById('media-scrubber-bg');
+
+            playPauseBtn.addEventListener('click', () => {
+                if (mainTimeline.paused) {
+                    mainTimeline.play();
+                    playIcon.innerText = 'pause';
+                } else {
+                    mainTimeline.pause();
+                    playIcon.innerText = 'play_arrow';
+                }
+            });
+
+            restartBtn.addEventListener('click', () => {
+                resetUI();
+                mainTimeline.restart();
+                playIcon.innerText = 'pause';
+            });
+
+            scrubberBg.addEventListener('click', (e) => {
+                const rect = scrubberBg.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
+                mainTimeline.seek(mainTimeline.duration * (percentage / 100));
+            });
+
+            // Safe Area Overlay Toggle
+            document.getElementById('toggle-safe-area').addEventListener('change', (e) => {
+                const overlay = document.getElementById('safe-area-overlay');
+                if (e.target.checked) {
+                    overlay.classList.remove('hidden');
+                } else {
+                    overlay.classList.add('hidden');
+                }
+            });
+
+            // Hook completion to swap pause icon back to play
+            mainTimeline.finished.then(() => {
+                playIcon.innerText = 'play_arrow';
+            });
+
+        });
+    </script>
+</body>
+
+</html>
