@@ -33,7 +33,7 @@ window.addEventListener('load', () => {
     if (!preloader) return;
 
     const elapsed = performance.now() - preloaderStartTime;
-    const remaining = Math.max(0, 1500 - elapsed);
+    const remaining = Math.max(0, 400 - elapsed);
 
     setTimeout(() => {
         if (preloaderDevice && heroDevice) {
@@ -62,7 +62,7 @@ window.addEventListener('load', () => {
             preloaderStatus.classList.add('opacity-0');
         }
 
-        // Clean up preloader and show hero mockup device after transition completes (1.0s duration)
+        // Clean up preloader and show hero mockup device after transition completes (0.5s duration)
         setTimeout(() => {
             // Instant swap: hide preloader device, show hero device without transition lag
             if (heroDevice) {
@@ -88,7 +88,7 @@ window.addEventListener('load', () => {
                 preloaderWrapper.style.display = 'none';
             }
             preloader.style.display = 'none';
-        }, 1000);
+        }, 500);
     }, remaining);
 });
 
@@ -413,7 +413,7 @@ function switchMode(mode, trackEvent = true) {
                 if (!window.deferDeviceBoot) {
                     hasBooted = true;
 
-                    // Transition 1: Boot -> Ready (after 1.2 seconds)
+                    // Transition 1: Boot -> Ready (after 0.4 seconds)
                     bootTimer = setTimeout(() => {
                         bootScreen.style.opacity = '0';
                         setTimeout(() => {
@@ -424,7 +424,7 @@ function switchMode(mode, trackEvent = true) {
                             // Restore status bar
                             if (statusBar) statusBar.style.display = 'flex';
                         }, 300);
-                    }, 1200);
+                    }, 400);
                 }
             } else {
                 // Skip boot screen, show ready screen immediately

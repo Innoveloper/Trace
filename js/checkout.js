@@ -90,8 +90,8 @@ window.addEventListener('load', () => {
     if (!preloader) return;
 
     const elapsed = performance.now() - preloaderStartTime;
-    // Set to 1.2 seconds minimum display duration (0.4s per stage)
-    const remaining = Math.max(0, 1200 - elapsed);
+    // Set to 0.4 seconds minimum display duration
+    const remaining = Math.max(0, 400 - elapsed);
 
     setTimeout(() => {
         if (preloaderDevice && heroDevice) {
@@ -120,7 +120,7 @@ window.addEventListener('load', () => {
             preloaderStatus.classList.add('opacity-0');
         }
 
-        // Clean up preloader and show hero mockup device after transition completes (1.0s duration)
+        // Clean up preloader and show hero mockup device after transition completes (0.5s duration)
         setTimeout(() => {
             // Instant swap: hide preloader device, show hero device without transition lag
             if (heroDevice) {
@@ -142,7 +142,7 @@ window.addEventListener('load', () => {
                 preloaderWrapper.style.display = 'none';
             }
             preloader.style.display = 'none';
-        }, 1000);
+        }, 500);
     }, remaining);
 });
 

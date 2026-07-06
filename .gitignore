@@ -3,3 +3,4 @@ iot-device.md
 /.idea/modules.xml
 /.idea/Trace.iml
 /.idea/vcs.xml
+node_modules/

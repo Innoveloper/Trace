@@ -9,41 +9,15 @@
     <meta name="description" content="Launch video simulator for the Trace AI Voice Dictation device.">
 
     <!-- Fonts (matching index.html) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
         rel="stylesheet">
-
-    <!-- Tailwind CSS (via CDN) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    <!-- Tailwind Custom Configuration (matching index.html / js/tailwind-config.js) -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'background': '#0A0A0A',
-                        'surface': '#131313',
-                        'primary': '#F5F5F5',
-                        'secondary': '#00E699', // Brand premium green accent
-                        'text-muted': '#A3A3A3',
-                        'border-subtle': '#262626'
-                    },
-                    fontFamily: {
-                        'sans': ['Geist', 'sans-serif'],
-                        'mono': ['JetBrains Mono', 'monospace'],
-                        'label-mono': ['JetBrains Mono', 'monospace'],
-                        'body-md': ['Geist', 'sans-serif'],
-                        'display-hero': ['Geist', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="css/tailwind.css">
 
     <!-- Anime.js (via CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
