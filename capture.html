@@ -2159,24 +2159,24 @@
 
             // Start Animation Logic (Click anywhere or Auto-start)
             let hasStarted = false;
-            
+
             const startAnimation = () => {
-                if(hasStarted) return;
+                if (hasStarted) return;
                 hasStarted = true;
-                
+
                 const startOverlay = document.getElementById('start-overlay');
                 if (startOverlay) {
                     startOverlay.classList.add('opacity-0', 'pointer-events-none');
                 }
-                
+
                 sfx.init(); // Initialize audio context
                 resetUI(); // Ensure all sub-elements are clean
                 mainTimeline.play(); // Start animation timeline
             };
-            
+
             // Require user click to unlock AudioContext (Fallback)
             document.body.addEventListener('click', startAnimation);
-            
+
             // Auto-start after 1 second if autoplay flag is present
             if (new URLSearchParams(window.location.search).get('autoplay') === '1') {
                 setTimeout(startAnimation, 100);
@@ -2239,26 +2239,26 @@
                 const progressBar = document.getElementById('render-progress-bar');
                 const frameCount = document.getElementById('render-frame-count');
                 const timeElapsed = document.getElementById('render-time-elapsed');
-                
+
                 overlay.classList.remove('opacity-0', 'pointer-events-none');
-                
+
                 try {
                     statusText.innerText = "Initializing Hardware Encoder...";
-                    
+
                     const fps = 30;
                     const duration = mainTimeline.duration; // in ms
                     const totalFrames = Math.floor((duration / 1000) * fps);
-                    
+
                     // Pause playback and animations
                     mainTimeline.pause();
                     document.querySelector('.dot-grid').style.animationPlayState = 'paused';
-                    
+
                     const canvasEl = document.getElementById('motion-canvas');
                     const origWidth = canvasEl.style.width;
                     const origMaxWidth = canvasEl.style.maxWidth;
                     canvasEl.style.width = '450px';
                     canvasEl.style.maxWidth = '450px';
-                    
+
                     // Initialize MP4 Muxer
                     const muxer = new Mp4Muxer.Muxer({
                         target: new Mp4Muxer.ArrayBufferTarget(),
@@ -2269,13 +2269,13 @@
                         },
                         fastStart: 'in-memory'
                     });
-                    
+
                     // Initialize WebCodecs Video Encoder
                     const videoEncoder = new VideoEncoder({
                         output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
                         error: e => { throw e; }
                     });
-                    
+
                     videoEncoder.configure({
                         codec: 'avc1.640028', // H.264 High Profile
                         width: 1080,
@@ -2284,18 +2284,18 @@
                         bitrate: 10_000_000, // 10 Mbps
                         framerate: fps
                     });
-                    
+
                     statusText.innerText = "Rendering frames (Hardware Accelerated)...";
                     const startTime = performance.now();
-                    
-                    for(let i = 0; i < totalFrames; i++) {
+
+                    for (let i = 0; i < totalFrames; i++) {
                         const t = (i / fps) * 1000;
                         mainTimeline.seek(t);
-                        
+
                         await new Promise(r => setTimeout(r, 10)); // Yield to let DOM update
-                        
+
                         // Render exact frame to an offscreen canvas
-                        const frameCanvas = await htmlToImage.toCanvas(canvasEl, { 
+                        const frameCanvas = await htmlToImage.toCanvas(canvasEl, {
                             quality: 1.0,
                             pixelRatio: 2.4, // 450x800 -> 1080x1920
                             width: 450,
@@ -2303,47 +2303,47 @@
                             skipFonts: true,
                             fontEmbedCSS: ''
                         });
-                        
+
                         // Encode the canvas frame directly
                         const frame = new VideoFrame(frameCanvas, { timestamp: (i / fps) * 1e6 });
                         videoEncoder.encode(frame, { keyFrame: i % fps === 0 });
                         frame.close();
-                        
+
                         // Update UI progress
                         const pct = Math.round(((i + 1) / totalFrames) * 100);
                         progressBar.style.width = `${pct}%`;
                         frameCount.innerText = `${i + 1} / ${totalFrames} Frames`;
                         timeElapsed.innerText = `${Math.round((performance.now() - startTime) / 1000)}s`;
-                        
+
                         if ((i + 1) % 30 === 0) {
                             console.log(`Render Progress: ${i + 1} / ${totalFrames} frames`);
                         }
                     }
-                    
+
                     statusText.innerText = "Finalizing MP4 file...";
-                    
+
                     // Flush the encoder and muxer
                     await videoEncoder.flush();
                     muxer.finalize();
-                    
+
                     // Trigger download
                     const buffer = muxer.target.buffer;
                     const blob = new Blob([buffer], { type: 'video/mp4' });
                     const url = URL.createObjectURL(blob);
-                    
+
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'Trace_Animation_1080p.mp4';
                     a.click();
-                    
+
                     // Restore UI
                     canvasEl.style.width = origWidth;
                     canvasEl.style.maxWidth = origMaxWidth;
                     document.querySelector('.dot-grid').style.animationPlayState = 'running';
-                    
+
                     overlay.classList.add('opacity-0', 'pointer-events-none');
-                    
-                } catch(err) {
+
+                } catch (err) {
                     console.error("PAGE ERROR: " + err.message);
                     statusText.innerText = "Error during export: " + err.message;
                     setTimeout(() => overlay.classList.add('opacity-0', 'pointer-events-none'), 5000);
@@ -2359,9 +2359,10 @@
             <span class="material-symbols-outlined text-[48px] text-secondary mb-4 animate-pulse">movie</span>
             <h3 class="text-xl font-medium text-primary mb-2">Rendering Video</h3>
             <p id="render-status-text" class="text-text-muted text-sm mb-6">Initializing FFmpeg...</p>
-            
+
             <div class="w-full h-2 bg-neutral-900 rounded-full overflow-hidden mb-2 relative">
-                <div id="render-progress-bar" class="absolute top-0 left-0 h-full bg-secondary w-0 transition-all duration-75"></div>
+                <div id="render-progress-bar"
+                    class="absolute top-0 left-0 h-full bg-secondary w-0 transition-all duration-75"></div>
             </div>
             <div class="flex justify-between w-full text-[10px] font-mono text-text-muted">
                 <span id="render-frame-count">0 / 0 Frames</span>
@@ -2371,8 +2372,10 @@
     </div>
 
     <!-- Start Button Overlay -->
-    <div id="start-overlay" class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm cursor-pointer transition-opacity duration-300">
-        <button class="bg-white text-black px-8 py-4 rounded-full font-bold text-xl hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+    <div id="start-overlay"
+        class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm cursor-pointer transition-opacity duration-300">
+        <button
+            class="bg-white text-black px-8 py-4 rounded-full font-bold text-xl hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
             <span class="material-symbols-outlined">play_arrow</span> Start Animation
         </button>
     </div>

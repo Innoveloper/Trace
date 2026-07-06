@@ -6,9 +6,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Trace - Meta Carousel Ads Builder</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         tailwind.config = {
@@ -34,9 +36,18 @@
         }
     </script>
     <style>
+        @keyframes dot-pan {
+            0% {
+                background-position: 0px 0px;
+            }
+            100% {
+                background-position: 40px 40px;
+            }
+        }
         .dot-grid {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.2px, transparent 1.2px);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
             background-size: 20px 20px;
+            animation: dot-pan 20s linear infinite;
         }
         /* Scrollbar styling for horizontal scroll */
         .carousel-container::-webkit-scrollbar {
@@ -75,16 +86,16 @@
     </div>
 
     <!-- Carousel Cards Container (horizontal scroll) -->
-    <div class="flex gap-8 overflow-x-auto pb-8 carousel-container flex-grow items-start" id="cards-container">
+    <div class="flex gap-8 overflow-x-auto pb-8 carousel-container flex-grow items-center" id="cards-container">
         
         <!-- Card 1: Intro -->
         <div class="flex flex-col gap-4">
             <h3 class="text-sm font-label-mono text-text-muted">Card 1: Hook</h3>
-            <div id="card-1" class="capture-card w-[1080px] h-[1080px] bg-background border border-border-subtle relative overflow-hidden flex flex-col p-24 shrink-0 shadow-xl" style="transform-origin: top left; transform: scale(0.4); margin-bottom: -648px; margin-right: -648px;">
-                <div class="absolute inset-0 dot-grid opacity-80 z-0"></div>
-                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0"></div>
+            <div id="card-1" class="capture-card w-[1080px] h-[1080px] bg-background border border-border-subtle relative overflow-hidden flex flex-col justify-center p-24 shrink-0 shadow-xl" style="transform-origin: top left; transform: scale(0.4); margin-bottom: -648px; margin-right: -648px;">
+                <!-- Background Dot Grid -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0 pointer-events-none"></div>
                 
-                <div class="relative z-10 flex-grow flex flex-col justify-center max-w-[888px] mx-auto h-full w-full">
+                <div class="relative z-10 w-full max-w-[888px] mx-auto flex flex-col justify-center">
                     <div class="mb-12 px-5 py-2 border border-border-subtle rounded-full inline-flex items-center gap-3 bg-surface/50 backdrop-blur-md self-start">
                         <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
                         <span class="font-label-mono text-[14px] text-text-muted uppercase tracking-wider">TRACE // AI VOICE Dictation</span>
@@ -103,10 +114,10 @@
         <div class="flex flex-col gap-4">
             <h3 class="text-sm font-label-mono text-text-muted">Card 2: Problem</h3>
             <div id="card-2" class="capture-card w-[1080px] h-[1080px] bg-background border border-border-subtle relative overflow-hidden flex flex-col justify-center p-24 shrink-0 shadow-xl" style="transform-origin: top left; transform: scale(0.4); margin-bottom: -648px; margin-right: -648px;">
-                <div class="absolute inset-0 dot-grid opacity-80 z-0"></div>
-                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0"></div>
+                <!-- Background Dot Grid -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0 pointer-events-none"></div>
                 
-                <div class="relative z-10 w-full max-w-[888px] mx-auto h-full flex flex-col justify-center text-left">
+                <div class="relative z-10 w-full max-w-[888px] mx-auto flex flex-col justify-center text-left">
                     <div class="w-24 h-24 rounded-3xl bg-surface-container-high border border-border-subtle flex items-center justify-center mb-16 shadow-2xl relative overflow-hidden">
                          <div class="absolute inset-0 bg-secondary/10"></div>
                         <span class="material-symbols-outlined text-secondary text-[48px] z-10">blur_on</span>
@@ -138,10 +149,11 @@
         <div class="flex flex-col gap-4">
             <h3 class="text-sm font-label-mono text-text-muted">Card 3: Features</h3>
             <div id="card-3" class="capture-card w-[1080px] h-[1080px] bg-background border border-border-subtle relative overflow-hidden flex flex-col items-center justify-center p-24 shrink-0 shadow-xl" style="transform-origin: top left; transform: scale(0.4); margin-bottom: -648px; margin-right: -648px;">
-                <div class="absolute inset-0 dot-grid opacity-80 z-0"></div>
-                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0"></div>
+                <!-- Background Dot Grid -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0 pointer-events-none"></div>
+                <div class="absolute inset-0 dot-grid z-0 pointer-events-none"></div>
 
-                <div class="relative z-10 w-full h-full max-w-[888px] mx-auto flex flex-col items-center justify-center">
+                <div class="relative z-10 w-full max-w-[888px] mx-auto flex flex-col items-center justify-center translate-y-20">
                         <!-- Device Display Area -->
                         <div
                                 class="relative w-full max-w-[440px] aspect-square flex items-center justify-center bg-transparent scale-[1.75] origin-center mb-12">
@@ -272,10 +284,10 @@
         <div class="flex flex-col gap-4">
             <h3 class="text-sm font-label-mono text-text-muted">Card 4: CTA</h3>
             <div id="card-4" class="capture-card w-[1080px] h-[1080px] bg-background border border-border-subtle relative overflow-hidden flex flex-col items-center justify-center p-24 shrink-0 shadow-xl" style="transform-origin: top left; transform: scale(0.4); margin-bottom: -648px; margin-right: -648px;">
-                <div class="absolute inset-0 dot-grid opacity-80 z-0"></div>
-                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0"></div>
+                <!-- Background Dot Grid -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/[0.02] z-0 pointer-events-none"></div>
                 
-                <div class="relative z-10 w-full h-full max-w-[888px] mx-auto flex flex-col items-center justify-center text-center">
+                <div class="relative z-10 w-full max-w-[888px] mx-auto flex flex-col items-center justify-center text-center">
                     <h2 class="font-display-hero text-[72px] font-medium leading-[1.1] text-primary tracking-tight mb-8">
                         Ready to multiply<br/>your output?
                     </h2>
@@ -310,27 +322,21 @@
             btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Generating...';
             btn.disabled = true;
 
-            const options = {
-                width: 1080,
-                height: 1080,
-                scale: 1,
-                backgroundColor: '#0D0D0D',
-                useCORS: true,
-                logging: false,
-                onclone: (clonedDoc) => {
-                    const clonedCards = clonedDoc.querySelectorAll('.capture-card');
-                    clonedCards.forEach(card => {
-                        card.style.transform = 'none';
-                        card.style.marginBottom = '0';
-                        card.style.marginRight = '0';
-                    });
-                }
-            };
-
             try {
                 for (let i = 0; i < cards.length; i++) {
-                    const canvas = await html2canvas(cards[i], options);
-                    const dataUrl = canvas.toDataURL('image/png');
+                    const dataUrl = await htmlToImage.toPng(cards[i], {
+                        width: 1080,
+                        height: 1080,
+                        style: {
+                            transform: 'none',
+                            transformOrigin: 'top left',
+                            margin: '0',
+                            marginBottom: '0',
+                            marginRight: '0'
+                        },
+                        pixelRatio: 1.777778, // Scale up to 1920x1920 (Full HD square)
+                        backgroundColor: '#0D0D0D'
+                    });
                     const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
                     zip.file(`trace-carousel-card-${i + 1}.png`, base64Data, {base64: true});
                 }
