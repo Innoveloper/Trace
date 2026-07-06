@@ -95,9 +95,12 @@
 
         /* Hardware scanner laser line */
         .laser-line {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00E699 20%, #00E699 80%, transparent);
-            box-shadow: 0 0 10px #00E699, 0 0 20px rgba(0, 230, 153, 0.5);
+            height: 4px;
+            background: linear-gradient(to bottom, #00E699, transparent);
+            box-shadow: 
+                0 0 10px #00E699,
+                0 0 20px rgba(0, 230, 153, 0.4),
+                0 -10px 40px rgba(0, 230, 153, 0.2);
             position: absolute;
             left: 0;
             right: 0;
@@ -120,6 +123,24 @@
 
         .float-active-2d {
             animation: ambient-float-2d 4s ease-in-out infinite;
+        }
+
+        @keyframes handheld-wiggle {
+            0%, 100% {
+                transform: rotateX(0deg) rotateY(0deg) translateY(0px) rotateZ(0deg);
+            }
+            25% {
+                transform: rotateX(1deg) rotateY(-1deg) translateY(-2px) rotateZ(-0.3deg);
+            }
+            50% {
+                transform: rotateX(-0.8deg) rotateY(1.2deg) translateY(1px) rotateZ(0.4deg);
+            }
+            75% {
+                transform: rotateX(0.5deg) rotateY(-0.5deg) translateY(-1px) rotateZ(-0.2deg);
+            }
+        }
+        .handheld-active {
+            animation: handheld-wiggle 6s ease-in-out infinite;
         }
 
         /* Hide scrollbars */
@@ -162,11 +183,11 @@
         n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
         t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
         document,'script','https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1499810801353296');
+        fbq('init', '1516675063287418');
         fbq('track', 'PageView');
     </script>
     <noscript>
-        <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1499810801353296&ev=PageView&noscript=1"/>
+        <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1516675063287418&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Facebook Pixel Code -->
 </head>
@@ -351,23 +372,26 @@
         <!-- ================= MIDDLE AREA: THE DEVICE MOCKUP (Matched 1-to-1 with index.html) ================= -->
         <div id="device-container"
             class="relative w-full max-w-[256px] aspect-[368/448] flex items-center justify-center z-20 opacity-0 translate-y-[300px] my-auto">
+            
+            <div id="device-wiggle-wrapper" class="relative w-full h-full flex items-center justify-center handheld-active">
+                <div id="device-parallax-wrapper" class="relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out" style="transform-style: preserve-3d; perspective: 1000px;">
 
-            <!-- Glow background effect behind device -->
-            <div id="device-glow"
-                class="absolute w-full h-full rounded-[32px] bg-secondary/5 blur-[40px] pointer-events-none transition-all duration-1000 opacity-50 z-0">
-            </div>
-
-            <!-- Outer Bezel / Case (exact classes from index.html / checkout.html / preview.html) -->
-            <div
-                class="relative w-full h-full bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center overflow-hidden z-10">
-
-                <!-- Glass Bezel Reflections (exact markup from index.html) -->
-                <div
-                    class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20">
+                <!-- Glow background effect behind device -->
+                <div id="device-glow"
+                    class="absolute w-full h-full rounded-[32px] bg-secondary/5 blur-[40px] pointer-events-none transition-all duration-1000 opacity-50 z-0">
                 </div>
+
+                <!-- Outer Bezel / Case (exact classes from index.html / checkout.html / preview.html) -->
                 <div
-                    class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20">
-                </div>
+                    class="relative w-full h-full bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center overflow-hidden z-10">
+
+                    <!-- Glass Bezel Reflections (exact markup from index.html) -->
+                    <div id="reflection-1"
+                        class="absolute top-[1.5px] right-[1.5px] left-[1.5px] bottom-[1.5px] bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-[30px] pointer-events-none z-20">
+                    </div>
+                    <div id="reflection-2"
+                        class="absolute top-[2px] right-[2px] w-[70%] h-[30%] bg-gradient-to-bl from-white/12 to-transparent rounded-[30px] filter blur-[1px] pointer-events-none z-20">
+                    </div>
 
                 <!-- 1.8" Touch AMOLED Display Area (exact classes from index.html) -->
                 <div class="relative w-full h-full bg-black rounded-[26px] overflow-hidden border border-neutral-950 shadow-inner flex flex-col justify-start select-none z-10"
@@ -617,6 +641,8 @@
 
                 </div>
             </div>
+            </div><!-- #device-parallax-wrapper -->
+            </div><!-- #device-wiggle-wrapper -->
         </div>
 
         <!-- ================= BOTTOM AREA: CTA BLOCK ================= -->
@@ -1325,6 +1351,13 @@
                     document.getElementById(toId).style.zIndex = 20;
                 }
             });
+            anime({
+                targets: '.dot-grid',
+                scale: [
+                    { value: 1.05, duration: 200, easing: 'cubicBezier(0.16, 1, 0.3, 1)' },
+                    { value: 1.0, duration: 250, easing: 'cubicBezier(0.16, 1, 0.3, 1)' }
+                ]
+            });
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -1429,6 +1462,7 @@
                 anime.set('#click-cursor', { translateX: 0, translateY: 0, scale: 1 });
                 anime.set('.ripple-ring', { scale: 1 });
                 anime.set('#flashback-wheel', { rotateZ: 0 });
+                anime.set(['#reflection-1', '#reflection-2'], { translateX: 0, translateY: 0 });
                 const timeEl = document.getElementById('device-time');
                 if (timeEl) timeEl.innerText = '12:47 PM';
             }
@@ -1665,6 +1699,20 @@
                         duration: 700,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     }, '-=350')
+                    .add({
+                        targets: '#reflection-1',
+                        translateX: 25,
+                        translateY: -10,
+                        duration: 700,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=700')
+                    .add({
+                        targets: '#reflection-2',
+                        translateX: -20,
+                        translateY: 15,
+                        duration: 700,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=700')
                     // Chain-flash overlay text: "Missed it?"
                     .add({
                         targets: '#cut-text-flashback',
@@ -1736,6 +1784,13 @@
                         duration: 600,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     })
+                    .add({
+                        targets: ['#reflection-1', '#reflection-2'],
+                        translateX: 0,
+                        translateY: 0,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
                     // Move click cursor to tap the Flashback icon perfectly in center
                     .add({
                         targets: '#click-cursor',
@@ -1861,6 +1916,20 @@
                         duration: 600,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     }, '-=350')
+                    .add({
+                        targets: '#reflection-1',
+                        translateX: -30,
+                        translateY: 15,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
+                    .add({
+                        targets: '#reflection-2',
+                        translateX: 25,
+                        translateY: -20,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
                     // Fade in transcribe text container
                     .add({
                         targets: '#cut-text-transcribe',
@@ -1927,6 +1996,20 @@
                         duration: 600,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     }, '-=350')
+                    .add({
+                        targets: '#reflection-1',
+                        translateX: 0,
+                        translateY: 20,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
+                    .add({
+                        targets: '#reflection-2',
+                        translateX: 0,
+                        translateY: -15,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
                     // Fade in summarize text on the top
                     .add({
                         targets: '#cut-text-summarize',
@@ -2006,6 +2089,20 @@
                         duration: 600,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     }, '-=350')
+                    .add({
+                        targets: '#reflection-1',
+                        translateX: 0,
+                        translateY: 35,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
+                    .add({
+                        targets: '#reflection-2',
+                        translateX: 0,
+                        translateY: -25,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=600')
                     // Draw Micro SD Card Vector
                     .add({
                         targets: '.sd-card-path',
@@ -2143,6 +2240,13 @@
                         duration: 600,
                         easing: 'cubicBezier(0.25, 1, 0.2, 1)'
                     }, '-=1200')
+                    .add({
+                        targets: ['#reflection-1', '#reflection-2'],
+                        translateX: 0,
+                        translateY: 0,
+                        duration: 600,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=1200')
                     // --- COMBINED INTEGRATION ANIMATIONS (Badges + Text) ---
                     // Pair 1: Notion (Starts at H+200)
                     .add({
@@ -2242,6 +2346,13 @@
                             });
                         }
                     }, '-=500')
+                    .add({
+                        targets: ['#reflection-1', '#reflection-2'],
+                        translateX: 0,
+                        translateY: 0,
+                        duration: 1500,
+                        easing: 'cubicBezier(0.25, 1, 0.2, 1)'
+                    }, '-=1500')
                     // Fade in CTA pricing block /Users/jd/Desktop/Screenshot 2026-07-05 at 8.25.53 PM.pngand domain directly below the device
                     .add({
                         targets: '#cta-block',
@@ -2444,6 +2555,27 @@
                     statusText.innerText = "Error during export: " + err.message;
                     setTimeout(() => overlay.classList.add('opacity-0', 'pointer-events-none'), 5000);
                 }
+            });
+
+            // Interactive 3D Parallax Mouse Tilt for Device Container
+            const parallaxWrapper = document.getElementById('device-parallax-wrapper');
+            const motionCanvas = document.getElementById('motion-canvas');
+            
+            motionCanvas.addEventListener('mousemove', (e) => {
+                const rect = motionCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Max rotation: 6 degrees Y and 6 degrees X
+                const rotateX = -(y / (rect.height / 2)) * 6;
+                const rotateY = (x / (rect.width / 2)) * 6;
+                
+                parallaxWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            // Reset parallax on mouseleave to keep it centered
+            motionCanvas.addEventListener('mouseleave', () => {
+                parallaxWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
             });
 
         });
