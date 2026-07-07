@@ -24,7 +24,38 @@ window.deferDeviceBoot = true;
 })();
 
 // Page preloader and fly-in morphing transition handler
-window.addEventListener('load', () => {
+let preloaderDismissed = false;
+
+// Schedule dynamic preloader status text transitions
+const statusTextTimer1 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Initializing Core UI Modules...';
+    }
+}, 400);
+
+const statusTextTimer2 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Syncing Workspace Cache...';
+    }
+}, 850);
+
+const statusTextTimer3 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Ready.';
+    }
+}, 1300);
+
+function hidePreloader() {
+    if (preloaderDismissed) return;
+    preloaderDismissed = true;
+
+    clearTimeout(statusTextTimer1);
+    clearTimeout(statusTextTimer2);
+    clearTimeout(statusTextTimer3);
+
     const preloader = document.getElementById('page-preloader');
     const preloaderDevice = document.getElementById('preloader-device');
     const heroDevice = document.getElementById('hero-device');
@@ -90,6 +121,17 @@ window.addEventListener('load', () => {
             preloader.style.display = 'none';
         }, 500);
     }, remaining);
+}
+
+// Fallback timeout to force preloader removal after 1.5 seconds if loading is slow
+const preloaderFallbackTimeout = setTimeout(() => {
+    console.warn("Preloader forced dismiss via timeout fallback.");
+    hidePreloader();
+}, 1500);
+
+window.addEventListener('load', () => {
+    clearTimeout(preloaderFallbackTimeout);
+    hidePreloader();
 });
 
 

@@ -81,7 +81,38 @@ setTimeout(() => {
 }, 800);
 
 // Page preloader and fly-in morphing transition handler
-window.addEventListener('load', () => {
+let preloaderDismissed = false;
+
+// Schedule dynamic preloader status text transitions
+const statusTextTimer1 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Establishing SSL Tunnel...';
+    }
+}, 400);
+
+const statusTextTimer2 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Validating API Handshake...';
+    }
+}, 850);
+
+const statusTextTimer3 = setTimeout(() => {
+    const statusEl = document.getElementById('preloader-status');
+    if (statusEl && !preloaderDismissed) {
+        statusEl.textContent = 'Connected.';
+    }
+}, 1300);
+
+function hidePreloader() {
+    if (preloaderDismissed) return;
+    preloaderDismissed = true;
+
+    clearTimeout(statusTextTimer1);
+    clearTimeout(statusTextTimer2);
+    clearTimeout(statusTextTimer3);
+
     const preloader = document.getElementById('page-preloader');
     const preloaderDevice = document.getElementById('preloader-device');
     const heroDevice = document.getElementById('hero-device');
@@ -144,6 +175,17 @@ window.addEventListener('load', () => {
             preloader.style.display = 'none';
         }, 500);
     }, remaining);
+}
+
+// Fallback timeout to force preloader removal after 1.5 seconds if loading is slow
+const preloaderFallbackTimeout = setTimeout(() => {
+    console.warn("Preloader forced dismiss via timeout fallback.");
+    hidePreloader();
+}, 1500);
+
+window.addEventListener('load', () => {
+    clearTimeout(preloaderFallbackTimeout);
+    hidePreloader();
 });
 
 // Google Sheet Apps Script Integration
@@ -289,7 +331,7 @@ function validateForm() {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
                     userGroup: 'Pre-order',
-                    source: 'Checkout Form'
+                    source: 'Preorder Form'
                 })
             })
         );
@@ -316,6 +358,15 @@ function validateForm() {
                 }
                 openSuccessModal();
             }, 800);
+        }
+    } else {
+        // Scroll to the first error element for mobile view visibility
+        const firstError = document.querySelector('.border-error');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                firstError.focus();
+            }, 300);
         }
     }
 }
