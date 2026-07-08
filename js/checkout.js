@@ -125,7 +125,7 @@ function hidePreloader() {
     const remaining = Math.max(0, 400 - elapsed);
 
     setTimeout(() => {
-        if (preloaderDevice && heroDevice) {
+        if (preloaderDevice && heroDevice && heroDevice.offsetWidth > 0) {
             // Calculate scale and position coordinates relative to the viewport
             const preloaderRect = preloaderDevice.getBoundingClientRect();
             const heroRect = heroDevice.getBoundingClientRect();
@@ -142,6 +142,10 @@ function hidePreloader() {
             // Trigger the FLIP animation using translation and exact scale matching (prevents viewport/mobile size jumps)
             preloaderDevice.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
             preloaderDevice.style.opacity = '1';
+        } else if (preloaderDevice) {
+            // Fallback for mobile / hidden hero device: slide out and fade out the preloader device cleanly
+            preloaderDevice.style.transform = 'translateY(24px) scale(0.95)';
+            preloaderDevice.style.opacity = '0';
         }
 
         // Fade out overlay background and status text separately to keep device visible
@@ -197,7 +201,7 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPSE8uEneh2N
 const LOOPS_FORM_ID = 'cmr2br68g059u0jyri98r5fyc';
 
 // Validation Logic
-const submitBtn = document.querySelector('.btn-interactive');
+const submitBtn = document.getElementById('checkout-submit-btn');
 
 if (submitBtn) {
     submitBtn.addEventListener('click', function (e) {
@@ -295,10 +299,15 @@ function validateForm() {
         }
 
         // Disable submit button during request
+        const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
         if (submitBtn) {
             submitBtn.disabled = true;
             var originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = 'Processing... <span class="material-symbols-outlined text-[20px] animate-spin">sync</span>';
+        }
+        if (mobileSubmitBtn) {
+            mobileSubmitBtn.disabled = true;
+            mobileSubmitBtn.innerHTML = 'Processing... <span class="material-symbols-outlined text-[16px] animate-spin">sync</span>';
         }
 
         const promises = [];
@@ -348,6 +357,10 @@ function validateForm() {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalBtnText;
                     }
+                    if (mobileSubmitBtn) {
+                        mobileSubmitBtn.disabled = false;
+                        mobileSubmitBtn.innerHTML = 'Pre-order <span class="material-symbols-outlined text-[16px]">arrow_forward</span>';
+                    }
                     openSuccessModal();
                 });
         } else {
@@ -355,6 +368,10 @@ function validateForm() {
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnText;
+                }
+                if (mobileSubmitBtn) {
+                    mobileSubmitBtn.disabled = false;
+                    mobileSubmitBtn.innerHTML = 'Pre-order <span class="material-symbols-outlined text-[16px]">arrow_forward</span>';
                 }
                 openSuccessModal();
             }, 800);
@@ -856,4 +873,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Mobile sticky bottom bar click binding
+    const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
+    if (mobileSubmitBtn && submitBtn) {
+        mobileSubmitBtn.addEventListener('click', () => {
+            submitBtn.click();
+        });
+    }
+
+    // IntersectionObserver to show/hide mobile sticky bar
+    const mobileStickyBar = document.getElementById('mobile-sticky-bar');
+    const mainSubmitBtn = document.getElementById('checkout-submit-btn');
+    if (mobileStickyBar && mainSubmitBtn) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    mobileStickyBar.classList.add('translate-y-full', 'opacity-0');
+                    mobileStickyBar.classList.remove('translate-y-0', 'opacity-100');
+                } else {
+                    mobileStickyBar.classList.remove('translate-y-full', 'opacity-0');
+                    mobileStickyBar.classList.add('translate-y-0', 'opacity-100');
+                }
+            });
+        }, {
+            threshold: 0.05
+        });
+        observer.observe(mainSubmitBtn);
+    }
 });

@@ -108,7 +108,7 @@
         !function (f, b, e, v, n, t, s) {
             if (f.fbq) return; n = f.fbq = function () {
                 n.callMethod ?
-                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
             }; if (!f._fbq) f._fbq = n;
             n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
             t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
@@ -188,24 +188,26 @@
     </div>
     <!-- TopNavBar (Transactional, but keeping Brand anchor for checkout context if desired, though instructions say hide if strictly linear. Will include minimal brand header for checkout) -->
     <header
-        class="w-full py-6 px-gutter max-w-[1280px] mx-auto flex justify-center items-center border-b border-border-subtle/50">
+        class="w-full py-4 md:py-6 px-4 md:px-gutter max-w-[1280px] mx-auto flex justify-center items-center border-b border-border-subtle/50">
         <a class="font-headline-md text-headline-md font-bold tracking-tighter text-primary" href="index.html">Trace</a>
     </header>
     <main
-        class="flex-1 w-full max-w-[1280px] mx-auto px-gutter py-8 md:py-section-v-lg flex flex-col md:flex-row gap-gutter md:gap-16">
+        class="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-gutter py-6 md:py-section-v-lg flex flex-col md:flex-row gap-8 md:gap-16">
         <!-- Left Column: Forms -->
         <div class="flex-1 w-full max-w-2xl">
-            <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">Preorder</h1>
-            <form class="space-y-12">
+            <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 md:mb-8">Preorder</h1>
+            <form class="space-y-8 md:space-y-12">
                 <!-- Honeypot trap to protect from spam bots -->
                 <div style="display: none !important;" aria-hidden="true">
                     <input type="text" name="website_url_trap" id="website_url_trap" tabindex="-1" autocomplete="off">
                 </div>
 
-                <!-- Shipping Information -->
-                <section class="space-y-6">
-                    <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Shipping Information
-                    </h2>
+                <!-- Contact Information -->
+                <section class="space-y-4 md:space-y-6">
+                    <div class="space-y-2">
+                        <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Contact Information</h2>
+                        <p class="font-body-md text-text-muted text-xs md:text-sm">Enter your contact details to join our reserved-member list.</p>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2 relative">
                             <label
@@ -279,7 +281,7 @@
                     </div>
                 </section>
                 <!-- Remarks -->
-                <section class="space-y-6">
+                <section class="space-y-4 md:space-y-6">
                     <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Pre-order Remarks</h2>
                     <div>
                         <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Feature
@@ -290,7 +292,7 @@
                     </div>
                 </section>
                 <!-- Payment Method -->
-                <section class="space-y-6">
+                <section class="space-y-4 md:space-y-6">
                     <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Payment Method</h2>
                     <div class="space-y-3">
                         <label
@@ -340,7 +342,7 @@
                 <h3 class="font-label-mono text-label-mono text-text-muted uppercase">Order Summary</h3>
 
                 <!-- Target Checkout Device Mockup -->
-                <div class="flex justify-center py-2">
+                <div class="hidden md:flex justify-center py-2">
                     <div id="hero-device"
                         class="relative w-full max-w-[256px] aspect-[368/448] bg-neutral-900 rounded-[32px] p-[6px] border border-neutral-800/80 shadow-[0_12px_32px_rgba(0,0,0,0.8),_inset_0_2px_4px_rgba(255,255,255,0.15)] ring-1 ring-white/10 flex items-center justify-center opacity-0 transition-opacity duration-500 z-10">
                         <!-- Glass Reflections -->
@@ -418,7 +420,7 @@
                     <span>Total</span>
                     <span>₹2,499.00</span>
                 </div>
-                <button
+                <button id="checkout-submit-btn"
                     class="btn-interactive w-full h-14 bg-primary text-on-primary font-medium rounded flex items-center justify-center gap-2 mt-4">
                     Complete Pre-order
                     <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
@@ -435,7 +437,7 @@
     <!-- Footer -->
     <footer class="w-full bg-surface border-t border-border-subtle mt-auto">
         <div
-            class="flex flex-col md:flex-row justify-between items-center py-8 md:py-section-v-md px-gutter max-w-[1280px] mx-auto gap-stack-gap">
+            class="flex flex-col md:flex-row justify-between items-center py-6 md:py-section-v-md px-4 md:px-gutter max-w-[1280px] mx-auto gap-stack-gap">
             <div class="font-headline-md text-headline-md font-bold text-primary">Trace</div>
             <div class="flex gap-6 font-label-mono text-label-mono text-text-muted">
                 <a class="hover:text-primary transition-colors duration-200" href="privacy.html">Privacy Policy</a>
@@ -447,7 +449,7 @@
     <!-- Success Modal Overlay -->
     <div id="success-modal"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-surface border border-border-subtle p-8 max-w-md w-full rounded-2xl text-center space-y-6 shadow-2xl relative mx-gutter transform scale-95 transition-transform duration-300"
+        <div class="bg-surface border border-border-subtle p-6 md:p-8 max-w-md w-full rounded-2xl text-center space-y-6 shadow-2xl relative mx-4 md:mx-gutter transform scale-95 transition-transform duration-300"
             id="success-modal-content">
             <div
                 class="w-16 h-16 bg-secondary/10 border border-secondary rounded-full flex items-center justify-center mx-auto">
@@ -481,6 +483,20 @@
                 <span class="material-symbols-outlined text-[18px]">home</span>
             </button>
         </div>
+    </div>
+
+    <!-- Mobile Sticky Bottom Bar -->
+    <div id="mobile-sticky-bar"
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-elevated/90 backdrop-blur-xl border-t border-border-subtle p-4 z-40 flex items-center justify-between transition-all duration-350 translate-y-full opacity-0">
+        <div>
+            <div class="font-label-mono text-[10px] text-text-muted uppercase tracking-wider">Total</div>
+            <div class="font-body-lg font-bold text-primary">₹2,499.00</div>
+        </div>
+        <button id="mobile-submit-btn"
+            class="h-12 px-6 bg-primary text-on-primary font-medium rounded flex items-center justify-center gap-2 text-sm shadow-lg active:scale-95 transition-all">
+            Pre-order
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
     </div>
 
     <script src="js/checkout.js" defer></script>
