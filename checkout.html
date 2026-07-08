@@ -210,8 +210,8 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2 relative">
-                            <label
-                                class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Country/Region</label>
+                            <label for="country-dropdown-trigger"
+                                class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Country/Region</label>
 
                             <!-- Custom Dropdown Picker -->
                             <div id="custom-country-dropdown" class="relative w-full">
@@ -239,7 +239,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">First
+                            <label for="first-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">First
                                 Name</label>
                             <input id="first-name" name="given-name" autocomplete="given-name"
                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
@@ -249,7 +249,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Last
+                            <label for="last-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Last
                                 Name</label>
                             <input id="last-name" name="family-name" autocomplete="family-name"
                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
@@ -259,7 +259,7 @@
                             </div>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Email
+                            <label for="email" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Email
                                 Address</label>
                             <input id="email" name="email" autocomplete="email"
                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
@@ -269,7 +269,7 @@
                             </div>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Mobile
+                            <label for="mobile" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Mobile
                                 Number</label>
                             <input id="mobile" name="tel" autocomplete="tel"
                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
@@ -284,9 +284,9 @@
                 <section class="space-y-4 md:space-y-6">
                     <h2 class="font-headline-md text-body-lg border-b border-border-subtle pb-2">Pre-order Remarks</h2>
                     <div>
-                        <label class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase">Feature
+                        <label for="remarks" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Feature
                             requests or product remarks (Optional)</label>
-                        <textarea
+                        <textarea id="remarks" name="remarks"
                             class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary p-4 resize-none"
                             placeholder="Any specific configurations or early access requests?" rows="4"></textarea>
                     </div>

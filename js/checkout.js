@@ -210,6 +210,15 @@ if (submitBtn) {
     });
 }
 
+// Persistent Receipt ID for the session/form completion tracking
+let currentReceiptId = null;
+function getOrCreateReceiptId() {
+    if (!currentReceiptId) {
+        currentReceiptId = '#AE-' + Math.floor(100000 + Math.random() * 900000);
+    }
+    return currentReceiptId;
+}
+
 function validateForm() {
     const firstName = document.getElementById('first-name');
     const lastName = document.getElementById('last-name');
@@ -259,6 +268,8 @@ function validateForm() {
         }
     }
 
+    const receiptId = getOrCreateReceiptId();
+
     if (isValid) {
         // 1. Honeypot Spam Bot Trap
         const honeypotVal = document.getElementById('website_url_trap')?.value || '';
@@ -270,10 +281,9 @@ function validateForm() {
         }
 
         const receiptEl = document.getElementById('receipt-id');
-        const randomId = '#AE-' + Math.floor(100000 + Math.random() * 900000);
-        if (receiptEl) receiptEl.textContent = randomId;
+        if (receiptEl) receiptEl.textContent = receiptId;
 
-        const remarks = document.querySelector('textarea')?.value || '';
+        const remarks = document.getElementById('remarks')?.value || '';
         const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
         const paymentMethod = selectedRadio ? selectedRadio.nextElementSibling.textContent.trim() : 'Unknown';
         const country = document.getElementById('checkout-country')?.value || '';
@@ -286,7 +296,8 @@ function validateForm() {
             country: country,
             remarks: remarks,
             paymentMethod: paymentMethod,
-            receiptId: randomId,
+            receiptId: receiptId,
+            status: 'completed',
             securityToken: "TracePreorderSecureToken2026"
         };
 
@@ -294,6 +305,7 @@ function validateForm() {
         if (window.posthog && typeof window.posthog.capture === 'function') {
             window.posthog.capture('checkout_funnel', {
                 step: 'submitting',
+                receipt_id: receiptId,
                 payment_method: paymentMethod
             });
         }
@@ -377,6 +389,61 @@ function validateForm() {
             }, 800);
         }
     } else {
+        const firstNameVal = firstName ? firstName.value.trim() : '';
+        const lastNameVal = lastName ? lastName.value.trim() : '';
+        const emailVal = email ? email.value.trim() : '';
+        const mobileVal = mobile ? mobile.value.trim() : '';
+        const remarksVal = document.getElementById('remarks')?.value.trim() || '';
+
+        // 1. Capture validation failure in PostHog
+        if (window.posthog && typeof window.posthog.capture === 'function') {
+            const failedFields = [];
+            if (firstName && !firstNameVal) failedFields.push('first_name');
+            if (lastName && !lastNameVal) failedFields.push('last_name');
+            if (email && !emailVal) failedFields.push('email');
+            if (mobile && !mobileVal) failedFields.push('mobile');
+
+            window.posthog.capture('checkout_funnel', {
+                step: 'validation_failed',
+                receipt_id: receiptId,
+                failed_fields: failedFields
+            });
+        }
+
+        // 2. Background silent save to Google Sheets if any field contains data
+        const hasAnyData = firstNameVal || lastNameVal || emailVal || mobileVal || remarksVal;
+        if (hasAnyData) {
+            const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
+            const paymentMethod = selectedRadio ? selectedRadio.nextElementSibling.textContent.trim() : 'Unknown';
+            const country = document.getElementById('checkout-country')?.value || '';
+
+            const partialData = {
+                firstName: firstNameVal,
+                lastName: lastNameVal,
+                email: emailVal,
+                mobile: mobileVal,
+                country: country,
+                remarks: remarksVal,
+                paymentMethod: paymentMethod,
+                receiptId: receiptId,
+                status: 'partial',
+                securityToken: "TracePreorderSecureToken2026"
+            };
+
+            if (GOOGLE_SCRIPT_URL) {
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(partialData)
+                }).catch(err => console.error("Background partial save failed:", err));
+            } else {
+                console.log("[Simulation] Saved partial data to Google Sheet:", partialData);
+            }
+        }
+
         // Scroll to the first error element for mobile view visibility
         const firstError = document.querySelector('.border-error');
         if (firstError) {
@@ -420,6 +487,9 @@ function openSuccessModal() {
         if (window.posthog && typeof window.posthog.capture === 'function') {
             window.posthog.capture('checkout_funnel', {step: 'completed'});
         }
+
+        // Clear current receipt ID after successful preorder to allow subsequent submissions to get a fresh ID
+        currentReceiptId = null;
     }
 }
 
@@ -753,15 +823,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('country-search');
     const optionsContainer = document.getElementById('country-options-container');
 
+    let dropdownTimeout = null;
     function toggleDropdown(show) {
+        if (dropdownTimeout) {
+            clearTimeout(dropdownTimeout);
+            dropdownTimeout = null;
+        }
         if (show) {
             if (dropdownPopover) {
                 dropdownPopover.classList.remove('hidden');
-                setTimeout(() => {
-                    dropdownPopover.classList.remove('opacity-0', 'scale-95');
-                    dropdownPopover.classList.add('opacity-100', 'scale-100');
-                    if (dropdownChevron) dropdownChevron.style.transform = 'rotate(180deg)';
-                }, 10);
+                dropdownPopover.offsetHeight; // force layout reflow
+                dropdownPopover.classList.remove('opacity-0', 'scale-95');
+                dropdownPopover.classList.add('opacity-100', 'scale-100');
+                if (dropdownChevron) dropdownChevron.style.transform = 'rotate(180deg)';
             }
             if (searchInput) searchInput.focus();
         } else {
@@ -769,8 +843,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 dropdownPopover.classList.remove('opacity-100', 'scale-100');
                 dropdownPopover.classList.add('opacity-0', 'scale-95');
                 if (dropdownChevron) dropdownChevron.style.transform = 'rotate(0deg)';
-                setTimeout(() => {
+                dropdownTimeout = setTimeout(() => {
                     dropdownPopover.classList.add('hidden');
+                    dropdownTimeout = null;
                 }, 200);
             }
         }
@@ -780,8 +855,8 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             if (dropdownPopover) {
-                const isHidden = dropdownPopover.classList.contains('hidden');
-                toggleDropdown(isHidden);
+                const isOpen = dropdownPopover.classList.contains('opacity-100');
+                toggleDropdown(!isOpen);
             }
         });
     }
