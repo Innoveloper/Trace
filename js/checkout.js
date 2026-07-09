@@ -30,7 +30,7 @@ function updateDeviceTime() {
     hours = hours % 12;
     hours = hours ? hours : 12;
     const timeStr = `${hours}:${minutes} ${ampm}`;
-    
+
     timeElements.forEach(el => {
         el.textContent = timeStr;
     });
@@ -43,25 +43,25 @@ function updatePreloaderScreenState(newTitleText, newIconText, newDescText, isSu
     const titleEl = document.getElementById('preloader-device-title');
     const iconEl = document.getElementById('preloader-device-icon');
     const textEl = document.getElementById('preloader-device-text');
-    
+
     if (iconEl && textEl && titleEl) {
         // Fade out content
         titleEl.style.opacity = '0';
         iconEl.style.opacity = '0';
         iconEl.style.transform = 'scale(0.8)';
         textEl.style.opacity = '0';
-        
+
         setTimeout(() => {
             // Swap content
             titleEl.textContent = newTitleText;
             iconEl.textContent = newIconText;
             textEl.textContent = newDescText;
-            
+
             if (isSuccessColor) {
                 iconEl.classList.remove('text-primary');
                 iconEl.classList.add('text-secondary');
             }
-            
+
             // Fade in content
             titleEl.style.opacity = '1';
             iconEl.style.opacity = '1';
@@ -212,9 +212,15 @@ if (submitBtn) {
 
 // Persistent Receipt ID for the session/form completion tracking
 let currentReceiptId = null;
+let debounceSaveTimeout = null;
+
 function getOrCreateReceiptId() {
     if (!currentReceiptId) {
-        currentReceiptId = '#AE-' + Math.floor(100000 + Math.random() * 900000);
+        currentReceiptId = localStorage.getItem('trace_checkout_receipt_id');
+        if (!currentReceiptId) {
+            currentReceiptId = '#AE-' + Math.floor(100000 + Math.random() * 900000);
+            localStorage.setItem('trace_checkout_receipt_id', currentReceiptId);
+        }
     }
     return currentReceiptId;
 }
@@ -271,6 +277,10 @@ function validateForm() {
     const receiptId = getOrCreateReceiptId();
 
     if (isValid) {
+        if (debounceSaveTimeout) {
+            clearTimeout(debounceSaveTimeout);
+            debounceSaveTimeout = null;
+        }
         // 1. Honeypot Spam Bot Trap
         const honeypotVal = document.getElementById('website_url_trap')?.value || '';
         if (honeypotVal) {
@@ -297,7 +307,7 @@ function validateForm() {
             remarks: remarks,
             paymentMethod: paymentMethod,
             receiptId: receiptId,
-            status: 'completed',
+            status: 'Completed',
             securityToken: "TracePreorderSecureToken2026"
         };
 
@@ -410,40 +420,6 @@ function validateForm() {
             });
         }
 
-        // 2. Background silent save to Google Sheets if any field contains data
-        const hasAnyData = firstNameVal || lastNameVal || emailVal || mobileVal || remarksVal;
-        if (hasAnyData) {
-            const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
-            const paymentMethod = selectedRadio ? selectedRadio.nextElementSibling.textContent.trim() : 'Unknown';
-            const country = document.getElementById('checkout-country')?.value || '';
-
-            const partialData = {
-                firstName: firstNameVal,
-                lastName: lastNameVal,
-                email: emailVal,
-                mobile: mobileVal,
-                country: country,
-                remarks: remarksVal,
-                paymentMethod: paymentMethod,
-                receiptId: receiptId,
-                status: 'partial',
-                securityToken: "TracePreorderSecureToken2026"
-            };
-
-            if (GOOGLE_SCRIPT_URL) {
-                fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(partialData)
-                }).catch(err => console.error("Background partial save failed:", err));
-            } else {
-                console.log("[Simulation] Saved partial data to Google Sheet:", partialData);
-            }
-        }
-
         // Scroll to the first error element for mobile view visibility
         const firstError = document.querySelector('.border-error');
         if (firstError) {
@@ -485,11 +461,13 @@ function openSuccessModal() {
 
         // Track checkout success funnel completion
         if (window.posthog && typeof window.posthog.capture === 'function') {
-            window.posthog.capture('checkout_funnel', {step: 'completed'});
+            window.posthog.capture('checkout_funnel', { step: 'completed' });
         }
 
         // Clear current receipt ID after successful preorder to allow subsequent submissions to get a fresh ID
         currentReceiptId = null;
+        localStorage.removeItem('trace_checkout_receipt_id');
+        localStorage.removeItem('trace_checkout_pending_data');
     }
 }
 
@@ -511,258 +489,268 @@ function closeSuccessModal() {
 }
 
 const countriesList = [
-    {code: "AF", name: "Afghanistan"},
-    {code: "AX", name: "Åland Islands"},
-    {code: "AL", name: "Albania"},
-    {code: "DZ", name: "Algeria"},
-    {code: "AS", name: "American Samoa"},
-    {code: "AD", name: "Andorra"},
-    {code: "AO", name: "Angola"},
-    {code: "AI", name: "Anguilla"},
-    {code: "AQ", name: "Antarctica"},
-    {code: "AG", name: "Antigua and Barbuda"},
-    {code: "AR", name: "Argentina"},
-    {code: "AM", name: "Armenia"},
-    {code: "AW", name: "Aruba"},
-    {code: "AU", name: "Australia"},
-    {code: "AT", name: "Austria"},
-    {code: "AZ", name: "Azerbaijan"},
-    {code: "BS", name: "Bahamas"},
-    {code: "BH", name: "Bahrain"},
-    {code: "BD", name: "Bangladesh"},
-    {code: "BB", name: "Barbados"},
-    {code: "BY", name: "Belarus"},
-    {code: "BE", name: "Belgium"},
-    {code: "BZ", name: "Belize"},
-    {code: "BJ", name: "Benin"},
-    {code: "BM", name: "Bermuda"},
-    {code: "BT", name: "Bhutan"},
-    {code: "BO", name: "Bolivia"},
-    {code: "BQ", name: "Bonaire, Sint Eustatius and Saba"},
-    {code: "BA", name: "Bosnia and Herzegovina"},
-    {code: "BW", name: "Botswana"},
-    {code: "BV", name: "Bouvet Island"},
-    {code: "BR", name: "Brazil"},
-    {code: "IO", name: "British Indian Ocean Territory"},
-    {code: "BN", name: "Brunei Darussalam"},
-    {code: "BG", name: "Bulgaria"},
-    {code: "BF", name: "Burkina Faso"},
-    {code: "BI", name: "Burundi"},
-    {code: "CV", name: "Cabo Verde"},
-    {code: "KH", name: "Cambodia"},
-    {code: "CM", name: "Cameroon"},
-    {code: "CA", name: "Canada"},
-    {code: "KY", name: "Cayman Islands"},
-    {code: "CF", name: "Central African Republic"},
-    {code: "TD", name: "Chad"},
-    {code: "CL", name: "Chile"},
-    {code: "CN", name: "China"},
-    {code: "CX", name: "Christmas Island"},
-    {code: "CC", name: "Cocos (Keeling) Islands"},
-    {code: "CO", name: "Colombia"},
-    {code: "KM", name: "Comoros"},
-    {code: "CD", name: "Congo (Democratic Republic)"},
-    {code: "CG", name: "Congo (Republic)"},
-    {code: "CK", name: "Cook Islands"},
-    {code: "CR", name: "Costa Rica"},
-    {code: "CI", name: "Côte d'Ivoire"},
-    {code: "HR", name: "Croatia"},
-    {code: "CU", name: "Cuba"},
-    {code: "CW", name: "Curaçao"},
-    {code: "CY", name: "Cyprus"},
-    {code: "CZ", name: "Czechia"},
-    {code: "DK", name: "Denmark"},
-    {code: "DJ", name: "Djibouti"},
-    {code: "DM", name: "Dominica"},
-    {code: "DO", name: "Dominican Republic"},
-    {code: "EC", name: "Ecuador"},
-    {code: "EG", name: "Egypt"},
-    {code: "SV", name: "El Salvador"},
-    {code: "GQ", name: "Equatorial Guinea"},
-    {code: "ER", name: "Eritrea"},
-    {code: "EE", name: "Estonia"},
-    {code: "SZ", name: "Eswatini"},
-    {code: "ET", name: "Ethiopia"},
-    {code: "FK", name: "Falkland Islands"},
-    {code: "FO", name: "Faroe Islands"},
-    {code: "FJ", name: "Fiji"},
-    {code: "FI", name: "Finland"},
-    {code: "FR", name: "France"},
-    {code: "GF", name: "French Guiana"},
-    {code: "PF", name: "French Polynesia"},
-    {code: "TF", name: "French Southern Territories"},
-    {code: "GA", name: "Gabon"},
-    {code: "GM", name: "Gambia"},
-    {code: "GE", name: "Georgia"},
-    {code: "DE", name: "Germany"},
-    {code: "GH", name: "Ghana"},
-    {code: "GI", name: "Gibraltar"},
-    {code: "GR", name: "Greece"},
-    {code: "GL", name: "Greenland"},
-    {code: "GD", name: "Grenada"},
-    {code: "GP", name: "Guadeloupe"},
-    {code: "GU", name: "Guam"},
-    {code: "GT", name: "Guatemala"},
-    {code: "GG", name: "Guernsey"},
-    {code: "GN", name: "Guinea"},
-    {code: "GW", name: "Guinea-Bissau"},
-    {code: "GY", name: "Guyana"},
-    {code: "HT", name: "Haiti"},
-    {code: "HM", name: "Heard Island and McDonald Islands"},
-    {code: "VA", name: "Holy See"},
-    {code: "HN", name: "Honduras"},
-    {code: "HK", name: "Hong Kong"},
-    {code: "HU", name: "Hungary"},
-    {code: "IS", name: "Iceland"},
-    {code: "IN", name: "India"},
-    {code: "ID", name: "Indonesia"},
-    {code: "IR", name: "Iran"},
-    {code: "IQ", name: "Iraq"},
-    {code: "IE", name: "Ireland"},
-    {code: "IM", name: "Isle of Man"},
-    {code: "IL", name: "Israel"},
-    {code: "IT", name: "Italy"},
-    {code: "JM", name: "Jamaica"},
-    {code: "JP", name: "Japan"},
-    {code: "JE", name: "Jersey"},
-    {code: "JO", name: "Jordan"},
-    {code: "KZ", name: "Kazakhstan"},
-    {code: "KE", name: "Kenya"},
-    {code: "KI", name: "Kiribati"},
-    {code: "KP", name: "Korea (Democratic People's Republic)"},
-    {code: "KR", name: "Korea (Republic)"},
-    {code: "KW", name: "Kuwait"},
-    {code: "KG", name: "Kyrgyzstan"},
-    {code: "LA", name: "Lao People's Democratic Republic"},
-    {code: "LV", name: "Latvia"},
-    {code: "LB", name: "Lebanon"},
-    {code: "LS", name: "Lesotho"},
-    {code: "LR", name: "Liberia"},
-    {code: "LY", name: "Libya"},
-    {code: "LI", name: "Liechtenstein"},
-    {code: "LT", name: "Lithuania"},
-    {code: "LU", name: "Luxembourg"},
-    {code: "MO", name: "Macao"},
-    {code: "MG", name: "Madagascar"},
-    {code: "MW", name: "Malawi"},
-    {code: "MY", name: "Malaysia"},
-    {code: "MV", name: "Maldives"},
-    {code: "ML", name: "Mali"},
-    {code: "MT", name: "Malta"},
-    {code: "MH", name: "Marshall Islands"},
-    {code: "MQ", name: "Martinique"},
-    {code: "MR", name: "Mauritania"},
-    {code: "MU", name: "Mauritius"},
-    {code: "YT", name: "Mayotte"},
-    {code: "MX", name: "Mexico"},
-    {code: "FM", name: "Micronesia"},
-    {code: "MD", name: "Moldova"},
-    {code: "MC", name: "Monaco"},
-    {code: "MN", name: "Mongolia"},
-    {code: "ME", name: "Montenegro"},
-    {code: "MS", name: "Montserrat"},
-    {code: "MA", name: "Morocco"},
-    {code: "MZ", name: "Mozambique"},
-    {code: "MM", name: "Myanmar"},
-    {code: "NA", name: "Namibia"},
-    {code: "NR", name: "Nauru"},
-    {code: "NP", name: "Nepal"},
-    {code: "NL", name: "Netherlands"},
-    {code: "NC", name: "New Caledonia"},
-    {code: "NZ", name: "New Zealand"},
-    {code: "NI", name: "Nicaragua"},
-    {code: "NE", name: "Niger"},
-    {code: "NG", name: "Nigeria"},
-    {code: "NU", name: "Niue"},
-    {code: "NF", name: "Norfolk Island"},
-    {code: "MK", name: "North Macedonia"},
-    {code: "MP", name: "Northern Mariana Islands"},
-    {code: "NO", name: "Norway"},
-    {code: "OM", name: "Oman"},
-    {code: "PK", name: "Pakistan"},
-    {code: "PW", name: "Palau"},
-    {code: "PS", name: "Palestine"},
-    {code: "PA", name: "Panama"},
-    {code: "PG", name: "Papua New Guinea"},
-    {code: "PY", name: "Paraguay"},
-    {code: "PE", name: "Peru"},
-    {code: "PH", name: "Philippines"},
-    {code: "PN", name: "Pitcairn"},
-    {code: "PL", name: "Poland"},
-    {code: "PT", name: "Portugal"},
-    {code: "PR", name: "Puerto Rico"},
-    {code: "QA", name: "Qatar"},
-    {code: "RE", name: "Réunion"},
-    {code: "RO", name: "Romania"},
-    {code: "RU", name: "Russian Federation"},
-    {code: "RW", name: "Rwanda"},
-    {code: "BL", name: "Saint Barthélemy"},
-    {code: "SH", name: "Saint Helena"},
-    {code: "KN", name: "Saint Kitts and Nevis"},
-    {code: "LC", name: "Saint Lucia"},
-    {code: "MF", name: "Saint Martin"},
-    {code: "PM", name: "Saint Pierre and Miquelon"},
-    {code: "VC", name: "Saint Vincent and the Grenadines"},
-    {code: "WS", name: "Samoa"},
-    {code: "SM", name: "San Marino"},
-    {code: "ST", name: "Sao Tome and Principe"},
-    {code: "SA", name: "Saudi Arabia"},
-    {code: "SN", name: "Senegal"},
-    {code: "RS", name: "Serbia"},
-    {code: "SC", name: "Seychelles"},
-    {code: "SL", name: "Sierra Leone"},
-    {code: "SG", name: "Singapore"},
-    {code: "SX", name: "Sint Maarten"},
-    {code: "SK", name: "Slovakia"},
-    {code: "SI", name: "Slovenia"},
-    {code: "SB", name: "Solomon Islands"},
-    {code: "SO", name: "Somalia"},
-    {code: "ZA", name: "South Africa"},
-    {code: "GS", name: "South Georgia and the South Sandwich Islands"},
-    {code: "SS", name: "South Sudan"},
-    {code: "ES", name: "Spain"},
-    {code: "LK", name: "Sri Lanka"},
-    {code: "SD", name: "Sudan"},
-    {code: "SR", name: "Suriname"},
-    {code: "SJ", name: "Svalbard and Jan Mayen"},
-    {code: "SE", name: "Sweden"},
-    {code: "CH", name: "Switzerland"},
-    {code: "SY", name: "Syrian Arab Republic"},
-    {code: "TW", name: "Taiwan"},
-    {code: "TJ", name: "Tajikistan"},
-    {code: "TZ", name: "Tanzania"},
-    {code: "TH", name: "Thailand"},
-    {code: "TL", name: "Timor-Leste"},
-    {code: "TG", name: "Togo"},
-    {code: "TK", name: "Tokelau"},
-    {code: "TO", name: "Tonga"},
-    {code: "TT", name: "Trinidad and Tobago"},
-    {code: "TN", name: "Tunisia"},
-    {code: "TR", name: "Turkey"},
-    {code: "TM", name: "Turkmenistan"},
-    {code: "TC", name: "Turks and Caicos Islands"},
-    {code: "TV", name: "Tuvalu"},
-    {code: "UG", name: "Uganda"},
-    {code: "UA", name: "Ukraine"},
-    {code: "AE", name: "United Arab Emirates"},
-    {code: "GB", name: "United Kingdom"},
-    {code: "UM", name: "United States Minor Outlying Islands"},
-    {code: "US", name: "United States"},
-    {code: "UY", name: "Uruguay"},
-    {code: "UZ", name: "Uzbekistan"},
-    {code: "VU", name: "Vanuatu"},
-    {code: "VE", name: "Venezuela"},
-    {code: "VN", name: "Viet Nam"},
-    {code: "VG", name: "Virgin Islands (British)"},
-    {code: "VI", name: "Virgin Islands (U.S.)"},
-    {code: "WF", name: "Wallis and Futuna"},
-    {code: "EH", name: "Western Sahara"},
-    {code: "YE", name: "Yemen"},
-    {code: "ZM", name: "Zambia"},
-    {code: "ZW", name: "Zimbabwe"}
+    { code: "AF", name: "Afghanistan" },
+    { code: "AX", name: "Åland Islands" },
+    { code: "AL", name: "Albania" },
+    { code: "DZ", name: "Algeria" },
+    { code: "AS", name: "American Samoa" },
+    { code: "AD", name: "Andorra" },
+    { code: "AO", name: "Angola" },
+    { code: "AI", name: "Anguilla" },
+    { code: "AQ", name: "Antarctica" },
+    { code: "AG", name: "Antigua and Barbuda" },
+    { code: "AR", name: "Argentina" },
+    { code: "AM", name: "Armenia" },
+    { code: "AW", name: "Aruba" },
+    { code: "AU", name: "Australia" },
+    { code: "AT", name: "Austria" },
+    { code: "AZ", name: "Azerbaijan" },
+    { code: "BS", name: "Bahamas" },
+    { code: "BH", name: "Bahrain" },
+    { code: "BD", name: "Bangladesh" },
+    { code: "BB", name: "Barbados" },
+    { code: "BY", name: "Belarus" },
+    { code: "BE", name: "Belgium" },
+    { code: "BZ", name: "Belize" },
+    { code: "BJ", name: "Benin" },
+    { code: "BM", name: "Bermuda" },
+    { code: "BT", name: "Bhutan" },
+    { code: "BO", name: "Bolivia" },
+    { code: "BQ", name: "Bonaire, Sint Eustatius and Saba" },
+    { code: "BA", name: "Bosnia and Herzegovina" },
+    { code: "BW", name: "Botswana" },
+    { code: "BV", name: "Bouvet Island" },
+    { code: "BR", name: "Brazil" },
+    { code: "IO", name: "British Indian Ocean Territory" },
+    { code: "BN", name: "Brunei Darussalam" },
+    { code: "BG", name: "Bulgaria" },
+    { code: "BF", name: "Burkina Faso" },
+    { code: "BI", name: "Burundi" },
+    { code: "CV", name: "Cabo Verde" },
+    { code: "KH", name: "Cambodia" },
+    { code: "CM", name: "Cameroon" },
+    { code: "CA", name: "Canada" },
+    { code: "KY", name: "Cayman Islands" },
+    { code: "CF", name: "Central African Republic" },
+    { code: "TD", name: "Chad" },
+    { code: "CL", name: "Chile" },
+    { code: "CN", name: "China" },
+    { code: "CX", name: "Christmas Island" },
+    { code: "CC", name: "Cocos (Keeling) Islands" },
+    { code: "CO", name: "Colombia" },
+    { code: "KM", name: "Comoros" },
+    { code: "CD", name: "Congo (Democratic Republic)" },
+    { code: "CG", name: "Congo (Republic)" },
+    { code: "CK", name: "Cook Islands" },
+    { code: "CR", name: "Costa Rica" },
+    { code: "CI", name: "Côte d'Ivoire" },
+    { code: "HR", name: "Croatia" },
+    { code: "CU", name: "Cuba" },
+    { code: "CW", name: "Curaçao" },
+    { code: "CY", name: "Cyprus" },
+    { code: "CZ", name: "Czechia" },
+    { code: "DK", name: "Denmark" },
+    { code: "DJ", name: "Djibouti" },
+    { code: "DM", name: "Dominica" },
+    { code: "DO", name: "Dominican Republic" },
+    { code: "EC", name: "Ecuador" },
+    { code: "EG", name: "Egypt" },
+    { code: "SV", name: "El Salvador" },
+    { code: "GQ", name: "Equatorial Guinea" },
+    { code: "ER", name: "Eritrea" },
+    { code: "EE", name: "Estonia" },
+    { code: "SZ", name: "Eswatini" },
+    { code: "ET", name: "Ethiopia" },
+    { code: "FK", name: "Falkland Islands" },
+    { code: "FO", name: "Faroe Islands" },
+    { code: "FJ", name: "Fiji" },
+    { code: "FI", name: "Finland" },
+    { code: "FR", name: "France" },
+    { code: "GF", name: "French Guiana" },
+    { code: "PF", name: "French Polynesia" },
+    { code: "TF", name: "French Southern Territories" },
+    { code: "GA", name: "Gabon" },
+    { code: "GM", name: "Gambia" },
+    { code: "GE", name: "Georgia" },
+    { code: "DE", name: "Germany" },
+    { code: "GH", name: "Ghana" },
+    { code: "GI", name: "Gibraltar" },
+    { code: "GR", name: "Greece" },
+    { code: "GL", name: "Greenland" },
+    { code: "GD", name: "Grenada" },
+    { code: "GP", name: "Guadeloupe" },
+    { code: "GU", name: "Guam" },
+    { code: "GT", name: "Guatemala" },
+    { code: "GG", name: "Guernsey" },
+    { code: "GN", name: "Guinea" },
+    { code: "GW", name: "Guinea-Bissau" },
+    { code: "GY", name: "Guyana" },
+    { code: "HT", name: "Haiti" },
+    { code: "HM", name: "Heard Island and McDonald Islands" },
+    { code: "VA", name: "Holy See" },
+    { code: "HN", name: "Honduras" },
+    { code: "HK", name: "Hong Kong" },
+    { code: "HU", name: "Hungary" },
+    { code: "IS", name: "Iceland" },
+    { code: "IN", name: "India" },
+    { code: "ID", name: "Indonesia" },
+    { code: "IR", name: "Iran" },
+    { code: "IQ", name: "Iraq" },
+    { code: "IE", name: "Ireland" },
+    { code: "IM", name: "Isle of Man" },
+    { code: "IL", name: "Israel" },
+    { code: "IT", name: "Italy" },
+    { code: "JM", name: "Jamaica" },
+    { code: "JP", name: "Japan" },
+    { code: "JE", name: "Jersey" },
+    { code: "JO", name: "Jordan" },
+    { code: "KZ", name: "Kazakhstan" },
+    { code: "KE", name: "Kenya" },
+    { code: "KI", name: "Kiribati" },
+    { code: "KP", name: "Korea (Democratic People's Republic)" },
+    { code: "KR", name: "Korea (Republic)" },
+    { code: "KW", name: "Kuwait" },
+    { code: "KG", name: "Kyrgyzstan" },
+    { code: "LA", name: "Lao People's Democratic Republic" },
+    { code: "LV", name: "Latvia" },
+    { code: "LB", name: "Lebanon" },
+    { code: "LS", name: "Lesotho" },
+    { code: "LR", name: "Liberia" },
+    { code: "LY", name: "Libya" },
+    { code: "LI", name: "Liechtenstein" },
+    { code: "LT", name: "Lithuania" },
+    { code: "LU", name: "Luxembourg" },
+    { code: "MO", name: "Macao" },
+    { code: "MG", name: "Madagascar" },
+    { code: "MW", name: "Malawi" },
+    { code: "MY", name: "Malaysia" },
+    { code: "MV", name: "Maldives" },
+    { code: "ML", name: "Mali" },
+    { code: "MT", name: "Malta" },
+    { code: "MH", name: "Marshall Islands" },
+    { code: "MQ", name: "Martinique" },
+    { code: "MR", name: "Mauritania" },
+    { code: "MU", name: "Mauritius" },
+    { code: "YT", name: "Mayotte" },
+    { code: "MX", name: "Mexico" },
+    { code: "FM", name: "Micronesia" },
+    { code: "MD", name: "Moldova" },
+    { code: "MC", name: "Monaco" },
+    { code: "MN", name: "Mongolia" },
+    { code: "ME", name: "Montenegro" },
+    { code: "MS", name: "Montserrat" },
+    { code: "MA", name: "Morocco" },
+    { code: "MZ", name: "Mozambique" },
+    { code: "MM", name: "Myanmar" },
+    { code: "NA", name: "Namibia" },
+    { code: "NR", name: "Nauru" },
+    { code: "NP", name: "Nepal" },
+    { code: "NL", name: "Netherlands" },
+    { code: "NC", name: "New Caledonia" },
+    { code: "NZ", name: "New Zealand" },
+    { code: "NI", name: "Nicaragua" },
+    { code: "NE", name: "Niger" },
+    { code: "NG", name: "Nigeria" },
+    { code: "NU", name: "Niue" },
+    { code: "NF", name: "Norfolk Island" },
+    { code: "MK", name: "North Macedonia" },
+    { code: "MP", name: "Northern Mariana Islands" },
+    { code: "NO", name: "Norway" },
+    { code: "OM", name: "Oman" },
+    { code: "PK", name: "Pakistan" },
+    { code: "PW", name: "Palau" },
+    { code: "PS", name: "Palestine" },
+    { code: "PA", name: "Panama" },
+    { code: "PG", name: "Papua New Guinea" },
+    { code: "PY", name: "Paraguay" },
+    { code: "PE", name: "Peru" },
+    { code: "PH", name: "Philippines" },
+    { code: "PN", name: "Pitcairn" },
+    { code: "PL", name: "Poland" },
+    { code: "PT", name: "Portugal" },
+    { code: "PR", name: "Puerto Rico" },
+    { code: "QA", name: "Qatar" },
+    { code: "RE", name: "Réunion" },
+    { code: "RO", name: "Romania" },
+    { code: "RU", name: "Russian Federation" },
+    { code: "RW", name: "Rwanda" },
+    { code: "BL", name: "Saint Barthélemy" },
+    { code: "SH", name: "Saint Helena" },
+    { code: "KN", name: "Saint Kitts and Nevis" },
+    { code: "LC", name: "Saint Lucia" },
+    { code: "MF", name: "Saint Martin" },
+    { code: "PM", name: "Saint Pierre and Miquelon" },
+    { code: "VC", name: "Saint Vincent and the Grenadines" },
+    { code: "WS", name: "Samoa" },
+    { code: "SM", name: "San Marino" },
+    { code: "ST", name: "Sao Tome and Principe" },
+    { code: "SA", name: "Saudi Arabia" },
+    { code: "SN", name: "Senegal" },
+    { code: "RS", name: "Serbia" },
+    { code: "SC", name: "Seychelles" },
+    { code: "SL", name: "Sierra Leone" },
+    { code: "SG", name: "Singapore" },
+    { code: "SX", name: "Sint Maarten" },
+    { code: "SK", name: "Slovakia" },
+    { code: "SI", name: "Slovenia" },
+    { code: "SB", name: "Solomon Islands" },
+    { code: "SO", name: "Somalia" },
+    { code: "ZA", name: "South Africa" },
+    { code: "GS", name: "South Georgia and the South Sandwich Islands" },
+    { code: "SS", name: "South Sudan" },
+    { code: "ES", name: "Spain" },
+    { code: "LK", name: "Sri Lanka" },
+    { code: "SD", name: "Sudan" },
+    { code: "SR", name: "Suriname" },
+    { code: "SJ", name: "Svalbard and Jan Mayen" },
+    { code: "SE", name: "Sweden" },
+    { code: "CH", name: "Switzerland" },
+    { code: "SY", name: "Syrian Arab Republic" },
+    { code: "TW", name: "Taiwan" },
+    { code: "TJ", name: "Tajikistan" },
+    { code: "TZ", name: "Tanzania" },
+    { code: "TH", name: "Thailand" },
+    { code: "TL", name: "Timor-Leste" },
+    { code: "TG", name: "Togo" },
+    { code: "TK", name: "Tokelau" },
+    { code: "TO", name: "Tonga" },
+    { code: "TT", name: "Trinidad and Tobago" },
+    { code: "TN", name: "Tunisia" },
+    { code: "TR", name: "Turkey" },
+    { code: "TM", name: "Turkmenistan" },
+    { code: "TC", name: "Turks and Caicos Islands" },
+    { code: "TV", name: "Tuvalu" },
+    { code: "UG", name: "Uganda" },
+    { code: "UA", name: "Ukraine" },
+    { code: "AE", name: "United Arab Emirates" },
+    { code: "GB", name: "United Kingdom" },
+    { code: "UM", name: "United States Minor Outlying Islands" },
+    { code: "US", name: "United States" },
+    { code: "UY", name: "Uruguay" },
+    { code: "UZ", name: "Uzbekistan" },
+    { code: "VU", name: "Vanuatu" },
+    { code: "VE", name: "Venezuela" },
+    { code: "VN", name: "Viet Nam" },
+    { code: "VG", name: "Virgin Islands (British)" },
+    { code: "VI", name: "Virgin Islands (U.S.)" },
+    { code: "WF", name: "Wallis and Futuna" },
+    { code: "EH", name: "Western Sahara" },
+    { code: "YE", name: "Yemen" },
+    { code: "ZM", name: "Zambia" },
+    { code: "ZW", name: "Zimbabwe" }
 ];
 
 async function detectUserLocation(selectElement) {
+    if (localStorage.getItem('trace_checkout_pending_data')) {
+        const savedData = JSON.parse(localStorage.getItem('trace_checkout_pending_data'));
+        if (savedData && savedData.country) {
+            selectElement.value = savedData.country;
+            const selectedText = document.getElementById('selected-country-text');
+            if (selectedText) selectedText.textContent = savedData.country;
+            if (typeof renderOptions === 'function') renderOptions();
+            return;
+        }
+    }
     let detectedCountry = 'United States';
     try {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -904,6 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         detection_type: 'manual'
                     });
                 }
+                queueRealtimeSave();
             });
             optionsContainer.appendChild(opt);
         });
@@ -921,7 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.posthog && typeof window.posthog.capture === 'function') {
-        window.posthog.capture('checkout_funnel', {step: 'started'});
+        window.posthog.capture('checkout_funnel', { step: 'started' });
     }
 
     // Track first input focus
@@ -931,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!hasFocusedForm) {
                 hasFocusedForm = true;
                 if (window.posthog && typeof window.posthog.capture === 'function') {
-                    window.posthog.capture('checkout_funnel', {step: 'form_focused'});
+                    window.posthog.capture('checkout_funnel', { step: 'form_focused' });
                 }
             }
         });
@@ -943,11 +932,131 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target.checked) {
                 const paymentVal = e.target.nextElementSibling.textContent.trim();
                 if (window.posthog && typeof window.posthog.capture === 'function') {
-                    window.posthog.capture('payment_preference_selected', {payment_method: paymentVal});
+                    window.posthog.capture('payment_preference_selected', { payment_method: paymentVal });
                 }
+                queueRealtimeSave();
             }
         });
     });
+
+    // Real-time auto-saving on user input
+    document.querySelectorAll('.checkout-input').forEach(input => {
+        input.addEventListener('input', queueRealtimeSave);
+    });
+
+    function queueRealtimeSave() {
+        if (debounceSaveTimeout) {
+            clearTimeout(debounceSaveTimeout);
+        }
+        debounceSaveTimeout = setTimeout(executeRealtimeSave, 1000);
+    }
+
+    function executeRealtimeSave() {
+        const firstName = document.getElementById('first-name');
+        const lastName = document.getElementById('last-name');
+        const email = document.getElementById('email');
+        const mobile = document.getElementById('mobile');
+        const remarks = document.getElementById('remarks');
+        const country = document.getElementById('checkout-country');
+
+        const firstNameVal = firstName ? firstName.value.trim() : '';
+        const lastNameVal = lastName ? lastName.value.trim() : '';
+        const emailVal = email ? email.value.trim() : '';
+        const mobileVal = mobile ? mobile.value.trim() : '';
+        const remarksVal = remarks ? remarks.value.trim() : '';
+        const countryVal = country ? country.value : '';
+
+        // If all fields are empty, do not save
+        if (!firstNameVal && !lastNameVal && !emailVal && !mobileVal && !remarksVal) {
+            return;
+        }
+
+        const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
+        const paymentMethod = selectedRadio ? selectedRadio.nextElementSibling.textContent.trim() : 'Unknown';
+        const receiptId = getOrCreateReceiptId();
+
+        const payload = {
+            firstName: firstNameVal,
+            lastName: lastNameVal,
+            email: emailVal,
+            mobile: mobileVal,
+            country: countryVal,
+            remarks: remarksVal,
+            paymentMethod: paymentMethod,
+            receiptId: receiptId,
+            status: 'Pending',
+            securityToken: "TracePreorderSecureToken2026"
+        };
+
+        // Cache local copy of the filled details
+        localStorage.setItem('trace_checkout_pending_data', JSON.stringify({
+            firstName: firstNameVal,
+            lastName: lastNameVal,
+            email: emailVal,
+            mobile: mobileVal,
+            country: countryVal,
+            remarks: remarksVal,
+            paymentMethod: paymentMethod
+        }));
+
+        if (GOOGLE_SCRIPT_URL) {
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Real-time auto-save failed:", err));
+        } else {
+            console.log("[Simulation] Auto-saved data to Google Sheet:", payload);
+        }
+    }
+
+    function prefillFormData() {
+        const savedDataStr = localStorage.getItem('trace_checkout_pending_data');
+        if (!savedDataStr) return;
+
+        try {
+            const savedData = JSON.parse(savedDataStr);
+            if (!savedData) return;
+
+            const firstName = document.getElementById('first-name');
+            const lastName = document.getElementById('last-name');
+            const email = document.getElementById('email');
+            const mobile = document.getElementById('mobile');
+            const remarks = document.getElementById('remarks');
+            const country = document.getElementById('checkout-country');
+            const selectedCountryText = document.getElementById('selected-country-text');
+
+            if (firstName && savedData.firstName) firstName.value = savedData.firstName;
+            if (lastName && savedData.lastName) lastName.value = savedData.lastName;
+            if (email && savedData.email) email.value = savedData.email;
+            if (mobile && savedData.mobile) mobile.value = savedData.mobile;
+            if (remarks && savedData.remarks) remarks.value = savedData.remarks;
+            if (country && savedData.country) {
+                country.value = savedData.country;
+                if (selectedCountryText) selectedCountryText.textContent = savedData.country;
+            }
+
+            // Prefill payment preference if saved
+            if (savedData.paymentMethod) {
+                document.querySelectorAll('.payment-card input[type="radio"]').forEach(radio => {
+                    const text = radio.nextElementSibling.textContent.trim();
+                    if (text.toLowerCase() === savedData.paymentMethod.toLowerCase()) {
+                        radio.checked = true;
+                    }
+                });
+            }
+
+            console.log("Prefilled form data from localStorage:", savedData);
+        } catch (e) {
+            console.error("Failed to parse prefill data from localStorage:", e);
+        }
+    }
+
+    // Prefill form inputs if cached data exists in localStorage
+    prefillFormData();
 
     // Mobile sticky bottom bar click binding
     const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
