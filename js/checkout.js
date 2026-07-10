@@ -464,6 +464,18 @@ function openSuccessModal() {
             window.posthog.capture('checkout_funnel', { step: 'completed' });
         }
 
+        // Track Facebook Pixel Purchase event and custom conversion events
+        if (typeof fbq === 'function') {
+            // Standard Purchase event (highly recommended for Meta Ads optimization)
+            fbq('track', 'Purchase', {
+                value: 2499.00,
+                currency: 'INR'
+            });
+            // Custom events matching user configurations
+            fbq('trackCustom', 'Order Completed');
+            fbq('trackCustom', 'Pre-Order');
+        }
+
         // Clear current receipt ID after successful preorder to allow subsequent submissions to get a fresh ID
         currentReceiptId = null;
         localStorage.removeItem('trace_checkout_receipt_id');

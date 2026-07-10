@@ -520,6 +520,15 @@ function trackCta(location, text) {
             cta_text: text
         });
     }
+    if (typeof fbq === 'function') {
+        if (text === 'Reserve Now') {
+            fbq('trackCustom', 'Reserve Now');
+            fbq('track', 'Lead');
+        } else if (text === 'Pre-order Now') {
+            fbq('trackCustom', 'Pre-Order');
+            fbq('track', 'Lead');
+        }
+    }
 }
 
 function scrollToTop() {
