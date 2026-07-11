@@ -91,16 +91,46 @@ body {
 
 /* Disabled button state styling */
 .btn-disabled-style {
-    opacity: 0.55 !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     cursor: not-allowed !important;
     pointer-events: auto !important; /* Keep it clickable to trigger scroll & errors */
     transform: none !important;
     box-shadow: none !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-size 0.15s ease-out !important;
+    
+    /* 4-Layer Background Masking for synchronized text color fill */
+    color: transparent !important;
+    background-image: 
+        linear-gradient(#09090b, #09090b), /* 1. Text Fill (Dark Slate) */
+        linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), /* 2. Text Base (Gray) */
+        linear-gradient(#ffffff, #ffffff), /* 3. Button Fill (White) */
+        linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)) !important; /* 4. Button Base (Dark Track) */
+        
+    -webkit-background-clip: text, text, padding-box, padding-box !important;
+    background-clip: text, text, padding-box, padding-box !important;
+    
+    background-position: bottom left, bottom left, bottom left, bottom left !important;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
 }
+
+/* Seamless bridge state to prevent flicker when dropping background-clip masks */
+.btn-success-flash {
+    background-color: #ffffff !important;
+    color: #09090b !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    transition: none !important;
+}
+
 .btn-disabled-style:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
     transform: none !important;
     box-shadow: none !important;
 }
+
+
 
 /* Hide mobile sticky bottom bar when virtual keyboard is open */
 .keyboard-open-hide {

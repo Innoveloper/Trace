@@ -177,6 +177,8 @@ function hidePreloader() {
                 preloaderWrapper.style.display = 'none';
             }
             preloader.style.display = 'none';
+            // Autofocus First Name input after preloader disappears
+            document.getElementById('first-name')?.focus();
         }, 500);
     }, remaining);
 }
@@ -227,14 +229,133 @@ function checkFormValidity() {
 function updateSubmitButtonsState() {
     const submitBtn = document.getElementById('checkout-submit-btn');
     const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
-    const isValid = checkFormValidity();
+
+    const firstName = document.getElementById('first-name');
+    const lastName = document.getElementById('last-name');
+    const email = document.getElementById('email');
+    const mobile = document.getElementById('mobile');
+    const country = document.getElementById('checkout-country');
+    const selectedRadio = document.querySelector('.payment-card input[type="radio"]:checked');
+
+    let completedFields = 0;
+    if (firstName && firstName.value.trim()) completedFields++;
+    if (lastName && lastName.value.trim()) completedFields++;
+    if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(email.value.trim())) completedFields++;
+    }
+    if (mobile && mobile.value.trim()) {
+        // Only count if it has more than just the prefix spacer
+        const val = mobile.value.trim();
+        if (val !== '+' && val !== '+91' && val !== '+1' && val !== '+44' && val !== '+61' && val !== '+65') {
+            completedFields++;
+        }
+    }
+    if (country && country.value) completedFields++;
+    if (selectedRadio) completedFields++;
+
+    const totalSteps = 6;
+    const isValid = (completedFields === totalSteps);
+    const pct = (completedFields / totalSteps) * 100;
 
     if (isValid) {
-        submitBtn?.classList.remove('btn-disabled-style');
-        mobileSubmitBtn?.classList.remove('btn-disabled-style');
+        // 1. Instantly set background to 100% white progress bar to let it slide to the end
+        if (submitBtn) {
+            submitBtn.style.backgroundSize = `100% 3px, 100% 100%, 100% 3px, 100% 3px`;
+        }
+        if (mobileSubmitBtn) {
+            mobileSubmitBtn.style.backgroundSize = `100% 3px, 100% 100%, 100% 3px, 100% 3px`;
+        }
+
+        // 2. Wait 150ms for width transition animation to finish
+        setTimeout(() => {
+            // Re-evaluate form validity
+            const fName = document.getElementById('first-name');
+            const lName = document.getElementById('last-name');
+            const mail = document.getElementById('email');
+            const mob = document.getElementById('mobile');
+            
+            let curCompleted = 0;
+            if (fName && fName.value.trim()) curCompleted++;
+            if (lName && lName.value.trim()) curCompleted++;
+            if (mail) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailRegex.test(mail.value.trim())) curCompleted++;
+            }
+            if (mob && mob.value.trim()) {
+                const val = mob.value.trim();
+                if (val !== '+' && val !== '+91' && val !== '+1' && val !== '+44' && val !== '+61' && val !== '+65') {
+                    curCompleted++;
+                }
+            }
+            const countrySelect = document.getElementById('checkout-country');
+            const payRadio = document.querySelector('.payment-card input[type="radio"]:checked');
+            if (countrySelect && countrySelect.value) curCompleted++;
+            if (payRadio) curCompleted++;
+
+            if (curCompleted === 6) {
+                // 3. Animate height to 100% (fill the button) and turn text dark for contrast
+                if (submitBtn) {
+                    submitBtn.style.backgroundSize = `100% 100%, 100% 100%, 100% 100%, 100% 3px`;
+                }
+                if (mobileSubmitBtn) {
+                    mobileSubmitBtn.style.backgroundSize = `100% 100%, 100% 100%, 100% 100%, 100% 3px`;
+                }
+
+                // 4. Wait another 500ms for height animation to finish before lighting up default active state
+                setTimeout(() => {
+                    // Check validity one last time
+                    const finalFName = document.getElementById('first-name');
+                    const finalLName = document.getElementById('last-name');
+                    const finalMail = document.getElementById('email');
+                    const finalMob = document.getElementById('mobile');
+                    
+                    let finalCompleted = 0;
+                    if (finalFName && finalFName.value.trim()) finalCompleted++;
+                    if (finalLName && finalLName.value.trim()) finalCompleted++;
+                    if (finalMail) {
+                        const eRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (eRegex.test(finalMail.value.trim())) finalCompleted++;
+                    }
+                    if (finalMob && finalMob.value.trim()) {
+                        const mVal = finalMob.value.trim();
+                        if (mVal !== '+' && mVal !== '+91' && mVal !== '+1' && mVal !== '+44' && mVal !== '+61' && mVal !== '+65') {
+                            finalCompleted++;
+                        }
+                    }
+                    const finalCountry = document.getElementById('checkout-country');
+                    const finalRadio = document.querySelector('.payment-card input[type="radio"]:checked');
+                    if (finalCountry && finalCountry.value) finalCompleted++;
+                    if (finalRadio) finalCompleted++;
+
+                    if (finalCompleted === 6) {
+                        submitBtn?.classList.add('btn-success-flash');
+                        submitBtn?.classList.remove('btn-disabled-style');
+                        mobileSubmitBtn?.classList.add('btn-success-flash');
+                        mobileSubmitBtn?.classList.remove('btn-disabled-style');
+                        
+                        if (submitBtn) submitBtn.style.backgroundSize = '';
+                        if (mobileSubmitBtn) mobileSubmitBtn.style.backgroundSize = '';
+                        
+                        // Allow browser to paint the solid white bridge state, then seamlessly transition to active green
+                        setTimeout(() => {
+                            submitBtn?.classList.remove('btn-success-flash');
+                            mobileSubmitBtn?.classList.remove('btn-success-flash');
+                        }, 30);
+                    }
+                }, 150);
+            }
+        }, 150);
     } else {
         submitBtn?.classList.add('btn-disabled-style');
         mobileSubmitBtn?.classList.add('btn-disabled-style');
+        
+        if (submitBtn) {
+            submitBtn.style.backgroundSize = `${pct}% 3px, 100% 100%, ${pct}% 3px, 100% 3px`;
+        }
+        if (mobileSubmitBtn) {
+            mobileSubmitBtn.style.backgroundSize = `${pct}% 3px, 100% 100%, ${pct}% 3px, 100% 3px`;
+        }
     }
 }
 
@@ -830,7 +951,7 @@ async function detectUserLocation(selectElement) {
             return;
         }
     }
-    let detectedCountry = 'United States';
+    let detectedCountry = 'India';
     try {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if (tz) {
@@ -972,6 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 queueRealtimeSave();
+                updateSubmitButtonsState();
             });
             optionsContainer.appendChild(opt);
         });
@@ -992,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.posthog.capture('checkout_funnel', { step: 'started' });
     }
 
-    // Track first input focus
+    // Track first input focus and auto-fill dial prefix
     let hasFocusedForm = false;
     document.querySelectorAll('.checkout-input').forEach(input => {
         input.addEventListener('focus', () => {
@@ -1001,6 +1123,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.posthog && typeof window.posthog.capture === 'function') {
                     window.posthog.capture('checkout_funnel', { step: 'form_focused' });
                 }
+            }
+            if (input.id === 'mobile' && !input.value.trim()) {
+                const country = document.getElementById('checkout-country')?.value || 'India';
+                if (country === 'India') {
+                    input.value = '+91 ';
+                } else if (country === 'United States' || country === 'Canada') {
+                    input.value = '+1 ';
+                } else if (country === 'United Kingdom') {
+                    input.value = '+44 ';
+                } else if (country === 'Australia') {
+                    input.value = '+61 ';
+                } else if (country === 'Singapore') {
+                    input.value = '+65 ';
+                } else {
+                    input.value = '+';
+                }
+                // Trigger input event to update validation state immediately
+                input.dispatchEvent(new Event('input'));
             }
         });
     });
@@ -1014,6 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.posthog.capture('payment_preference_selected', { payment_method: paymentVal });
                 }
                 queueRealtimeSave();
+                updateSubmitButtonsState();
             }
         });
     });

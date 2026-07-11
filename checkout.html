@@ -214,71 +214,68 @@
                             <label for="country-dropdown-trigger"
                                 class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Country/Region</label>
 
-                            <!-- Custom Dropdown Picker -->
-                            <div id="custom-country-dropdown" class="relative w-full">
-                                <button type="button" id="country-dropdown-trigger"
-                                    class="w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 flex items-center justify-between text-left transition-all">
-                                    <span id="selected-country-text">United States</span>
-                                    <span
-                                        class="material-symbols-outlined text-[20px] text-text-muted transition-transform duration-200"
-                                        id="dropdown-chevron">expand_more</span>
-                                </button>
-
-                                <input type="hidden" id="checkout-country" name="country" class="checkout-input"
-                                    value="United States" />
-
-                                <div id="country-dropdown-popover"
-                                    class="absolute left-0 right-0 mt-1 bg-surface-elevated border border-border-subtle rounded shadow-2xl z-50 hidden opacity-0 scale-95 origin-top transition-all duration-200 flex flex-col max-h-[300px]">
-                                    <div
-                                        class="p-2 border-b border-border-subtle/50 sticky top-0 bg-surface-elevated shrink-0">
-                                        <input type="text" id="country-search" placeholder="Search country..."
-                                            class="w-full bg-surface border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-9 px-3 text-sm focus:outline-none" />
-                                    </div>
-                                    <div id="country-options-container" class="overflow-y-auto flex-grow py-1">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="first-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">First
-                                Name</label>
-                            <input id="first-name" name="given-name" autocomplete="given-name"
-                                class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
-                                placeholder="Aarav" type="text" />
-                            <div id="error-first-name" class="text-error font-label-mono text-[10px] mt-1 hidden">First
-                                name is required
-                            </div>
-                        </div>
-                        <div>
-                            <label for="last-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Last
-                                Name</label>
-                            <input id="last-name" name="family-name" autocomplete="family-name"
-                                class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
-                                placeholder="Sharma" type="text" />
-                            <div id="error-last-name" class="text-error font-label-mono text-[10px] mt-1 hidden">Last
-                                name is required
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="email" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Email
-                                Address</label>
-                            <input id="email" name="email" autocomplete="email"
-                                class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
-                                placeholder="aarav@example.com" type="email" />
-                            <div id="error-email" class="text-error font-label-mono text-[10px] mt-1 hidden">Please
-                                enter a valid email address
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="mobile" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Mobile
-                                Number</label>
-                            <input id="mobile" name="tel" autocomplete="tel"
-                                class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
-                                placeholder="+91 98765 43210" type="tel" />
-                            <div id="error-mobile" class="text-error font-label-mono text-[10px] mt-1 hidden">Please
-                                enter a valid mobile number
-                            </div>
-                        </div>
+                             <!-- Custom Dropdown Picker -->
+                             <div id="custom-country-dropdown" class="relative w-full">
+                                 <button type="button" id="country-dropdown-trigger"
+                                     class="w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 flex items-center justify-between text-left transition-all">
+                                     <span id="selected-country-text">India</span>
+                                     <span
+                                         class="material-symbols-outlined text-[20px] text-text-muted transition-transform duration-200"
+                                         id="dropdown-chevron">expand_more</span>
+                                 </button>
+ 
+                                 <input type="hidden" id="checkout-country" name="country" class="checkout-input"
+                                     value="India" />
+ 
+                                 <div id="country-dropdown-popover"
+                                     class="absolute left-0 right-0 mt-1 bg-surface-elevated border border-border-subtle rounded shadow-2xl z-50 hidden opacity-0 scale-95 origin-top transition-all duration-200 flex flex-col max-h-[300px]">
+                                     <div
+                                         class="p-2 border-b border-border-subtle/50 sticky top-0 bg-surface-elevated shrink-0">
+                                         <input type="text" id="country-search" placeholder="Search country..."
+                                             class="w-full bg-surface border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-9 px-3 text-sm focus:outline-none" />
+                                     </div>
+                                     <div id="country-options-container" class="overflow-y-auto flex-grow py-1">
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div>
+                             <label for="first-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">First Name <span class="text-secondary">*</span></label>
+                             <input id="first-name" name="given-name" autocomplete="given-name"
+                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
+                                 placeholder="Aarav" type="text" />
+                             <div id="error-first-name" class="text-error font-label-mono text-[10px] mt-1 hidden">First
+                                 name is required
+                             </div>
+                         </div>
+                         <div>
+                             <label for="last-name" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Last Name <span class="text-secondary">*</span></label>
+                             <input id="last-name" name="family-name" autocomplete="family-name"
+                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
+                                 placeholder="Sharma" type="text" />
+                             <div id="error-last-name" class="text-error font-label-mono text-[10px] mt-1 hidden">Last
+                                 name is required
+                             </div>
+                         </div>
+                         <div class="md:col-span-2">
+                             <label for="email" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Email Address <span class="text-secondary">*</span></label>
+                             <input id="email" name="email" autocomplete="email"
+                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
+                                 placeholder="aarav@example.com" type="email" />
+                             <div id="error-email" class="text-error font-label-mono text-[10px] mt-1 hidden">Please
+                                 enter a valid email address
+                             </div>
+                         </div>
+                         <div class="md:col-span-2">
+                             <label for="mobile" class="block font-label-mono text-label-mono text-text-muted mb-2 uppercase cursor-pointer">Mobile Number <span class="text-secondary">*</span></label>
+                             <p class="text-[10px] text-text-muted/70 mb-2 mt-[-4px]">Used only to send delivery updates via SMS/WhatsApp</p>
+                             <input id="mobile" name="tel" autocomplete="tel"
+                                 class="checkout-input w-full bg-surface-elevated border border-border-subtle rounded text-on-background focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 transition-all"
+                                 placeholder="+91 98765 43210" type="tel" />
+                             <div id="error-mobile" class="text-error font-label-mono text-[10px] mt-1 hidden">Please
+                                 enter a valid mobile number
+                             </div>
+                         </div>
                     </div>
                 </section>
                 <!-- Remarks -->
