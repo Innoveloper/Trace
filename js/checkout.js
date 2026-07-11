@@ -1168,14 +1168,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    let isAutoSaving = false;
+    let pendingAutoSave = false;
+
     function queueRealtimeSave() {
         if (debounceSaveTimeout) {
             clearTimeout(debounceSaveTimeout);
         }
-        debounceSaveTimeout = setTimeout(executeRealtimeSave, 1000);
+        debounceSaveTimeout = setTimeout(executeRealtimeSave, 2000); // Increased debounce to 2s
     }
 
-    function executeRealtimeSave() {
+    async function executeRealtimeSave() {
+        if (isAutoSaving) {
+            pendingAutoSave = true;
+            return;
+        }
+
         const firstName = document.getElementById('first-name');
         const lastName = document.getElementById('last-name');
         const email = document.getElementById('email');
@@ -1223,17 +1231,33 @@ document.addEventListener('DOMContentLoaded', () => {
             paymentMethod: paymentMethod
         }));
 
+        isAutoSaving = true;
+
         if (GOOGLE_SCRIPT_URL) {
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            }).catch(err => console.error("Real-time auto-save failed:", err));
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Real-time auto-save failed:", err);
+            } finally {
+                // Wait 1.5s for Google Sheets to propagate its cache before allowing the next save
+                setTimeout(() => {
+                    isAutoSaving = false;
+                    if (pendingAutoSave) {
+                        pendingAutoSave = false;
+                        queueRealtimeSave();
+                    }
+                }, 1500);
+            }
         } else {
             console.log("[Simulation] Auto-saved data to Google Sheet:", payload);
+            isAutoSaving = false;
         }
     }
 
