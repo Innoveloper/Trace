@@ -89,3 +89,23 @@ body {
     pointer-events: none;
 }
 
+/* Disabled button state styling */
+.btn-disabled-style {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+    pointer-events: auto !important; /* Keep it clickable to trigger scroll & errors */
+    transform: none !important;
+    box-shadow: none !important;
+}
+.btn-disabled-style:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Hide mobile sticky bottom bar when virtual keyboard is open */
+.keyboard-open-hide {
+    display: none !important;
+}
+
+
+

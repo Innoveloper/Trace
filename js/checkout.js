@@ -201,6 +201,64 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPSE8uEneh2N
 const LOOPS_FORM_ID = 'cmr2br68g059u0jyri98r5fyc';
 
 // Validation Logic
+let isSubmitting = false;
+
+function checkFormValidity() {
+    const firstName = document.getElementById('first-name');
+    const lastName = document.getElementById('last-name');
+    const email = document.getElementById('email');
+    const mobile = document.getElementById('mobile');
+
+    let isValid = true;
+
+    if (firstName && !firstName.value.trim()) isValid = false;
+    if (lastName && !lastName.value.trim()) isValid = false;
+
+    if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value.trim())) isValid = false;
+    }
+
+    if (mobile && !mobile.value.trim()) isValid = false;
+
+    return isValid;
+}
+
+function updateSubmitButtonsState() {
+    const submitBtn = document.getElementById('checkout-submit-btn');
+    const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
+    const isValid = checkFormValidity();
+
+    if (isValid) {
+        submitBtn?.classList.remove('btn-disabled-style');
+        mobileSubmitBtn?.classList.remove('btn-disabled-style');
+    } else {
+        submitBtn?.classList.add('btn-disabled-style');
+        mobileSubmitBtn?.classList.add('btn-disabled-style');
+    }
+}
+
+function validateFieldRealtime(inputEl) {
+    if (inputEl.id === 'first-name') {
+        if (inputEl.value.trim()) {
+            hideError(inputEl, 'error-first-name');
+        }
+    } else if (inputEl.id === 'last-name') {
+        if (inputEl.value.trim()) {
+            hideError(inputEl, 'error-last-name');
+        }
+    } else if (inputEl.id === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(inputEl.value.trim())) {
+            hideError(inputEl, 'error-email');
+        }
+    } else if (inputEl.id === 'mobile') {
+        if (inputEl.value.trim()) {
+            hideError(inputEl, 'error-mobile');
+        }
+    }
+}
+
 const submitBtn = document.getElementById('checkout-submit-btn');
 
 if (submitBtn) {
@@ -226,6 +284,8 @@ function getOrCreateReceiptId() {
 }
 
 function validateForm() {
+    if (isSubmitting) return;
+
     const firstName = document.getElementById('first-name');
     const lastName = document.getElementById('last-name');
     const email = document.getElementById('email');
@@ -277,6 +337,7 @@ function validateForm() {
     const receiptId = getOrCreateReceiptId();
 
     if (isValid) {
+        isSubmitting = true;
         if (debounceSaveTimeout) {
             clearTimeout(debounceSaveTimeout);
             debounceSaveTimeout = null;
@@ -375,6 +436,7 @@ function validateForm() {
                             console.error(`Submission target ${i} failed:`, res.reason);
                         }
                     });
+                    isSubmitting = false;
                     if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalBtnText;
@@ -387,6 +449,7 @@ function validateForm() {
                 });
         } else {
             setTimeout(() => {
+                isSubmitting = false;
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnText;
@@ -461,7 +524,11 @@ function openSuccessModal() {
 
         // Track checkout success funnel completion
         if (window.posthog && typeof window.posthog.capture === 'function') {
-            window.posthog.capture('checkout_funnel', { step: 'completed' });
+            const receiptId = getOrCreateReceiptId();
+            window.posthog.capture('checkout_funnel', { 
+                step: 'completed',
+                receipt_id: receiptId
+            });
         }
 
         // Track Facebook Pixel Purchase event and custom conversion events
@@ -951,9 +1018,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Real-time auto-saving on user input
+    // Real-time auto-saving on user input and validation checks
     document.querySelectorAll('.checkout-input').forEach(input => {
-        input.addEventListener('input', queueRealtimeSave);
+        input.addEventListener('input', () => {
+            queueRealtimeSave();
+            validateFieldRealtime(input);
+            updateSubmitButtonsState();
+        });
     });
 
     function queueRealtimeSave() {
@@ -1069,6 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Prefill form inputs if cached data exists in localStorage
     prefillFormData();
+    updateSubmitButtonsState();
 
     // Mobile sticky bottom bar click binding
     const mobileSubmitBtn = document.getElementById('mobile-submit-btn');
@@ -1096,5 +1168,21 @@ document.addEventListener('DOMContentLoaded', () => {
             threshold: 0.05
         });
         observer.observe(mainSubmitBtn);
+    }
+
+    // Hide mobile sticky bottom bar when virtual keyboard is open
+    if (window.visualViewport) {
+        const initialHeight = window.innerHeight;
+        window.visualViewport.addEventListener('resize', () => {
+            if (mobileStickyBar) {
+                // If viewport height drops significantly, it indicates keyboard is visible
+                const isKeyboardOpen = (initialHeight - window.visualViewport.height) > 150;
+                if (isKeyboardOpen) {
+                    mobileStickyBar.classList.add('keyboard-open-hide');
+                } else {
+                    mobileStickyBar.classList.remove('keyboard-open-hide');
+                }
+            }
+        });
     }
 });
